@@ -1,0 +1,132 @@
+<header class="border-b border-border bg-surface/90 backdrop-blur-xl">
+  <div class="content-shell flex flex-wrap items-center justify-between gap-4 py-4">
+    <a
+      routerLink="/dashboard"
+      class="inline-flex items-center gap-2 text-sm font-medium text-text-secondary no-underline transition-colors hover:text-accent-cyan"
+    >
+      ← Back to Dashboard
+    </a>
+    <p class="m-0 text-xs font-medium tracking-[0.14em] text-accent-cyan uppercase">
+      Analytics agent
+    </p>
+  </div>
+</header>
+
+<main class="content-shell py-8 md:py-10">
+  <div class="max-w-3xl">
+    <h1 class="m-0 text-[clamp(1.85rem,3.5vw,2.6rem)] font-bold tracking-[-0.035em] text-text-primary">
+      Ask the portfolio data
+    </h1>
+    <p class="mt-3 mb-0 text-[1.05rem] leading-relaxed text-text-secondary">
+      Grounded answers from the same showcase dataset as the Highcharts dashboard.
+      The model can only call allowlisted analytics tools — never raw SQL.
+    </p>
+  </div>
+
+  <section class="mt-8 max-w-3xl" aria-label="Ask a question">
+    <label class="sr-only" for="agent-question">Question</label>
+    <textarea
+      id="agent-question"
+      rows="3"
+      class="field w-full !min-h-[5.5rem] resize-y"
+      [ngModel]="draft()"
+      (ngModelChange)="draft.set($event)"
+      (keydown.enter)="onEnter($event)"
+      placeholder="e.g. Which technologies are used most across projects?"
+      [disabled]="sending()"
+    ></textarea>
+    <div class="mt-3 flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        class="btn btn-primary"
+        [ngClass]="{ 'opacity-50': !canSend() }"
+        [disabled]="!canSend()"
+        (click)="send()"
+      >
+        {{ sending() ? 'Asking…' : 'Ask agent' }}
+      </button>
+      <p class="m-0 text-xs text-text-muted">Enter to send · Shift+Enter for a new line</p>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-2" aria-label="Sample prompts">
+      @for (prompt of samplePrompts; track prompt) {
+        <button
+          type="button"
+          class="rounded-lg border border-border bg-surface px-3 py-1.5 text-left text-xs text-text-secondary transition-colors hover:border-border-highlight hover:text-accent-cyan"
+          (click)="useSample(prompt)"
+        >
+          {{ prompt }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="mt-10 max-w-3xl space-y-5" aria-live="polite">
+    @if (turns().length === 0) {
+      <p class="m-0 text-sm text-text-muted">No questions yet. Try a sample prompt above.</p>
+    }
+
+    @for (turn of turns(); track turn.id) {
+      <article class="rounded-2xl border border-border bg-surface/80 p-4 md:p-5">
+        <div>
+          <span class="text-xs font-medium tracking-wide text-accent-cyan uppercase">You</span>
+          <p class="mt-1 mb-0 text-sm text-text-primary">{{ turn.question }}</p>
+        </div>
+
+        @if (turn.loading) {
+          <p class="mt-4 mb-0 text-sm text-text-secondary">Running bounded tool loop…</p>
+        }
+
+        @if (turn.error) {
+          <p class="mt-4 mb-0 text-sm text-red-400">{{ turn.error }}</p>
+        }
+
+        @if (turn.response; as response) {
+          <div class="mt-4 border-t border-border pt-4">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-medium tracking-wide text-accent-cyan uppercase">Agent</span>
+              @if (response.is_demo_dataset) {
+                <span
+                  class="rounded-md border border-border bg-surface-elevated px-2 py-0.5 text-[0.65rem] text-text-muted"
+                >
+                  Showcase dataset
+                </span>
+              }
+              <span class="text-xs text-text-muted">
+                {{ response.model }} · {{ response.llm_calls ?? response.iterations }} LLM call(s)
+                @if (response.answer_source) {
+                  · {{ response.answer_source }}
+                }
+              </span>
+            </div>
+            <p class="mt-2 mb-0 text-sm leading-relaxed text-text-primary">{{ response.answer }}</p>
+
+            @if (response.tool_activity.length) {
+              <ul class="mt-3 mb-0 list-none space-y-1 p-0">
+                @for (item of response.tool_activity; track $index) {
+                  <li class="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+                    <span
+                      class="rounded px-1.5 py-0.5 font-medium uppercase"
+                      [ngClass]="{
+                        'bg-emerald-500/15 text-emerald-300': item.status === 'ok',
+                        'bg-amber-500/15 text-amber-300': item.status === 'error',
+                        'bg-rose-500/15 text-rose-300': item.status === 'rejected',
+                      }"
+                    >
+                      {{ item.status }}
+                    </span>
+                    <code class="text-accent-cyan">{{ item.tool_name }}</code>
+                    @if (item.detail) {
+                      <span class="text-text-muted">{{ item.detail }}</span>
+                    }
+                  </li>
+                }
+              </ul>
+              <app-tool-results [activity]="response.tool_activity" />
+            }
+          </div>
+        }
+      </article>
+    }
+  </section>
+</main>

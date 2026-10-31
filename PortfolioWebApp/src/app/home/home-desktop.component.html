@@ -1,0 +1,577 @@
+<header
+  class="fixed inset-x-0 top-0 z-50 border-b border-border bg-surface/88 backdrop-blur-xl"
+>
+  <div class="content-shell flex h-[var(--nav-height)] items-center justify-between gap-4">
+    <a href="#home" class="inline-flex items-center gap-2 text-[1.05rem] font-semibold tracking-[-0.02em] text-text-primary no-underline">
+      <span class="h-1.5 w-1.5 rounded-full bg-accent-cyan shadow-[0_0_8px_rgba(0,217,255,0.7)]" aria-hidden="true"></span>
+      Jumari Blignaut
+    </a>
+    <nav class="flex items-center gap-7" aria-label="Primary">
+      @for (link of navLinks; track link.id) {
+        <a
+          [href]="'#' + link.id"
+          class="relative text-sm font-medium no-underline transition-colors"
+          [ngClass]="
+            activeSection() === link.id
+              ? 'text-text-primary'
+              : 'text-text-secondary hover:text-text-primary'
+          "
+        >
+          {{ link.label }}
+          @if (activeSection() === link.id) {
+            <span
+              class="absolute -bottom-2 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-accent-cyan shadow-[0_0_12px_rgba(0,217,255,0.55)]"
+            ></span>
+          }
+        </a>
+      }
+      <a class="btn btn-primary !min-h-10 !px-4 !text-sm" [href]="cvUrl" target="_blank" rel="noopener">
+        View CV
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section
+    id="home"
+    class="hero-section bg-background pt-[calc(var(--nav-height)+2rem)]"
+    [class.hero-content-ready]="heroContentReady()"
+  >
+    <div class="hero-atmosphere pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <app-aurora-background (contentReady)="onHeroContentReady()" />
+    <div class="hero-content-veil pointer-events-none absolute inset-y-0 left-0 z-[2]" aria-hidden="true"></div>
+
+    <div class="content-shell hero-content py-[clamp(4rem,9vw,7.5rem)]">
+      <div class="hero-copy-panel max-w-2xl min-w-0">
+        <div
+          class="hero-intro hero-intro--1 mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-surface-elevated/85 px-3.5 py-2 text-sm text-text-secondary"
+        >
+          <span class="h-2 w-2 shrink-0 rounded-full bg-accent-cyan shadow-[0_0_10px_rgba(0,217,255,0.7)]"></span>
+          Available for new opportunities
+        </div>
+        <h1 class="hero-title hero-intro hero-intro--2 m-0 max-w-full font-extrabold tracking-[-0.045em] break-words">
+          <span class="text-text-primary">Jumari</span>
+          <span class="text-accent-blue"> Blignaut</span>
+        </h1>
+        <p class="hero-intro hero-intro--3 hero-role mt-4 mb-0">Full-Stack Software Engineer</p>
+        <p class="body-copy hero-intro hero-intro--4 mt-5 mb-0 max-w-xl">
+          I build scalable, practical software solutions across web applications, APIs, and data-driven
+          systems.
+        </p>
+        <div class="hero-intro hero-intro--5 mt-8 flex flex-wrap gap-3">
+          <a class="btn btn-primary" href="#projects">Explore My Projects →</a>
+          <a class="btn btn-secondary" [href]="cvUrl" target="_blank" rel="noopener">View My CV</a>
+          <a class="btn btn-secondary" href="#contact">Contact Me</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="section-pad bg-surface">
+    <div class="content-shell">
+      <div appReveal>
+        <p class="section-label">About</p>
+        <h2 class="section-title">Software engineer with a practical full-stack focus</h2>
+      </div>
+      <div class="mt-10 grid items-start gap-12 grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
+        <div class="space-y-5" [appReveal]="60">
+          @for (paragraph of about.summary; track paragraph) {
+            <p class="body-copy m-0">{{ paragraph }}</p>
+          }
+        </div>
+        @if (about.highlights.length) {
+          <aside class="surface-card bg-surface-elevated p-8" [appReveal]="140">
+            <p class="m-0 mb-5 text-[0.75rem] font-semibold tracking-[0.16em] text-accent-cyan uppercase">
+              Snapshot
+            </p>
+            <dl class="m-0 space-y-6">
+              @for (item of about.highlights; track item.label) {
+                <div>
+                  <dt class="m-0 text-[0.75rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
+                    {{ item.label }}
+                  </dt>
+                  <dd class="mt-2 mb-0 text-[clamp(1rem,1.1vw,1.125rem)] font-medium leading-snug text-text-primary">
+                    {{ item.value }}
+                  </dd>
+                </div>
+              }
+            </dl>
+          </aside>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills" class="section-pad bg-background">
+    <div class="content-shell">
+      <div appReveal>
+        <p class="section-label">Technical Skills</p>
+        <h2 class="section-title">Tools I use to ship reliable software</h2>
+        <p class="section-copy">
+          Grouped by the layers I work across day to day — from interface to API to data.
+        </p>
+      </div>
+      <div class="mt-10 grid gap-5 grid-cols-4">
+        @for (group of skillGroups; track group.title; let i = $index) {
+          <article
+            class="surface-card flex min-h-[16rem] flex-col bg-surface-elevated p-7"
+            [appReveal]="i * 80"
+          >
+            <h3 class="m-0 text-[clamp(1.2rem,1.5vw,1.35rem)] font-semibold tracking-[-0.02em] text-text-primary">
+              {{ group.title }}
+            </h3>
+            <div class="mt-6 flex flex-wrap content-start gap-2.5">
+              @for (skill of group.skills; track skill) {
+                <span class="tech-tag">{{ skill }}</span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="section-pad bg-surface">
+    <div class="content-shell">
+      <div appReveal>
+        <p class="section-label">Projects</p>
+        <h2 class="section-title">Independent software I build and ship</h2>
+        <p class="section-copy">
+          For these personal projects, I independently owned the full software development lifecycle —
+          from initial design and database architecture through frontend and backend development,
+          deployment, and hosting. I was responsible for the technical decisions and implementation
+          across each application, including project setup, system architecture, database design, API
+          development, and deployment.
+        </p>
+      </div>
+      <div class="mt-10 grid gap-7 grid-cols-2">
+        @for (project of projects; track project.id; let i = $index) {
+          <article
+            class="surface-card project-card overflow-hidden bg-surface-elevated"
+            [ngClass]="project.featured ? 'col-span-2' : ''"
+            [appReveal]="i * 90"
+          >
+            <div
+              class="grid"
+              [ngClass]="
+                project.featured
+                  ? 'grid-cols-[minmax(18rem,0.95fr)_minmax(0,1.05fr)]'
+                  : 'grid-cols-1'
+              "
+            >
+              <div
+                class="project-preview relative min-h-[16rem] border-border"
+                [ngClass]="[
+                  previewClass(project),
+                  project.featured ? 'min-h-[20rem] border-r' : 'border-b',
+                ]"
+                aria-hidden="true"
+              >
+                <div class="project-preview-grid absolute inset-0 opacity-30"></div>
+                <div class="project-preview-scale relative flex h-full min-h-[16rem] flex-col p-6">
+                  <p class="m-0 text-[0.72rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
+                    {{ project.previewLabel }}
+                  </p>
+                  <div class="mt-4 flex flex-1 items-center justify-center">
+                    @switch (project.id) {
+                      @case ('veld-supply') {
+                        <div class="mock-panel w-full max-w-sm rounded-xl border border-border p-3 shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
+                          <div class="mb-3 flex items-center justify-between">
+                            <div class="h-2.5 w-20 rounded bg-accent-blue/50"></div>
+                            <div class="h-7 w-20 rounded-md bg-accent-blue/80"></div>
+                          </div>
+                          <div class="grid grid-cols-3 gap-2">
+                            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                              <div class="rounded-lg border border-border bg-surface p-2">
+                                <div class="mb-2 aspect-square rounded-md bg-surface-highlight"></div>
+                                <div class="h-1.5 w-3/4 rounded bg-accent-silver/25"></div>
+                                <div class="mt-1.5 h-1.5 w-1/2 rounded bg-accent-cyan/35"></div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                      @case ('accountant-app') {
+                        <div class="mock-panel flex w-full max-w-sm overflow-hidden rounded-xl border border-border shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
+                          <div class="w-14 shrink-0 border-r border-border bg-surface p-2">
+                            <div class="mb-3 h-6 w-6 rounded bg-accent-cyan/40"></div>
+                            <div class="space-y-2">
+                              <div class="h-2 rounded bg-accent-silver/20"></div>
+                              <div class="h-2 rounded bg-accent-silver/20"></div>
+                              <div class="h-2 rounded bg-accent-blue/40"></div>
+                            </div>
+                          </div>
+                          <div class="flex-1 p-3">
+                            <div class="mb-3 flex gap-2">
+                              <div class="h-8 flex-1 rounded-md bg-surface-highlight"></div>
+                              <div class="h-8 w-16 rounded-md bg-accent-blue/70"></div>
+                            </div>
+                            <div class="space-y-2">
+                              @for (i of [1, 2, 3, 4]; track i) {
+                                <div class="flex items-center gap-2 rounded-md border border-border bg-surface px-2 py-2">
+                                  <div class="h-2 flex-1 rounded bg-accent-silver/20"></div>
+                                  <div class="h-2 w-10 rounded bg-accent-cyan/30"></div>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      @default {
+                        <div class="mock-panel w-full max-w-sm rounded-xl border border-border p-3 shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
+                          <div class="mb-3 flex gap-2">
+                            <div class="h-10 flex-1 rounded-lg border border-border bg-surface p-2">
+                              <div class="h-2 w-10 rounded bg-accent-cyan/40"></div>
+                              <div class="mt-2 h-4 w-8 rounded bg-text-primary/80"></div>
+                            </div>
+                            <div class="h-10 flex-1 rounded-lg border border-border bg-surface p-2">
+                              <div class="h-2 w-10 rounded bg-accent-blue/40"></div>
+                              <div class="mt-2 h-4 w-8 rounded bg-text-primary/80"></div>
+                            </div>
+                          </div>
+                          <div class="flex h-28 items-end gap-2 rounded-lg border border-border bg-surface px-3 pt-4 pb-3">
+                            @for (h of [40, 65, 48, 80, 55, 72]; track h) {
+                              <div
+                                class="flex-1 rounded-t-md bg-gradient-to-t from-accent-blue to-accent-cyan"
+                                [ngClass]="
+                                  h === 40
+                                    ? 'h-[40%]'
+                                    : h === 65
+                                      ? 'h-[65%]'
+                                      : h === 48
+                                        ? 'h-[48%]'
+                                        : h === 80
+                                          ? 'h-[80%]'
+                                          : h === 55
+                                            ? 'h-[55%]'
+                                            : 'h-[72%]'
+                                "
+                              ></div>
+                            }
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                  <p class="mt-4 mb-0 text-sm text-text-muted">
+                    Visual preview — screenshots can replace this when available
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex flex-col p-9">
+                <h3 class="m-0 text-[clamp(1.4rem,2vw,1.7rem)] font-semibold tracking-[-0.02em] text-text-primary">
+                  {{ project.name }}
+                </h3>
+                <p class="project-copy mt-4 mb-0">{{ project.description }}</p>
+                <div class="mt-6 flex flex-wrap gap-2.5">
+                  @for (tech of project.tech; track tech) {
+                    <span class="tech-tag">{{ tech }}</span>
+                  }
+                </div>
+                <ul class="mt-6 mb-0 list-none space-y-2.5 p-0">
+                  @for (feature of project.features; track feature) {
+                    <li class="project-copy text-accent-silver">→ {{ feature }}</li>
+                  }
+                </ul>
+                <div class="project-actions mt-auto mt-8 flex flex-wrap gap-3 border-t border-border pt-7">
+                  @for (action of project.actions; track action.label) {
+                    @if (isAppRoute(action)) {
+                      <a
+                        class="btn"
+                        [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                        [routerLink]="action.url"
+                      >
+                        {{ action.label }}
+                      </a>
+                    } @else if (isInternal(action)) {
+                      <a
+                        class="btn"
+                        [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                        [href]="action.url"
+                      >
+                        {{ action.label }}
+                      </a>
+                    } @else if (action.url) {
+                      <a
+                        class="btn"
+                        [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                        [href]="action.url"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        {{ action.label }}
+                      </a>
+                    } @else {
+                      <button
+                        type="button"
+                        class="btn is-disabled"
+                        [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                        disabled
+                      >
+                        {{ action.label }}
+                      </button>
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="mt-10 flex flex-col items-start gap-3 border-t border-border pt-8" appReveal>
+        <p class="m-0 max-w-2xl text-text-secondary">
+          Explore a dedicated Highcharts analytics route built from the same portfolio project data.
+        </p>
+        <a routerLink="/dashboard" class="btn btn-primary">Explore Analytics Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience" class="section-pad bg-background">
+    <div class="content-shell">
+      <div appReveal>
+        <p class="section-label">Experience</p>
+        <h2 class="section-title">Professional timeline</h2>
+        <p class="section-copy">Roles and education from my CV — no invented employment history.</p>
+      </div>
+      <div class="relative mt-10">
+        <div
+          class="pointer-events-none absolute top-3 bottom-3 left-[0.6875rem] w-px bg-[color-mix(in_srgb,var(--accent-blue)_45%,transparent)]"
+          aria-hidden="true"
+        ></div>
+        <div class="space-y-6">
+          @for (item of experience; track item.title + item.organization; let i = $index) {
+            <article class="relative flex items-start gap-6" [appReveal]="i * 70">
+              <div class="flex w-6 shrink-0 justify-center pt-7" aria-hidden="true">
+                <span
+                  class="mt-1 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-accent-cyan bg-accent-blue shadow-[0_0_12px_rgba(0,217,255,0.55)]"
+                ></span>
+              </div>
+              <div class="surface-card min-w-0 flex-1 p-7">
+                <h3 class="m-0 text-[clamp(1.25rem,2vw,1.5rem)] font-semibold tracking-[-0.02em] text-text-primary">
+                  {{ item.title }}
+                </h3>
+                <p class="mt-2 mb-0 text-[0.95rem] font-medium text-accent-cyan">
+                  {{ item.organization }} · {{ item.dates }}
+                  @if (item.location) {
+                    <span class="text-text-muted"> · {{ item.location }}</span>
+                  }
+                </p>
+                <p class="body-copy mt-4 mb-0">{{ item.description }}</p>
+
+                @if (item.bullets?.length) {
+                  <ul class="mt-4 mb-0 list-none space-y-2.5 p-0">
+                    @for (bullet of item.bullets; track bullet) {
+                      <li class="body-copy text-accent-silver">→ {{ bullet }}</li>
+                    }
+                  </ul>
+                }
+
+                @if (item.sections?.length) {
+                  <div class="mt-6 space-y-6">
+                    @for (section of item.sections; track section.title) {
+                      <div class="border-t border-border pt-5">
+                        <h4 class="m-0 text-[clamp(1.05rem,1.3vw,1.2rem)] font-semibold tracking-[-0.015em] text-text-primary">
+                          {{ section.title }}
+                        </h4>
+                        @if (section.summary) {
+                          <p class="body-copy mt-2 mb-0">{{ section.summary }}</p>
+                        }
+                        @if (section.tech?.length) {
+                          <div class="mt-3 flex flex-wrap gap-2">
+                            @for (tech of section.tech; track tech) {
+                              <span class="tech-tag">{{ tech }}</span>
+                            }
+                          </div>
+                        }
+                        <ul class="mt-3 mb-0 list-none space-y-2.5 p-0">
+                          @for (bullet of section.bullets; track bullet) {
+                            <li class="body-copy text-accent-silver">→ {{ bullet }}</li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (!item.sections?.length && item.tech.length) {
+                  <div class="mt-5 flex flex-wrap gap-2">
+                    @for (tech of item.tech; track tech) {
+                      <span class="tech-tag">{{ tech }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashboard" class="section-pad bg-surface">
+    <div class="content-shell">
+      <div appReveal>
+        <p class="section-label">Dashboard</p>
+        <h2 class="section-title">Portfolio data at a glance</h2>
+        <p class="section-copy">
+          Illustrative summary from this portfolio API — not live business analytics from other products.
+        </p>
+      </div>
+      @if (overview(); as data) {
+        <div class="mt-10 grid gap-4 grid-cols-4">
+          @for (metric of data.metrics; track metric.label; let i = $index) {
+            <article class="surface-card bg-surface-elevated p-6" [appReveal]="i * 70">
+              <p
+                class="m-0 text-[clamp(1.9rem,3vw,2.35rem)] font-bold tracking-[-0.03em] text-accent-cyan"
+                [appCountUp]="metric.value"
+              ></p>
+              <p class="mt-2 mb-0 text-[0.95rem] text-text-secondary">{{ metric.label }}</p>
+            </article>
+          }
+        </div>
+        <div class="mt-6 grid min-w-0 grid-cols-2 gap-6">
+          <article class="surface-card min-w-0 overflow-hidden bg-surface-elevated p-6" [appReveal]="80">
+            <div class="mb-1 flex items-baseline justify-between gap-3">
+              <h3 class="m-0 text-lg font-semibold text-text-primary">Technology mix</h3>
+              <span class="text-xs font-medium tracking-wide text-text-muted uppercase">Illustrative</span>
+            </div>
+            <p class="mt-1 mb-4 text-sm text-text-secondary">
+              Relative emphasis across the stack used in these portfolio projects.
+            </p>
+            <highcharts-chart class="block h-[300px] w-full max-w-full" [options]="techChart()" />
+          </article>
+          <article class="surface-card min-w-0 overflow-hidden bg-surface-elevated p-6" [appReveal]="160">
+            <div class="mb-1 flex items-baseline justify-between gap-3">
+              <h3 class="m-0 text-lg font-semibold text-text-primary">Project categories</h3>
+              <span class="text-xs font-medium tracking-wide text-text-muted uppercase">Illustrative</span>
+            </div>
+            <p class="mt-1 mb-4 text-sm text-text-secondary">Count of showcased projects by category.</p>
+            <highcharts-chart class="block h-[300px] w-full max-w-full" [options]="categoryChart()" />
+          </article>
+        </div>
+      } @else {
+        <p class="body-copy mt-10">Loading dashboard…</p>
+      }
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section-pad bg-background">
+    <div class="content-shell">
+      <div appReveal>
+        <p class="section-label">Contact</p>
+        <h2 class="section-title">Let’s build something practical</h2>
+        <p class="section-copy">Reach out for full-stack roles, collaborations, or project discussions.</p>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-3" [appReveal]="60">
+        <a class="btn btn-primary" [href]="'mailto:' + email">Email {{ email }}</a>
+        @if (linkedInUrl) {
+          <a class="btn btn-secondary" [href]="linkedInUrl" target="_blank" rel="noopener">LinkedIn</a>
+        } @else {
+          <button type="button" class="btn btn-secondary is-disabled" disabled>LinkedIn — add URL</button>
+        }
+        @if (githubUrl) {
+          <a class="btn btn-secondary" [href]="githubUrl" target="_blank" rel="noopener">GitHub</a>
+        } @else {
+          <button type="button" class="btn btn-secondary is-disabled" disabled>GitHub — add URL</button>
+        }
+      </div>
+      <form
+        class="surface-card mt-10 max-w-3xl space-y-5 p-8"
+        [appReveal]="120"
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+      >
+        <div>
+          <label class="mb-2 block text-sm font-medium text-text-secondary" for="desktop-name">Name</label>
+          <input id="desktop-name" class="field" formControlName="name" placeholder="Your name" autocomplete="name" />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium text-text-secondary" for="desktop-email">Email</label>
+          <input
+            id="desktop-email"
+            class="field"
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-medium text-text-secondary" for="desktop-message">Message</label>
+          <textarea
+            id="desktop-message"
+            class="field min-h-28 resize-y"
+            formControlName="message"
+            placeholder="How can I help?"
+          ></textarea>
+        </div>
+        <div class="flex flex-wrap items-center gap-4">
+          <button class="btn btn-primary" type="submit" [disabled]="form.invalid || submitting()">
+            {{ submitting() ? 'Sending…' : 'Send message' }}
+          </button>
+          @if (status()) {
+            <p
+              class="m-0 text-sm"
+              [ngClass]="status() === 'sent' ? 'text-accent-cyan' : 'text-red-300'"
+            >
+              {{ statusMessage() }}
+            </p>
+          }
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="section-pad border-t border-border bg-surface !py-12">
+  <div class="content-shell flex flex-col gap-8">
+    <div class="flex items-end justify-between gap-6">
+      <div>
+        <p class="m-0 text-lg font-semibold tracking-[-0.02em] text-text-primary">Jumari Blignaut</p>
+        <p class="mt-1 mb-0 text-sm text-text-secondary">Full-Stack Software Engineer</p>
+      </div>
+      <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="Footer">
+        @for (link of footerLinks; track link.id) {
+          <a
+            [href]="'#' + link.id"
+            class="text-sm text-text-secondary no-underline transition-colors hover:text-accent-cyan"
+          >
+            {{ link.label }}
+          </a>
+        }
+        @if (githubUrl) {
+          <a
+            [href]="githubUrl"
+            target="_blank"
+            rel="noopener"
+            class="text-sm text-text-secondary no-underline transition-colors hover:text-accent-cyan"
+          >
+            GitHub
+          </a>
+        }
+        @if (linkedInUrl) {
+          <a
+            [href]="linkedInUrl"
+            target="_blank"
+            rel="noopener"
+            class="text-sm text-text-secondary no-underline transition-colors hover:text-accent-cyan"
+          >
+            LinkedIn
+          </a>
+        }
+      </nav>
+    </div>
+    <p class="m-0 text-sm text-text-muted">© {{ year }} Jumari Blignaut. All rights reserved.</p>
+  </div>
+</footer>

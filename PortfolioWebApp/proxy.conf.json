@@ -1,4 +1,12 @@
 {
+  "/api/agent": {
+    "target": "http://127.0.0.1:8000",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/agent": "/api"
+    }
+  },
   "/api": {
     "target": "http://localhost:5157",
     "secure": false,
