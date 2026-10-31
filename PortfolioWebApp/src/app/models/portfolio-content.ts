@@ -100,7 +100,7 @@ export const PROJECTS: ProjectItem[] = [
       },
       {
         label: 'Ask the AI agent',
-        url: '/dashboard/agent',
+        url: '/?agent=1',
       },
     ],
   },

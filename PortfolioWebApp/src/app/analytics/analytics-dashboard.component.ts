@@ -7,12 +7,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { HighchartsChartComponent } from 'highcharts-angular';
 import type { Options } from 'highcharts';
 import { catchError, map, of, startWith } from 'rxjs';
-import { AgentChatPanelComponent } from '../agent/agent-chat-panel.component';
 import {
   AnalyticsFilters,
   AnalyticsLoadState,
@@ -25,7 +24,7 @@ import { PortfolioAnalyticsService } from './services/portfolio-analytics.servic
 @Component({
   selector: 'app-analytics-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, NgClass, DatePipe, HighchartsChartComponent, AgentChatPanelComponent],
+  imports: [RouterLink, NgClass, DatePipe, HighchartsChartComponent],
   host: {
     class: 'analytics-page relative block min-h-screen bg-background text-text-primary',
   },
@@ -33,12 +32,8 @@ import { PortfolioAnalyticsService } from './services/portfolio-analytics.servic
 })
 export class AnalyticsDashboardComponent {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly analytics = inject(PortfolioAnalyticsService);
   private readonly charts = inject(AnalyticsChartService);
-
-  readonly agentOpen = signal(false);
 
   readonly filters = signal<AnalyticsFilters>(this.analytics.defaultFilters());
   readonly selection = signal<AnalyticsSelection>(null);
@@ -158,12 +153,6 @@ export class AnalyticsDashboardComponent {
 
   constructor() {
     this.destroyRef.onDestroy(() => this.selection.set(null));
-
-    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
-      if (params.get('agent') === '1') {
-        this.agentOpen.set(true);
-      }
-    });
   }
 
   setCategory(value: string): void {
@@ -191,30 +180,6 @@ export class AnalyticsDashboardComponent {
 
   clearSelection(): void {
     this.selection.set(null);
-  }
-
-  openAgent(): void {
-    this.agentOpen.set(true);
-  }
-
-  closeAgent(): void {
-    this.agentOpen.set(false);
-    if (this.route.snapshot.queryParamMap.get('agent')) {
-      void this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { agent: null },
-        queryParamsHandling: 'merge',
-        replaceUrl: true,
-      });
-    }
-  }
-
-  toggleAgent(): void {
-    if (this.agentOpen()) {
-      this.closeAgent();
-    } else {
-      this.openAgent();
-    }
   }
 
   statusLabel(status?: ProjectStatus | 'all'): string {

@@ -11,11 +11,26 @@ export interface PortfolioAnalyticsProject {
   description?: string;
 }
 
+export interface PortfolioOwnerHighlight {
+  label: string;
+  value: string;
+}
+
+export interface PortfolioOwner {
+  name: string;
+  role: string;
+  location: string;
+  summary: string;
+  highlights: PortfolioOwnerHighlight[];
+}
+
 export interface PortfolioAnalyticsDataset {
   /** Explicitly marks showcase / demo provenance. */
   sourceLabel: string;
   generatedAt: string;
   yearsExperience: number;
+  /** Optional — present on the shared API payload; charts do not require it. */
+  owner?: PortfolioOwner;
   projects: PortfolioAnalyticsProject[];
 }
 

@@ -1,4 +1,4 @@
-import { PROJECTS } from '../../models/portfolio-content';
+import { ABOUT, PROJECTS } from '../../models/portfolio-content';
 import {
   PortfolioAnalyticsDataset,
   PortfolioAnalyticsProject,
@@ -47,6 +47,13 @@ export function createAnalyticsDemoDataset(): PortfolioAnalyticsDataset {
     sourceLabel: 'Synthetic showcase data derived from portfolio projects',
     generatedAt: new Date().toISOString(),
     yearsExperience: 4,
+    owner: {
+      name: 'Jumari Blignaut',
+      role: 'Full-Stack Software Engineer',
+      location: 'Potchefstroom, South Africa',
+      summary: ABOUT.summary.join(' '),
+      highlights: ABOUT.highlights.map((h) => ({ label: h.label, value: h.value })),
+    },
     projects: mapProjects(),
   };
 }

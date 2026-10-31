@@ -10,13 +10,38 @@ public record DashboardOverview(
     IReadOnlyList<ChartSeriesPoint> ProjectCategories);
 
 /// <summary>
-/// Shared showcase analytics dataset used by the dashboard charts and the AI agent.
+/// Shared portfolio content used by the dashboard charts and the site-wide AI agent.
 /// </summary>
 public record PortfolioAnalyticsDatasetDto(
     string SourceLabel,
     string GeneratedAt,
     int YearsExperience,
+    PortfolioOwnerDto Owner,
+    PortfolioContactDto Contact,
+    IReadOnlyList<PortfolioSkillGroupDto> SkillGroups,
+    IReadOnlyList<PortfolioExperienceDto> Experience,
     IReadOnlyList<PortfolioAnalyticsProjectDto> Projects);
+
+public record PortfolioOwnerDto(
+    string Name,
+    string Role,
+    string Location,
+    string Summary,
+    IReadOnlyList<PortfolioOwnerHighlightDto> Highlights);
+
+public record PortfolioOwnerHighlightDto(string Label, string Value);
+
+public record PortfolioContactDto(string Email);
+
+public record PortfolioSkillGroupDto(string Title, IReadOnlyList<string> Skills);
+
+public record PortfolioExperienceDto(
+    string Title,
+    string Organization,
+    string Dates,
+    string Location,
+    string Description,
+    IReadOnlyList<string> Technologies);
 
 public record PortfolioAnalyticsProjectDto(
     string Id,

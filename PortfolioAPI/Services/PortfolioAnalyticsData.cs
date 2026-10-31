@@ -3,16 +3,49 @@ using PortfolioAPI.Contracts;
 namespace PortfolioAPI.Services;
 
 /// <summary>
-/// Canonical showcase dataset (same projects the portfolio site advertises).
-/// Keep in sync with PortfolioWebApp analytics-demo mapping.
+/// Canonical portfolio showcase content (aligned with PortfolioWebApp content).
 /// </summary>
 public static class PortfolioAnalyticsData
 {
     public static PortfolioAnalyticsDatasetDto Create() =>
         new(
-            "Synthetic showcase data derived from portfolio projects",
+            "Portfolio site content shared with the AI agent",
             DateTime.UtcNow.ToString("O"),
             4,
+            new PortfolioOwnerDto(
+                "Jumari Blignaut",
+                "Full-Stack Software Engineer",
+                "Potchefstroom, South Africa",
+                "Full-Stack Software Engineer with nearly four years of professional experience developing and maintaining web applications across financial technology, higher education and fleet telematics. Experienced in frontend and backend development, with a strong technical foundation in C#, .NET, Angular, TypeScript and SQL. Holds a Bachelor of Engineering in Computer and Electronic Engineering from North-West University, completed with distinction.",
+                [
+                    new("Education", "BEng Computer & Electronic Engineering — NWU (Distinction)"),
+                    new("Experience", "Nearly 4 years professional"),
+                    new("Focus", "Angular · ASP.NET · SQL Server · Azure"),
+                    new("Based in", "Potchefstroom, South Africa"),
+                ]),
+            new PortfolioContactDto("jumablignaut@gmail.com"),
+            [
+                new("Frontend", ["Angular", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind"]),
+                new("Backend", ["C#", "ASP.NET Core", "PHP", "REST APIs", "Node.js"]),
+                new("Databases", ["SQL Server", "SQL", "Database design"]),
+                new("Tools & Platforms", ["Git", "Azure", "Visual Studio", "VS Code", "Highcharts"]),
+            ],
+            [
+                new(
+                    "Software Engineer",
+                    "Matogen",
+                    "01/2023 – Present",
+                    "Potchefstroom, South Africa",
+                    "Contributed to the development and maintenance of software solutions across financial technology, higher education, fleet telematics and workflow automation.",
+                    ["Angular", "C#", ".NET", "TypeScript", "Highcharts", "NestJS", "SQL", "Azure"]),
+                new(
+                    "Bachelor of Engineering in Computer and Electronic Engineering",
+                    "North-West University",
+                    "2019 – 2022",
+                    "Potchefstroom, South Africa",
+                    "Academic achievement: Graduated with Distinction.",
+                    ["Engineering"]),
+            ],
             [
                 new(
                     "veld-supply",

@@ -1,18 +1,8 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { finalize } from 'rxjs';
 import { ToolResultsComponent } from './components/tool-results.component';
-import { ChatTurn } from './models/chat.models';
-import { readApiErrorMessage } from './services/api-error';
-import { ChatApiService } from './services/chat-api.service';
+import { AgentChatStateService } from './services/agent-chat-state.service';
 
 @Component({
   selector: 'app-agent-chat-panel',
@@ -38,13 +28,13 @@ import { ChatApiService } from './services/chat-api.service';
       <header class="flex items-start justify-between gap-3 border-b border-border px-4 py-3.5">
         <div class="min-w-0">
           <p class="m-0 text-[0.65rem] font-medium tracking-[0.14em] text-accent-cyan uppercase">
-            Analytics agent
+            Portfolio agent
           </p>
           <h2
             id="agent-chat-title"
             class="mt-0.5 mb-0 text-base font-semibold tracking-[-0.02em] text-text-primary"
           >
-            Ask the portfolio data
+            Ask about this site
           </h2>
         </div>
         <button
@@ -62,7 +52,7 @@ import { ChatApiService } from './services/chat-api.service';
             <button
               type="button"
               class="rounded-lg border border-border bg-surface-elevated px-2 py-1 text-left text-[0.7rem] text-text-secondary transition-colors hover:border-border-highlight hover:text-accent-cyan"
-              (click)="useSample(prompt)"
+              (click)="chat.useSample(prompt)"
             >
               {{ prompt }}
             </button>
@@ -70,13 +60,13 @@ import { ChatApiService } from './services/chat-api.service';
         </div>
 
         <section class="space-y-3" aria-live="polite">
-          @if (turns().length === 0) {
+          @if (chat.turns().length === 0) {
             <p class="m-0 text-xs text-text-muted">
-              Ask about projects, tech, or categories — grounded on the showcase dataset.
+              Ask about Jumari, skills, experience, projects, or contact — grounded on site content.
             </p>
           }
 
-          @for (turn of turns(); track turn.id) {
+          @for (turn of chat.turns(); track turn.id) {
             <article class="rounded-xl border border-border bg-surface-elevated/70 p-3">
               <div>
                 <span class="text-[0.65rem] font-medium tracking-wide text-accent-cyan uppercase">You</span>
@@ -112,22 +102,22 @@ import { ChatApiService } from './services/chat-api.service';
           id="agent-question"
           rows="2"
           class="field w-full !min-h-[3.25rem] resize-none text-sm"
-          [ngModel]="draft()"
-          (ngModelChange)="draft.set($event)"
+          [ngModel]="chat.draft()"
+          (ngModelChange)="chat.setDraft($event)"
           (keydown.enter)="onEnter($event)"
           placeholder="Ask a question…"
-          [disabled]="sending()"
+          [disabled]="chat.sending()"
         ></textarea>
         <div class="mt-2 flex items-center justify-between gap-2">
           <p class="m-0 text-[0.65rem] text-text-muted">Enter to send</p>
           <button
             type="button"
             class="btn btn-primary !min-h-9 !px-3 !py-1.5 text-sm"
-            [ngClass]="{ 'opacity-50': !canSend() }"
-            [disabled]="!canSend()"
-            (click)="send()"
+            [ngClass]="{ 'opacity-50': !chat.canSend() }"
+            [disabled]="!chat.canSend()"
+            (click)="chat.send()"
           >
-            {{ sending() ? 'Asking…' : 'Ask' }}
+            {{ chat.sending() ? 'Asking…' : 'Ask' }}
           </button>
         </div>
       </footer>
@@ -135,66 +125,15 @@ import { ChatApiService } from './services/chat-api.service';
   `,
 })
 export class AgentChatPanelComponent {
-  private readonly chatApi = inject(ChatApiService);
-
+  readonly chat = inject(AgentChatStateService);
   readonly closed = output<void>();
 
-  readonly draft = signal('');
-  readonly turns = signal<ChatTurn[]>([]);
-  readonly sending = signal(false);
-
   readonly samplePrompts = [
-    'How many projects?',
-    'Top technologies?',
-    'Category mix?',
+    'Who is Jumari?',
+    'What are the skills?',
+    'Where has Jumari worked?',
     'Tell me about Veld Supply',
   ] as const;
-
-  readonly canSend = computed(() => this.draft().trim().length > 0 && !this.sending());
-
-  useSample(prompt: string): void {
-    this.draft.set(prompt);
-  }
-
-  send(): void {
-    const message = this.draft().trim();
-    if (!message || this.sending()) {
-      return;
-    }
-
-    const turnId = crypto.randomUUID();
-    this.turns.update((existing) => [
-      {
-        id: turnId,
-        question: message,
-        loading: true,
-      },
-      ...existing,
-    ]);
-    this.draft.set('');
-    this.sending.set(true);
-
-    this.chatApi
-      .sendMessage(message)
-      .pipe(finalize(() => this.sending.set(false)))
-      .subscribe({
-        next: (response) => {
-          this.turns.update((existing) =>
-            existing.map((turn) =>
-              turn.id === turnId ? { ...turn, loading: false, response } : turn,
-            ),
-          );
-        },
-        error: (err: unknown) => {
-          const detail = readApiErrorMessage(err);
-          this.turns.update((existing) =>
-            existing.map((turn) =>
-              turn.id === turnId ? { ...turn, loading: false, error: detail } : turn,
-            ),
-          );
-        },
-      });
-  }
 
   onEnter(event: Event): void {
     const keyboard = event as KeyboardEvent;
@@ -202,6 +141,6 @@ export class AgentChatPanelComponent {
       return;
     }
     keyboard.preventDefault();
-    this.send();
+    this.chat.send();
   }
 }
