@@ -11,11 +11,8 @@ import {
 } from '@angular/core';
 
 /**
- * Designed aurora media (Option 3) — no procedural geometry.
- *
- * public/aurora/
- * - aurora-poster.png  required still (from storyboard plate)
- * - aurora.webm        optional muted loop authored to the storyboard
+ * Designed aurora media (Option 3).
+ * Prefers aurora.webm; poster is fallback / reduced-motion only (never flashes under video).
  */
 @Component({
   selector: 'app-aurora-background',
@@ -28,25 +25,28 @@ import {
   },
   template: `
     <div class="hero-aurora__stage" aria-hidden="true">
-      <img
-        class="hero-aurora__media hero-aurora__poster"
-        [src]="posterSrc"
-        alt=""
-        decoding="async"
-        (load)="onPosterReady()"
-        (error)="onPosterReady()"
-      />
+      @if (showPoster()) {
+        <img
+          class="hero-aurora__media hero-aurora__poster"
+          [src]="posterSrc"
+          alt=""
+          decoding="async"
+          (load)="onPosterReady()"
+          (error)="onPosterReady()"
+        />
+      }
       @if (videoActive()) {
         <video
           #video
           class="hero-aurora__media hero-aurora__video"
-          [src]="videoSrc"
-          [poster]="posterSrc"
+          [attr.src]="videoSrc"
           muted
           loop
           playsinline
+          autoplay
           preload="auto"
-          (canplay)="onVideoCanPlay()"
+          (loadeddata)="onVideoReady()"
+          (playing)="onVideoReady()"
           (error)="onVideoError()"
         ></video>
       }
@@ -62,12 +62,14 @@ export class AuroraBackgroundComponent {
   readonly ready = signal(false);
   readonly reducedMotion = signal(false);
   readonly videoActive = signal(false);
+  /** Poster only when not using video (reduced motion or video failed). */
+  readonly showPoster = signal(false);
 
   readonly posterSrc = '/aurora/aurora-poster.png';
-  readonly videoSrc = '/aurora/aurora.webm';
+  readonly videoSrc = `/aurora/aurora.webm?v=2`;
 
   private readyEmitted = false;
-  private posterReady = false;
+  private playStarted = false;
 
   constructor() {
     afterNextRender(() => this.init());
@@ -79,42 +81,64 @@ export class AuroraBackgroundComponent {
       typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.reducedMotion.set(reduced);
 
-    if (reduced) return;
+    if (reduced) {
+      this.showPoster.set(true);
+      this.videoActive.set(false);
+      return;
+    }
 
-    void fetch(this.videoSrc, { method: 'HEAD' })
-      .then((res) => {
-        if (res.ok) this.videoActive.set(true);
-      })
-      .catch(() => {
-        /* poster-only */
-      });
+    this.showPoster.set(false);
+    this.videoActive.set(true);
+
+    // Safety: never block hero copy if video stalls
+    window.setTimeout(() => {
+      if (this.readyEmitted) return;
+      if (!this.ready()) this.fallbackToPoster();
+    }, 2500);
   }
 
   onPosterReady(): void {
-    this.posterReady = true;
     this.ready.set(true);
     this.emitReady();
   }
 
-  onVideoCanPlay(): void {
+  onVideoReady(): void {
     const el = this.videoRef()?.nativeElement;
     if (!el || this.reducedMotion()) return;
-    void el.play().catch(() => {
-      this.videoActive.set(false);
-    });
+
+    el.muted = true;
+    el.playsInline = true;
+
+    if (!this.playStarted) {
+      this.playStarted = true;
+      void el.play().catch(() => {
+        this.playStarted = false;
+        this.fallbackToPoster();
+      });
+    }
+
+    // Reveal only once we have a decoded frame (avoids empty flash / wrong plate).
+    if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      this.ready.set(true);
+      this.emitReady();
+    }
   }
 
   onVideoError(): void {
+    this.fallbackToPoster();
+  }
+
+  private fallbackToPoster(): void {
     this.videoActive.set(false);
+    this.showPoster.set(true);
   }
 
   private pauseVideo(): void {
-    const el = this.videoRef()?.nativeElement;
-    el?.pause();
+    this.videoRef()?.nativeElement?.pause();
   }
 
   private emitReady(): void {
-    if (this.readyEmitted || !this.posterReady) return;
+    if (this.readyEmitted || !this.ready()) return;
     this.readyEmitted = true;
     window.setTimeout(() => this.contentReady.emit(), this.reducedMotion() ? 0 : 900);
   }

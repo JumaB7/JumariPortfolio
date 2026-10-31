@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
   apiBaseUrl: '/api',
-  /** Dev proxy rewrites /api/agent → FastAPI http://127.0.0.1:8000/api */
-  agentApiBaseUrl: '/api/agent',
+  /** Dev proxy: /agent-api → FastAPI http://127.0.0.1:8000/api (avoid clashing with /api → PortfolioAPI) */
+  agentApiBaseUrl: '/agent-api',
   email: 'jumablignaut@gmail.com',
   linkedInUrl: '',
   githubUrl: '',

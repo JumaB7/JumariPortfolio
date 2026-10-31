@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   apiBaseUrl: '/api',
   /** Path-based same-origin agent API (reverse proxy → FastAPI /api). */
-  agentApiBaseUrl: '/api/agent',
+  agentApiBaseUrl: '/agent-api',
   email: 'jumablignaut@gmail.com',
   linkedInUrl: '',
   githubUrl: '',

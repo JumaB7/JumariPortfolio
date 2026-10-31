@@ -10,8 +10,9 @@
   --text-secondary: #a3aec0;
   --text-muted: #718096;
 
-  --accent-blue: #3b82f6;
-  --accent-cyan: #00d9ff;
+  /* Sky cyan — closer to secondary-button hover, still quieter than neon */
+  --accent-blue: #0e8fad;
+  --accent-cyan: #22d3ee;
   --accent-silver: #c0c7d1;
 
   --border: rgba(192, 199, 209, 0.14);
@@ -195,8 +196,8 @@
   }
 
   .project-card:hover .project-actions .btn-primary:not(:disabled):not(.is-disabled) {
-    filter: brightness(1.08);
-    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.36);
+    filter: brightness(1.04);
+    box-shadow: 0 10px 22px rgba(8, 47, 73, 0.42);
   }
 
   .project-card:hover .project-actions .btn-secondary:not(:disabled):not(.is-disabled) {
@@ -257,14 +258,15 @@
 
   .btn-primary {
     border: 1px solid transparent;
-    background: var(--accent-blue);
+    background: linear-gradient(135deg, #0c7a96 0%, #0e8fad 100%);
     color: #fff;
-    box-shadow: 0 10px 28px rgba(59, 130, 246, 0.28);
+    box-shadow: 0 8px 20px rgba(8, 47, 73, 0.35);
   }
 
   .btn-primary:hover:not(:disabled):not(.is-disabled) {
-    background: color-mix(in srgb, var(--accent-blue) 88%, white);
+    background: linear-gradient(135deg, #0e8fad 0%, #14a8c4 100%);
     transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(8, 47, 73, 0.4);
   }
 
   .btn-secondary {
@@ -333,16 +335,26 @@
   }
 
   .hero-content-veil {
-    /* Left copy zone only — do not overlay the aurora curtains on the right */
-    width: min(52%, 36rem);
+    /* Lighter veil — keep copy readable, let a little aurora show through */
+    width: min(58%, 42rem);
     background:
       linear-gradient(
         90deg,
-        rgba(4, 8, 16, 0.92) 0%,
-        rgba(4, 8, 16, 0.55) 55%,
-        rgba(4, 8, 16, 0.12) 82%,
+        rgba(4, 8, 16, 0.88) 0%,
+        rgba(4, 8, 16, 0.62) 45%,
+        rgba(4, 8, 16, 0.28) 70%,
+        rgba(4, 8, 16, 0.08) 88%,
         transparent 100%
       );
+  }
+
+  .hero-name-accent {
+    color: #6ec8dc;
+    -webkit-text-stroke: 0.4px rgba(4, 8, 16, 0.55);
+    paint-order: stroke fill;
+    text-shadow:
+      0 0 14px rgba(4, 8, 16, 0.95),
+      0 1px 2px rgba(4, 8, 16, 0.9);
   }
 
   @media (max-width: 1023.98px) {
@@ -411,8 +423,8 @@
     height: 2px;
     margin-top: 0.85rem;
     border-radius: 999px;
-    background: linear-gradient(90deg, var(--accent-cyan), rgba(59, 130, 246, 0.15));
-    box-shadow: 0 0 12px rgba(0, 217, 255, 0.45);
+    background: linear-gradient(90deg, var(--accent-cyan), rgba(14, 143, 173, 0.15));
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
   }
 
   .hero-title {
@@ -431,6 +443,23 @@
     height: 100%;
     overflow: hidden;
     pointer-events: none;
+    /* Soft mask — faint aurora under copy, full strength on the right */
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.12) 34%,
+      rgba(0, 0, 0, 0.35) 48%,
+      rgba(0, 0, 0, 0.7) 60%,
+      #000 72%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.12) 34%,
+      rgba(0, 0, 0, 0.35) 48%,
+      rgba(0, 0, 0, 0.7) 60%,
+      #000 72%
+    );
   }
 
   .hero-aurora__stage {
@@ -453,26 +482,18 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: right center;
+    object-position: 100% 42%;
+    transform: scale(1.18) translate3d(10%, 0, 0);
+    transform-origin: right center;
     pointer-events: none;
     border: 0;
   }
 
-  /* Storyboard plate sits on the right; left stays dark for copy */
   .hero-aurora__poster {
     transform-origin: 70% 50%;
   }
 
-  .hero-aurora__video {
-    opacity: 0;
-    transition: opacity 700ms ease;
-  }
-
-  .hero-aurora--video.hero-aurora--ready .hero-aurora__video {
-    opacity: 1;
-  }
-
-  /* Light drift only when no authored WebM and motion is allowed */
+  /* Light drift only for poster fallback (no WebM / reduced-motion still) */
   .hero-aurora--ready:not(.hero-aurora--reduced):not(.hero-aurora--video) .hero-aurora__poster {
     animation: aurora-plate-drift 28s ease-in-out infinite alternate;
   }
@@ -492,8 +513,27 @@
       opacity: 0.9;
     }
 
+    app-aurora-background.hero-aurora,
+    app-aurora-background {
+      -webkit-mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.18) 22%,
+        rgba(0, 0, 0, 0.55) 40%,
+        #000 55%
+      );
+      mask-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 0, 0, 0.18) 22%,
+        rgba(0, 0, 0, 0.55) 40%,
+        #000 55%
+      );
+    }
+
     .hero-aurora__media {
-      object-position: 70% center;
+      object-position: 90% 35%;
+      transform: scale(1.14) translate3d(8%, 4%, 0);
     }
   }
 
@@ -599,9 +639,7 @@
     background: color-mix(in srgb, var(--background) 82%, transparent);
   }
 
-  .analytics-page {
-    overflow-x: clip;
-  }
+  /* Do not set overflow on .analytics-page — it traps position:fixed (FAB / agent chat). */
 
   .analytics-topbar {
     position: sticky;
