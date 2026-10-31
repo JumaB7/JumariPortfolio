@@ -1,0 +1,245 @@
+<div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+  <div class="min-w-0 max-w-3xl">
+    <div class="flex flex-wrap items-center gap-3">
+      <h1 class="m-0 text-[clamp(1.85rem,3.5vw,2.6rem)] font-bold tracking-[-0.035em] text-text-primary">
+        Project Portfolio
+      </h1>
+      <span
+        class="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-elevated/80 px-2.5 py-1 text-[0.7rem] font-medium text-text-muted"
+      >
+        Demo data
+      </span>
+    </div>
+    <p class="mt-3 mb-0 max-w-2xl text-[1.05rem] leading-relaxed text-text-secondary">
+      Interactive Highcharts views of showcase project data — technologies, categories, and timeline.
+    </p>
+    <p
+      class="mt-3 mb-0 inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated/80 px-3 py-1.5 text-xs text-text-muted"
+    >
+      <span class="h-1.5 w-1.5 rounded-full bg-accent-cyan" aria-hidden="true"></span>
+      {{ sourceLabel() }}
+    </p>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-3">
+    <label class="analytics-field">
+      <span class="analytics-field__label">Data period</span>
+      <select
+        class="field !min-h-11 !py-2"
+        [value]="period()"
+        (change)="period.set('showcase')"
+        aria-label="Data period"
+      >
+        <option value="showcase">Showcase dataset</option>
+      </select>
+    </label>
+    <div class="analytics-field">
+      <span class="analytics-field__label">Last updated</span>
+      <p class="m-0 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-text-secondary">
+        @if (lastUpdated(); as updated) {
+          {{ updated | date: 'medium' }}
+        } @else {
+          —
+        }
+      </p>
+    </div>
+  </div>
+</div>
+
+@if (loadState(); as state) {
+  @if (state.status === 'loading') {
+    <div class="analytics-state mt-10" role="status">
+      <p class="m-0 text-text-secondary">Loading analytics…</p>
+    </div>
+  } @else if (state.status === 'error') {
+    <div class="analytics-state mt-10" role="alert">
+      <p class="m-0 text-text-primary">{{ state.message }}</p>
+      <p class="mt-2 mb-0 text-sm text-text-muted">
+        The showcase dataset could not be prepared. Try again from the portfolio home page.
+      </p>
+    </div>
+  } @else if (allProjects().length === 0) {
+    <div class="analytics-state mt-10">
+      <p class="m-0 text-text-primary">No projects available</p>
+      <p class="mt-2 mb-0 text-sm text-text-muted">
+        Add portfolio projects to populate this analytics view.
+      </p>
+    </div>
+  } @else {
+    <section class="mt-8 rounded-2xl border border-border bg-surface-elevated/70 p-4 md:p-5" aria-label="Filters">
+      <div class="flex flex-wrap items-end gap-3">
+        <label class="analytics-field min-w-[10rem] flex-1">
+          <span class="analytics-field__label">Category</span>
+          <select
+            class="field !min-h-11 !py-2"
+            [value]="filters().category"
+            (change)="setCategory($any($event.target).value)"
+          >
+            <option value="all">All categories</option>
+            @for (category of categoryOptions(); track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="analytics-field min-w-[10rem] flex-1">
+          <span class="analytics-field__label">Technology</span>
+          <select
+            class="field !min-h-11 !py-2"
+            [value]="filters().technology"
+            (change)="setTechnology($any($event.target).value)"
+          >
+            <option value="all">All technologies</option>
+            @for (tech of technologyOptions(); track tech) {
+              <option [value]="tech">{{ tech }}</option>
+            }
+          </select>
+        </label>
+
+        @if (statusOptions().length) {
+          <label class="analytics-field min-w-[10rem] flex-1">
+            <span class="analytics-field__label">Status</span>
+            <select
+              class="field !min-h-11 !py-2"
+              [value]="filters().status"
+              (change)="setStatus($any($event.target).value)"
+            >
+              <option value="all">All statuses</option>
+              @for (status of statusOptions(); track status) {
+                <option [value]="status">{{ statusLabel(status) }}</option>
+              }
+            </select>
+          </label>
+        }
+
+        <button
+          type="button"
+          class="btn btn-secondary !min-h-11"
+          [disabled]="!hasActiveFilters()"
+          (click)="resetFilters()"
+        >
+          Reset filters
+        </button>
+      </div>
+
+      @if (hasActiveFilters()) {
+        <p class="mt-3 mb-0 text-xs text-text-muted">
+          Showing {{ filteredProjects().length }} of {{ allProjects().length }} projects
+        </p>
+      }
+    </section>
+
+    @if (filteredProjects().length === 0) {
+      <div class="analytics-state mt-8">
+        <p class="m-0 text-text-primary">No projects match the selected filters</p>
+        <p class="mt-2 mb-0 text-sm text-text-muted">Reset filters to see the full showcase dataset.</p>
+        <button type="button" class="btn btn-secondary mt-5" (click)="resetFilters()">
+          Reset filters
+        </button>
+      </div>
+    } @else {
+      <section class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key metrics">
+        <article class="analytics-kpi">
+          <p class="analytics-kpi__label">Total Projects</p>
+          <p class="analytics-kpi__value">{{ kpis().totalProjects }}</p>
+          <p class="analytics-kpi__hint">Showcase projects in the current filter</p>
+        </article>
+        <article class="analytics-kpi">
+          <p class="analytics-kpi__label">Years of Experience</p>
+          <p class="analytics-kpi__value">~{{ kpis().yearsExperience }}</p>
+          <p class="analytics-kpi__hint">Professional experience from portfolio profile</p>
+        </article>
+        <article class="analytics-kpi">
+          <p class="analytics-kpi__label">Technologies Used</p>
+          <p class="analytics-kpi__value">{{ kpis().technologiesUsed }}</p>
+          <p class="analytics-kpi__hint">Unique technologies across filtered projects</p>
+        </article>
+        <article class="analytics-kpi">
+          <p class="analytics-kpi__label">Project Categories</p>
+          <p class="analytics-kpi__value">{{ kpis().projectCategories }}</p>
+          <p class="analytics-kpi__hint">Distinct categories in the filtered set</p>
+        </article>
+      </section>
+
+      <section class="mt-8 grid gap-5 lg:grid-cols-2" aria-label="Charts">
+        <article class="analytics-chart-card lg:col-span-2">
+          <highcharts-chart
+            class="analytics-chart analytics-chart--tall block w-full max-w-full"
+            [options]="techChart()"
+          />
+        </article>
+
+        <article class="analytics-chart-card">
+          <highcharts-chart
+            class="analytics-chart block w-full max-w-full"
+            [options]="categoryChart()"
+          />
+        </article>
+
+        <article class="analytics-chart-card">
+          <highcharts-chart
+            class="analytics-chart block w-full max-w-full"
+            [options]="matrixChart()"
+          />
+        </article>
+
+        <article class="analytics-chart-card lg:col-span-2">
+          <highcharts-chart
+            class="analytics-chart block w-full max-w-full"
+            [options]="timelineChart()"
+          />
+        </article>
+      </section>
+
+      @if (selection(); as sel) {
+        <section
+          class="mt-6 rounded-2xl border border-border-highlight/40 bg-surface-elevated p-5"
+          aria-live="polite"
+        >
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p class="section-label !mb-2">Selection</p>
+              <h2 class="m-0 text-lg font-semibold text-text-primary">{{ selectionTitle() }}</h2>
+            </div>
+            <button
+              type="button"
+              class="btn btn-secondary !min-h-10 !px-3 !text-sm"
+              (click)="clearSelection()"
+            >
+              Clear
+            </button>
+          </div>
+
+          @if (selectionProjects().length) {
+            <ul class="mt-4 mb-0 grid list-none gap-3 p-0 md:grid-cols-2">
+              @for (project of selectionProjects(); track project.id) {
+                <li class="rounded-xl border border-border bg-surface p-4">
+                  <p class="m-0 font-semibold text-text-primary">{{ project.name }}</p>
+                  <p class="mt-1 mb-0 text-sm text-text-secondary">{{ project.category }}</p>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    @for (tech of project.technologies; track tech) {
+                      <span
+                        class="tech-tag !py-1 !text-xs"
+                        [ngClass]="
+                          sel.kind === 'technology' && tech === sel.value
+                            ? '!border-accent-cyan/50 !text-accent-cyan'
+                            : ''
+                        "
+                      >
+                        {{ tech }}
+                      </span>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else if (sel.kind === 'matrix' && !sel.used) {
+            <p class="mt-3 mb-0 text-sm text-text-secondary">
+              This cell indicates the technology is not part of the project stack.
+            </p>
+          }
+        </section>
+      }
+    }
+  }
+}

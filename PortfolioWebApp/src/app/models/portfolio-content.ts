@@ -82,12 +82,12 @@ export const PROJECTS: ProjectItem[] = [
     id: 'portfolio-dashboard',
     name: 'Portfolio Dashboard',
     description:
-      'Data dashboard inside this portfolio, powered by the portfolio API and its own SQL Server database — plus a custom-built AI agent that answers questions about the same showcase data.',
+      'Financial analytics showcase with KPIs, Highcharts, and filters — plus the original project-portfolio analytics view and a custom AI agent for grounded Q&A on the demo data.',
     tech: ['Angular', 'Highcharts', 'ASP.NET Core', 'SQL Server', 'AI agent'],
     features: [
-      'Portfolio statistics',
-      'API-backed Highcharts views',
-      'Custom AI agent for grounded Q&A on the data',
+      'Financial KPIs and multi-chart demo (ZAR)',
+      'Project portfolio analytics view',
+      'Custom AI agent for grounded Q&A',
       'Allowlisted analytics tools — no raw SQL',
       'Isolated from other project databases',
     ],
@@ -100,7 +100,7 @@ export const PROJECTS: ProjectItem[] = [
       },
       {
         label: 'Ask the AI agent',
-        url: '/?agent=1',
+        url: '/dashboard/agent',
       },
     ],
   },

@@ -1,13 +1,13 @@
 import type { Options } from 'highcharts';
 
 export const ANALYTICS_CHART_COLORS = [
-  '#00D9FF',
+  '#22D3EE',
   '#3B82F6',
-  '#7DD3FC',
   '#60A5FA',
-  '#C0C7D1',
+  '#A78BFA',
+  '#14B8A6',
+  '#7DD3FC',
   '#94A3B8',
-  '#38BDF8',
 ];
 
 export function analyticsChartBase(reduceMotion: boolean): Options {
