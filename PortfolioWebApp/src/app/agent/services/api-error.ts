@@ -10,7 +10,7 @@ export function readApiErrorMessage(err: unknown): string {
       return detail.message;
     }
     if (err.status === 0) {
-      return 'Could not reach the analytics agent. Is uvicorn running on port 8000?';
+      return 'Could not reach the analytics agent. Is PortfolioAPI running?';
     }
     return err.message || `Request failed (${err.status})`;
   }

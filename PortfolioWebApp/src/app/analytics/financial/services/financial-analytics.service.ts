@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { FINANCIAL_DEMO_DATASET } from '../data/financial-demo.data';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import {
   CategoryAggregate,
   DateRangeId,
@@ -34,6 +35,8 @@ export const DATE_RANGE_OPTIONS: { id: DateRangeId; label: string }[] = [
 
 @Injectable({ providedIn: 'root' })
 export class FinancialAnalyticsService {
+  private readonly http = inject(HttpClient);
+
   private readonly currency = new Intl.NumberFormat('en-ZA', {
     style: 'currency',
     currency: 'ZAR',
@@ -46,8 +49,8 @@ export class FinancialAnalyticsService {
     maximumFractionDigits: 1,
   });
 
-  getDataset() {
-    return of(FINANCIAL_DEMO_DATASET);
+  getDataset(): Observable<FinancialDemoDataset> {
+    return this.http.get<FinancialDemoDataset>(`${environment.apiBaseUrl}/financial/analytics`);
   }
 
   defaultFilters(): FinancialFilters {
@@ -103,13 +106,13 @@ export class FinancialAnalyticsService {
         byMonth.set(row.monthIndex, entry);
       }
 
-      entry.revenue += row.revenue;
-      entry.cashIn += row.cashIn;
-      entry.cashOut += row.cashOut;
+      entry.revenue += Number(row.revenue);
+      entry.cashIn += Number(row.cashIn);
+      entry.cashOut += Number(row.cashOut);
 
       for (const expense of row.expenses) {
         if (category !== 'all' && expense.category !== category) continue;
-        entry.expenses += expense.actual;
+        entry.expenses += Number(expense.actual);
       }
     }
 
@@ -129,8 +132,8 @@ export class FinancialAnalyticsService {
       for (const expense of row.expenses) {
         if (category !== 'all' && expense.category !== category) continue;
         const current = totals.get(expense.category) ?? { actual: 0, budget: 0 };
-        current.actual += expense.actual;
-        current.budget += expense.budget;
+        current.actual += Number(expense.actual);
+        current.budget += Number(expense.budget);
         totals.set(expense.category, current);
       }
     }
@@ -207,12 +210,12 @@ export class FinancialAnalyticsService {
     let cashOut = 0;
 
     for (const row of rows) {
-      revenue += row.priorRevenue;
-      cashIn += row.priorCashIn;
-      cashOut += row.priorCashOut;
+      revenue += Number(row.priorRevenue);
+      cashIn += Number(row.priorCashIn);
+      cashOut += Number(row.priorCashOut);
       for (const expense of row.expenses) {
         if (category !== 'all' && expense.category !== category) continue;
-        expenses += expense.priorActual;
+        expenses += Number(expense.priorActual);
       }
     }
 

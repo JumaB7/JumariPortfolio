@@ -24,3 +24,7 @@ Thumbs.db
 **/*.pem
 **/*.key
 **/user-secrets.json
+
+# Local EF tools
+PortfolioAPI/.tools/
+

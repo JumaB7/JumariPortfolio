@@ -6,16 +6,19 @@ namespace PortfolioAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class DashboardController : ControllerBase
+public class DashboardController(PortfolioContentService content) : ControllerBase
 {
-    /// <summary>Legacy overview used by older clients.</summary>
     [HttpGet]
-    public DashboardOverview Get() =>
-        PortfolioAnalyticsData.ToOverview(PortfolioAnalyticsData.Create());
+    public async Task<ActionResult<DashboardOverview>> Get(CancellationToken ct)
+    {
+        var data = await content.GetAnalyticsAsync(ct);
+        return data is null ? NotFound() : Ok(PortfolioAnalyticsData.ToOverview(data));
+    }
 
-    /// <summary>
-    /// Full analytics dataset shared by the Highcharts dashboard and AI agent.
-    /// </summary>
     [HttpGet("analytics")]
-    public PortfolioAnalyticsDatasetDto GetAnalytics() => PortfolioAnalyticsData.Create();
+    public async Task<ActionResult<PortfolioAnalyticsDatasetDto>> GetAnalytics(CancellationToken ct)
+    {
+        var data = await content.GetAnalyticsAsync(ct);
+        return data is null ? NotFound() : Ok(data);
+    }
 }

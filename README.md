@@ -1,17 +1,18 @@
 # JumariPortfolio
 
-Personal portfolio site.
+Personal portfolio site — Angular SPA + ASP.NET Core API + in-process analytics agent, one Azure App Service (Veld Supply pattern).
 
 ## Stack
 
 | Part | Choice |
 | --- | --- |
 | Frontend | Angular (`PortfolioWebApp`) |
-| Backend | ASP.NET Core Web API, C# (`PortfolioAPI`) |
+| Backend | ASP.NET Core Web API (`PortfolioAPI`) — dashboard, financial analytics, contact, **AI agent** |
+| Database | SQL Server (LocalDB locally; Azure SQL for UAT) |
 
 ## Run locally
 
-Start the API first, then the web app. The Angular dev server proxies `/api` to the API.
+Start the API first (creates/migrates LocalDB `PortfolioLocal` and seeds showcase data), then the web app.
 
 From `PortfolioAPI`:
 
@@ -19,7 +20,7 @@ From `PortfolioAPI`:
 dotnet run --launch-profile http
 ```
 
-The API is [http://localhost:5157](http://localhost:5157). Swagger is [http://localhost:5157/swagger](http://localhost:5157/swagger). In Visual Studio, open `JumariPortfolio.slnx` (or `PortfolioAPI/PortfolioAPI.csproj`) and use the **http** profile.
+API: [http://localhost:5157](http://localhost:5157) · Swagger: [http://localhost:5157/swagger](http://localhost:5157/swagger)
 
 From `PortfolioWebApp`:
 
@@ -27,8 +28,47 @@ From `PortfolioWebApp`:
 pnpm start
 ```
 
-The app is [http://localhost:4200](http://localhost:4200).
+App: [http://localhost:4300](http://localhost:4300) (proxies `/api` → API).
 
-## Branches
+Local connection string (Development only, committed):
 
-`main` is production. `develop` is active work. `release` is for release candidates.
+`Server=(localdb)\MSSQLLocalDB;Database=PortfolioLocal;Trusted_Connection=True;TrustServerCertificate=True`
+
+Connect in SSMS to `(localdb)\MSSQLLocalDB` → database `PortfolioLocal`.
+
+## Agent
+
+The analytics agent is **part of PortfolioAPI** (`POST /api/agent/chat`) — allowlisted tools over SQL-backed portfolio data. There is no separate FastAPI host in this deploy.
+
+## Branches & deploy
+
+| Branch | Role |
+| --- | --- |
+| `develop` | Day-to-day work |
+| `release` | UAT deploy |
+| `main` | Production (when host is ready) |
+
+GitHub Actions (`.github/workflows/portfolio.yml`):
+
+1. Build: `dotnet publish` API + `pnpm build` SPA  
+2. On push to **`release`**: copy SPA into `api/wwwroot`, deploy to Azure App Service `JumariPortfolio`  
+3. Production on `main` is a stub until `PRODUCTION_HOST` is set  
+
+### Azure UAT checklist (same as Veld Supply)
+
+1. Create App Service `JumariPortfolio` + Azure SQL `PortfolioUat`.  
+2. App Service connection string name: **`Portfolio`**.  
+3. Download publish profile → GitHub secret **`AZURE_WEBAPP_PUBLISH_PROFILE`**.  
+4. Create GitHub Environment **`staging`**.  
+5. Merge to **`release`** → Actions deploys UAT.  
+6. Optional CORS origins for the public hostname via App Service settings.
+
+UAT/prod connection strings stay in Azure — not in git.
+
+## Databases by environment
+
+| Database | Where | Used by |
+| --- | --- | --- |
+| `PortfolioLocal` | SQL Server LocalDB | Local development |
+| `PortfolioUat` | Azure SQL | `release` → App Service |
+| `PortfolioProd` | Production SQL (when ready) | `main` |

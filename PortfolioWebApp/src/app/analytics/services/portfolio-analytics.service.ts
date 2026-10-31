@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { createAnalyticsDemoDataset } from '../data/analytics-demo.data';
 import {
   AnalyticsFilters,
   AnalyticsKpis,
@@ -21,10 +20,7 @@ const DEFAULT_FILTERS: AnalyticsFilters = {
 export class PortfolioAnalyticsService {
   private readonly http = inject(HttpClient);
 
-  /**
-   * Shared showcase analytics from PortfolioAPI.
-   * Falls back to the local demo dataset if the API is unavailable.
-   */
+  /** Shared showcase analytics from PortfolioAPI (SQL Server). */
   getAnalytics(): Observable<PortfolioAnalyticsDataset> {
     return this.http
       .get<PortfolioAnalyticsDataset>(`${environment.apiBaseUrl}/dashboard/analytics`)
@@ -33,7 +29,6 @@ export class PortfolioAnalyticsService {
           ...data,
           projects: data.projects ?? [],
         })),
-        catchError(() => of(createAnalyticsDemoDataset())),
       );
   }
 

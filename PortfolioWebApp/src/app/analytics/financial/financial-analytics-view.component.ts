@@ -9,11 +9,12 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { HighchartsChartComponent } from 'highcharts-angular';
 import type { Options } from 'highcharts';
-import { map, startWith } from 'rxjs';
+import { catchError, map, of, startWith } from 'rxjs';
 import {
   DateRangeId,
   Department,
   ExpenseCategory,
+  FinancialDemoDataset,
   FinancialFilters,
 } from './models/financial-analytics.model';
 import {
@@ -41,7 +42,8 @@ export class FinancialAnalyticsViewComponent {
 
   private readonly dataset = toSignal(
     this.finance.getDataset().pipe(
-      map((data) => data),
+      map((data): FinancialDemoDataset | null => data),
+      catchError(() => of(null)),
       startWith(null),
     ),
     { initialValue: null },
