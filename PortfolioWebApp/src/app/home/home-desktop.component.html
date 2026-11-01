@@ -156,73 +156,31 @@
             [ngClass]="project.featured ? 'col-span-2' : ''"
             [appReveal]="i * 90"
           >
-            <div
-              class="grid"
-              [ngClass]="
-                project.featured
-                  ? 'grid-cols-[minmax(18rem,0.95fr)_minmax(0,1.05fr)]'
-                  : 'grid-cols-1'
-              "
-            >
+            <div class="grid grid-cols-1">
               <div
-                class="project-preview relative min-h-[16rem] border-border"
+                class="project-preview relative min-h-[16rem] border-b border-border"
                 [ngClass]="[
                   project.previewClass,
-                  project.featured ? 'min-h-[20rem] border-r' : 'border-b',
+                  project.featured ? 'min-h-[20rem]' : '',
                 ]"
                 aria-hidden="true"
               >
-                <div class="project-preview-grid absolute inset-0 opacity-30"></div>
-                <div class="project-preview-scale relative flex h-full min-h-[16rem] flex-col p-6">
-                  <p class="m-0 text-[0.72rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
-                    {{ project.previewLabel }}
-                  </p>
-                  <div class="mt-4 flex flex-1 items-center justify-center">
-                    @switch (project.id) {
-                      @case ('veld-supply') {
-                        <div class="mock-panel w-full max-w-sm rounded-xl border border-border p-3 shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
-                          <div class="mb-3 flex items-center justify-between">
-                            <div class="h-2.5 w-20 rounded bg-accent-blue/50"></div>
-                            <div class="h-7 w-20 rounded-md bg-accent-blue/80"></div>
-                          </div>
-                          <div class="grid grid-cols-3 gap-2">
-                            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
-                              <div class="rounded-lg border border-border bg-surface p-2">
-                                <div class="mb-2 aspect-square rounded-md bg-surface-highlight"></div>
-                                <div class="h-1.5 w-3/4 rounded bg-accent-silver/25"></div>
-                                <div class="mt-1.5 h-1.5 w-1/2 rounded bg-accent-cyan/35"></div>
-                              </div>
-                            }
-                          </div>
-                        </div>
-                      }
-                      @case ('accountant-app') {
-                        <div class="mock-panel flex w-full max-w-sm overflow-hidden rounded-xl border border-border shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
-                          <div class="w-14 shrink-0 border-r border-border bg-surface p-2">
-                            <div class="mb-3 h-6 w-6 rounded bg-accent-cyan/40"></div>
-                            <div class="space-y-2">
-                              <div class="h-2 rounded bg-accent-silver/20"></div>
-                              <div class="h-2 rounded bg-accent-silver/20"></div>
-                              <div class="h-2 rounded bg-accent-blue/40"></div>
-                            </div>
-                          </div>
-                          <div class="flex-1 p-3">
-                            <div class="mb-3 flex gap-2">
-                              <div class="h-8 flex-1 rounded-md bg-surface-highlight"></div>
-                              <div class="h-8 w-16 rounded-md bg-accent-blue/70"></div>
-                            </div>
-                            <div class="space-y-2">
-                              @for (i of [1, 2, 3, 4]; track i) {
-                                <div class="flex items-center gap-2 rounded-md border border-border bg-surface px-2 py-2">
-                                  <div class="h-2 flex-1 rounded bg-accent-silver/20"></div>
-                                  <div class="h-2 w-10 rounded bg-accent-cyan/30"></div>
-                                </div>
-                              }
-                            </div>
-                          </div>
-                        </div>
-                      }
-                      @default {
+                <div class="project-preview-grid absolute inset-0 opacity-20"></div>
+                <div
+                  class="project-preview-scale relative flex h-full min-h-[16rem] flex-col justify-center py-4"
+                >
+                  @if (project.overviewShots.length) {
+                    <app-project-showcase-stage
+                      [shots]="project.overviewShots"
+                      [featured]="!!project.featured"
+                      [label]="project.previewLabel"
+                    />
+                  } @else {
+                    <div class="flex flex-1 flex-col p-6">
+                      <p class="m-0 text-[0.72rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
+                        {{ project.previewLabel }}
+                      </p>
+                      <div class="mt-4 flex flex-1 items-center justify-center">
                         <div class="mock-panel w-full max-w-sm rounded-xl border border-border p-3 shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
                           <div class="mb-3 flex gap-2">
                             <div class="h-10 flex-1 rounded-lg border border-border bg-surface p-2">
@@ -255,12 +213,9 @@
                             }
                           </div>
                         </div>
-                      }
-                    }
-                  </div>
-                  <p class="mt-4 mb-0 text-sm text-text-muted">
-                    Visual preview — screenshots can replace this when available
-                  </p>
+                      </div>
+                    </div>
+                  }
                 </div>
               </div>
 
@@ -297,7 +252,7 @@
                   </dl>
                 }
                 <ul class="mt-6 mb-0 list-none space-y-2.5 p-0">
-                  @for (feature of project.features; track feature) {
+                  @for (feature of project.cardFeatures; track feature) {
                     <li class="project-copy text-accent-silver">→ {{ feature }}</li>
                   }
                 </ul>
@@ -470,11 +425,11 @@
     </div>
   </section>
 
-  <!-- Dashboard -->
-  <section id="dashboard" class="section-pad bg-surface">
+  <!-- Overview (home teaser — full analytics lives at /dashboard) -->
+  <section id="overview" class="section-pad bg-surface">
     <div class="content-shell">
       <div appReveal>
-        <p class="section-label">Dashboard</p>
+        <p class="section-label">Overview</p>
         <h2 class="section-title">Portfolio data at a glance</h2>
         <p class="section-copy">
           Illustrative summary from this portfolio API — not live business analytics from other products.
@@ -512,8 +467,12 @@
             <highcharts-chart class="block h-[300px] w-full max-w-full" [options]="categoryChart()" />
           </article>
         </div>
+        <div class="mt-8 flex flex-wrap gap-3" appReveal>
+          <a class="btn btn-primary" routerLink="/dashboard">Explore Analytics Dashboard</a>
+          <a class="btn btn-secondary" routerLink="/dashboard/agent">Ask the AI agent</a>
+        </div>
       } @else {
-        <p class="body-copy mt-10">Loading dashboard…</p>
+        <p class="body-copy mt-10">Loading overview…</p>
       }
     </div>
   </section>

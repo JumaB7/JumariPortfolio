@@ -1,0 +1,208 @@
+@if (project(); as project) {
+  <header class="border-b border-border bg-surface">
+    <div class="content-shell flex flex-wrap items-center justify-between gap-4 py-5">
+      <a routerLink="/" class="text-sm font-semibold tracking-wide text-accent-cyan uppercase">
+        ← Back to portfolio
+      </a>
+      <a routerLink="/" fragment="projects" class="text-sm text-text-secondary hover:text-text-primary">
+        All projects
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="border-b border-border bg-surface py-12 md:py-16">
+      <div class="content-shell max-w-4xl" appReveal>
+        <p class="section-label">{{ project.previewLabel }}</p>
+        <h1 class="m-0 text-[clamp(2.25rem,5vw,3.75rem)] font-semibold tracking-[-0.04em] text-text-primary">
+          {{ project.name }}
+        </h1>
+        <p class="mt-6 mb-0 max-w-2xl text-lg leading-relaxed text-text-secondary">
+          {{ project.detailSummary || project.description }}
+        </p>
+        <div class="mt-7 flex flex-wrap gap-2.5">
+          @for (tech of project.tech; track tech) {
+            <span class="tech-tag">{{ tech }}</span>
+          }
+        </div>
+        <div class="mt-9 flex flex-wrap gap-3">
+          @for (action of project.actionViews; track action.label) {
+            @if (action.linkKind === 'route') {
+              <a
+                class="btn"
+                [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                [routerLink]="action.url"
+              >
+                {{ action.label }}
+              </a>
+            } @else if (action.linkKind === 'hash') {
+              <a
+                class="btn"
+                [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                [href]="action.url"
+              >
+                {{ action.label }}
+              </a>
+            } @else if (action.linkKind === 'external') {
+              <a
+                class="btn"
+                [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                [href]="action.url"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ action.label }}
+              </a>
+            } @else {
+              <button
+                type="button"
+                class="btn is-disabled"
+                [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
+                disabled
+              >
+                {{ action.label }}
+              </button>
+            }
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (project.capabilities; as capabilities) {
+      <section class="bg-background">
+        @for (capability of capabilities; track capability.title; let i = $index) {
+          <article
+            class="border-t border-border"
+            [ngClass]="[
+              i % 2 === 0 ? 'bg-background' : 'bg-surface',
+              capability.visuals?.length || capability.callout
+                ? 'py-10 md:py-14'
+                : 'py-8 md:py-10',
+            ]"
+            [appReveal]="40"
+          >
+            <div class="content-shell">
+              <div
+                class="grid gap-8 md:gap-10"
+                [ngClass]="
+                  capability.visuals?.length
+                    ? 'lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-10'
+                    : capability.callout
+                      ? 'lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-center lg:gap-10'
+                      : 'max-w-3xl'
+                "
+              >
+                <div>
+                  <p class="section-label">Capability</p>
+                  <h2
+                    class="m-0 text-[clamp(1.5rem,2.8vw,2.25rem)] font-semibold tracking-[-0.035em] text-text-primary"
+                  >
+                    {{ capability.title }}
+                  </h2>
+                  <p class="mt-4 mb-0 text-base leading-relaxed text-text-secondary">
+                    {{ capability.detail }}
+                  </p>
+                  @if (capability.href && capability.linkLabel) {
+                    <a
+                      class="btn btn-secondary mt-5"
+                      [href]="capability.href"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ capability.linkLabel }}
+                    </a>
+                  }
+                </div>
+
+                @if (capability.visuals; as visuals) {
+                  <app-project-showcase-stage [shots]="visuals" [featured]="true" />
+                } @else if (capability.callout) {
+                  <aside class="capability-callout">
+                    <p class="capability-callout__label">In short</p>
+                    <p class="capability-callout__text">{{ capability.callout }}</p>
+                  </aside>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <section class="border-t border-border bg-background py-10 md:py-14">
+        <div class="content-shell grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+          <div appReveal>
+            <p class="section-label">Features</p>
+            <h2 class="m-0 text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-[-0.02em] text-text-primary">
+              What shipped
+            </h2>
+            <ul class="mt-6 mb-0 list-none space-y-3 p-0">
+              @for (feature of project.features; track feature) {
+                <li class="project-copy text-accent-silver">→ {{ feature }}</li>
+              }
+            </ul>
+          </div>
+
+          @if (project.delivery; as delivery) {
+            <dl class="surface-card m-0 grid gap-5 bg-surface-elevated p-6 lg:p-8" appReveal>
+              <div>
+                <dt class="m-0 text-xs font-semibold tracking-widest text-accent-cyan uppercase">Built with</dt>
+                <dd class="project-copy mt-2 mb-0">{{ delivery.code }}</dd>
+              </div>
+              <div>
+                <dt class="m-0 text-xs font-semibold tracking-widest text-accent-cyan uppercase">Deploy</dt>
+                <dd class="project-copy mt-2 mb-0">{{ delivery.deploy }}</dd>
+              </div>
+              <div>
+                <dt class="m-0 text-xs font-semibold tracking-widest text-accent-cyan uppercase">Host</dt>
+                <dd class="project-copy mt-2 mb-0">{{ delivery.host }}</dd>
+              </div>
+            </dl>
+          }
+        </div>
+      </section>
+    }
+
+    @if (project.delivery; as delivery) {
+      @if (project.capabilities) {
+        <section class="border-t border-border bg-surface py-10 md:py-12">
+          <div class="content-shell max-w-4xl" appReveal>
+            <p class="section-label">Tech specs</p>
+            <h2 class="m-0 text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-[-0.02em] text-text-primary">
+              What’s in the box
+            </h2>
+            <dl class="mt-6 mb-0 grid gap-5">
+              <div class="border-t border-border pt-4">
+                <dt class="m-0 text-xs font-semibold tracking-widest text-accent-cyan uppercase">Built with</dt>
+                <dd class="project-copy mt-2 mb-0">{{ delivery.code }}</dd>
+              </div>
+              <div class="border-t border-border pt-4">
+                <dt class="m-0 text-xs font-semibold tracking-widest text-accent-cyan uppercase">Deploy</dt>
+                <dd class="project-copy mt-2 mb-0">{{ delivery.deploy }}</dd>
+              </div>
+              <div class="border-t border-border pt-4">
+                <dt class="m-0 text-xs font-semibold tracking-widest text-accent-cyan uppercase">Host</dt>
+                <dd class="project-copy mt-2 mb-0">{{ delivery.host }}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+      }
+    }
+  </main>
+
+  <footer class="border-t border-border bg-background">
+    <div class="content-shell flex flex-wrap items-center justify-between gap-3 py-8 text-sm text-text-muted">
+      <p class="m-0">© {{ year }} Jumari Blignaut</p>
+      <a class="text-accent-cyan" [href]="'mailto:' + email">{{ email }}</a>
+    </div>
+  </footer>
+} @else {
+  <main class="py-12 md:py-16">
+    <div class="content-shell" appReveal>
+      <p class="section-label">Projects</p>
+      <h1 class="section-title m-0">Project not found</h1>
+      <p class="section-copy mt-4">That project id is not in this portfolio.</p>
+      <a routerLink="/" fragment="projects" class="btn btn-primary mt-8">Back to projects</a>
+    </div>
+  </main>
+}

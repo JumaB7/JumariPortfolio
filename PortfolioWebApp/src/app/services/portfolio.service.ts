@@ -29,4 +29,8 @@ export class PortfolioService {
   readonly cvUrl = environment.cvUrl;
   readonly footerLinks = NAV_LINKS.slice(0, 5);
   readonly year = new Date().getFullYear();
+
+  projectById(id: string): ProjectItem | undefined {
+    return this.projects.find((project) => project.id === id);
+  }
 }

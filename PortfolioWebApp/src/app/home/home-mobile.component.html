@@ -164,54 +164,24 @@
         @for (project of projectCards; track project.id; let i = $index) {
           <article class="surface-card project-card overflow-hidden bg-surface-elevated" [appReveal]="i * 80">
             <div
-              class="project-preview relative min-h-[10.5rem] border-b border-border"
+              class="project-preview relative min-h-[13rem] border-b border-border"
               [ngClass]="project.previewClass"
               aria-hidden="true"
             >
-              <div class="project-preview-grid absolute inset-0 opacity-30"></div>
-              <div class="project-preview-scale relative flex h-full min-h-[10.5rem] flex-col p-4">
-                <p class="m-0 text-[0.7rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
-                  {{ project.previewLabel }}
-                </p>
-                <div class="mt-3 flex flex-1 items-center justify-center">
-                  @switch (project.id) {
-                    @case ('veld-supply') {
-                      <div class="mock-panel w-full rounded-xl border border-border p-2.5">
-                        <div class="mb-2 flex items-center justify-between">
-                          <div class="h-2 w-16 rounded bg-accent-blue/50"></div>
-                          <div class="h-6 w-14 rounded-md bg-accent-blue/80"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                          @for (i of [1, 2]; track i) {
-                            <div class="rounded-lg border border-border bg-surface p-2">
-                              <div class="mb-2 h-10 rounded-md bg-surface-highlight"></div>
-                              <div class="h-1.5 w-3/4 rounded bg-accent-silver/25"></div>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-                    @case ('accountant-app') {
-                      <div class="mock-panel flex w-full overflow-hidden rounded-xl border border-border">
-                        <div class="w-10 shrink-0 border-r border-border bg-surface p-1.5">
-                          <div class="mb-2 h-4 w-4 rounded bg-accent-cyan/40"></div>
-                          <div class="space-y-1.5">
-                            <div class="h-1.5 rounded bg-accent-silver/20"></div>
-                            <div class="h-1.5 rounded bg-accent-blue/40"></div>
-                          </div>
-                        </div>
-                        <div class="flex-1 space-y-1.5 p-2">
-                          <div class="h-6 rounded-md bg-surface-highlight"></div>
-                          @for (i of [1, 2]; track i) {
-                            <div class="flex items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5">
-                              <div class="h-1.5 flex-1 rounded bg-accent-silver/20"></div>
-                              <div class="h-1.5 w-8 rounded bg-accent-cyan/30"></div>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                    }
-                    @default {
+              <div class="project-preview-grid absolute inset-0 opacity-20"></div>
+              <div class="project-preview-scale relative flex h-full min-h-[13rem] flex-col justify-start pt-3 pb-3">
+                @if (project.overviewShots.length) {
+                  <app-project-showcase-stage
+                    [shots]="project.overviewShots"
+                    [compact]="true"
+                    [label]="project.previewLabel"
+                  />
+                } @else {
+                  <div class="flex flex-1 flex-col p-4">
+                    <p class="m-0 text-[0.7rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
+                      {{ project.previewLabel }}
+                    </p>
+                    <div class="mt-3 flex flex-1 items-center justify-center">
                       <div class="mock-panel w-full rounded-xl border border-border p-2.5">
                         <div class="flex h-20 items-end gap-1.5 rounded-lg border border-border bg-surface px-2 pt-3 pb-2">
                           @for (h of [40, 65, 48, 80, 55]; track h) {
@@ -232,9 +202,9 @@
                           }
                         </div>
                       </div>
-                    }
-                  }
-                </div>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
 
@@ -271,7 +241,7 @@
                 </dl>
               }
               <ul class="mt-4 mb-0 list-none space-y-2 p-0">
-                @for (feature of project.features; track feature) {
+                @for (feature of project.cardFeatures; track feature) {
                   <li class="project-copy text-accent-silver">→ {{ feature }}</li>
                 }
               </ul>
@@ -443,11 +413,11 @@
     </div>
   </section>
 
-  <!-- Dashboard -->
-  <section id="dashboard" class="section-pad bg-surface">
+  <!-- Overview (home teaser — full analytics lives at /dashboard) -->
+  <section id="overview" class="section-pad bg-surface">
     <div class="content-shell">
       <div appReveal>
-        <p class="section-label">Dashboard</p>
+        <p class="section-label">Overview</p>
         <h2 class="section-title">Portfolio data at a glance</h2>
         <p class="section-copy">
           Illustrative summary from this portfolio API — not live business analytics from other products.
@@ -485,8 +455,12 @@
             <highcharts-chart class="block h-[260px] w-full max-w-full" [options]="categoryChart()" />
           </article>
         </div>
+        <div class="mt-6 flex flex-wrap gap-2.5" appReveal>
+          <a class="btn btn-primary" routerLink="/dashboard">Explore Analytics Dashboard</a>
+          <a class="btn btn-secondary" routerLink="/dashboard/agent">Ask the AI agent</a>
+        </div>
       } @else {
-        <p class="body-copy mt-8">Loading dashboard…</p>
+        <p class="body-copy mt-8">Loading overview…</p>
       }
     </div>
   </section>

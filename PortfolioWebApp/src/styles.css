@@ -182,7 +182,7 @@
   }
 
   .project-card:hover .project-preview-scale {
-    transform: scale(1.03);
+    transform: scale(1.015);
   }
 
   .project-card .project-actions .btn {
@@ -289,6 +289,16 @@
     color: var(--text-primary);
     font: inherit;
     transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  /* Custom chevron — native arrows ignore padding on Windows. */
+  select.field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5 10 12.5 15 7.5' stroke='%23C0C7D1' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 0.95rem 0.95rem;
+    padding-inline-end: 2.15rem;
   }
 
   .field::placeholder {
@@ -610,33 +620,375 @@
     overflow: hidden;
   }
 
-  .project-preview--commerce {
-    background:
-      radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.28), transparent 42%),
-      linear-gradient(160deg, #0b1220, #162944);
-  }
-
-  .project-preview--admin {
-    background:
-      radial-gradient(circle at 80% 30%, rgba(0, 217, 255, 0.18), transparent 38%),
-      linear-gradient(160deg, #0b1220, #111b2d);
-  }
-
+  .project-preview--commerce,
+  .project-preview--admin,
   .project-preview--analytics {
-    background:
-      radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.22), transparent 42%),
-      linear-gradient(160deg, #05070d, #162944);
+    background: linear-gradient(165deg, #0c121c 0%, #101826 55%, #0a1018 100%);
   }
 
   .project-preview-grid {
     background-image:
-      linear-gradient(rgba(242, 245, 250, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(242, 245, 250, 0.04) 1px, transparent 1px);
+      linear-gradient(rgba(242, 245, 250, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(242, 245, 250, 0.035) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
   .mock-panel {
     background: color-mix(in srgb, var(--background) 82%, transparent);
+  }
+
+  /* Device pair (laptop + phone) + flat stack for multi-shot chapters */
+  .project-showcase {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+    /* Extra inset so a mild hover scale does not clip the label into the card edge. */
+    padding: 1rem 1.1rem 1.1rem;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .project-showcase--flat {
+    padding: 0;
+  }
+
+  app-project-showcase-stage.project-showcase--featured .project-showcase--pair {
+    padding: 1rem 1rem 1.15rem;
+  }
+
+  app-project-showcase-stage.project-showcase--compact .project-showcase {
+    padding: 0.65rem 0.65rem 0.8rem;
+  }
+
+  .project-showcase__label {
+    position: relative;
+    z-index: 2;
+    margin: 0 0 0.75rem;
+    color: var(--accent-cyan);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .project-showcase__stage {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+  }
+
+  .project-showcase__stage--pair {
+    min-height: 12rem;
+    padding: 0.35rem 1.25rem 0.85rem 0.5rem;
+    place-items: center;
+  }
+
+  app-project-showcase-stage.project-showcase--featured .project-showcase__stage--pair {
+    min-height: 15rem;
+    padding: 0.5rem 1.75rem 1rem 0.75rem;
+  }
+
+  app-project-showcase-stage.project-showcase--compact .project-showcase__stage--pair {
+    min-height: 9.5rem;
+  }
+
+  .project-showcase__stage--stack {
+    place-items: stretch;
+  }
+
+  .project-showcase__stack {
+    display: grid;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  .project-shot {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .project-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: top left;
+    border-radius: 0.5rem;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+  }
+
+  .project-shot--phone img {
+    width: auto;
+    max-width: min(100%, 17.5rem);
+  }
+
+  .project-shot figcaption {
+    margin-top: 0.55rem;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .capability-callout {
+    margin: 0;
+    padding: 1.35rem 1.4rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background:
+      linear-gradient(155deg, color-mix(in srgb, var(--surface-elevated) 92%, transparent), transparent 70%),
+      color-mix(in srgb, var(--surface) 88%, transparent);
+  }
+
+  .capability-callout__label {
+    margin: 0 0 0.65rem;
+    color: var(--accent-cyan);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .capability-callout__text {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.15rem;
+    font-weight: 550;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+  }
+
+  .device-laptop {
+    position: relative;
+    width: min(86%, 28rem);
+    z-index: 1;
+    margin-inline: auto;
+    transform: translateY(0);
+    animation: showcase-float 7s ease-in-out infinite;
+  }
+
+  app-project-showcase-stage.project-showcase--featured .device-laptop {
+    width: min(78%, 34rem);
+  }
+
+  app-project-showcase-stage.project-showcase--compact .device-laptop {
+    width: min(86%, 20rem);
+  }
+
+  .device-laptop__bezel {
+    overflow: hidden;
+    border: 1px solid rgba(192, 199, 209, 0.22);
+    border-radius: 0.75rem 0.75rem 0.3rem 0.3rem;
+    background: #0a0f18;
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.42);
+  }
+
+  .device-laptop__chrome {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+    padding: 0.4rem 0.65rem;
+    background: linear-gradient(180deg, #151c2a, #0e1420);
+    border-bottom: 1px solid rgba(192, 199, 209, 0.1);
+  }
+
+  .device-laptop__chrome span {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: rgba(163, 174, 192, 0.45);
+  }
+
+  .device-laptop__chrome span:nth-child(1) {
+    background: #f87171;
+  }
+
+  .device-laptop__chrome span:nth-child(2) {
+    background: #fbbf24;
+  }
+
+  .device-laptop__chrome span:nth-child(3) {
+    background: #34d399;
+  }
+
+  .device-laptop__screen {
+    background: #05070d;
+  }
+
+  .device-laptop__screen img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .device-laptop__base {
+    height: 0.5rem;
+    margin: 0 auto;
+    width: 106%;
+    margin-left: -3%;
+    border-radius: 0 0 0.5rem 0.5rem;
+    background: linear-gradient(180deg, #1a2333, #0c121c);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .device-laptop__shadow {
+    position: absolute;
+    inset: auto 10% -0.95rem;
+    height: 1.15rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.4);
+    filter: blur(10px);
+  }
+
+  .device-phone {
+    position: absolute;
+    right: 6%;
+    bottom: 0.35rem;
+    z-index: 3;
+    width: clamp(5rem, 24%, 7.25rem);
+    overflow: hidden;
+    border: 2px solid rgba(192, 199, 209, 0.32);
+    border-radius: 1.1rem;
+    background: #05070d;
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(0, 0, 0, 0.35);
+    transform: translateY(0) rotate(3deg);
+    animation: showcase-float-phone 6.5s ease-in-out infinite;
+  }
+
+  app-project-showcase-stage.project-showcase--featured .device-phone {
+    width: clamp(5.75rem, 20%, 8rem);
+    right: 10%;
+    bottom: 0.5rem;
+  }
+
+  app-project-showcase-stage.project-showcase--compact .device-phone {
+    width: clamp(4.25rem, 26%, 6rem);
+    border-radius: 0.9rem;
+    right: 4%;
+  }
+
+  .device-phone__notch {
+    position: absolute;
+    top: 0.35rem;
+    left: 50%;
+    z-index: 2;
+    width: 34%;
+    height: 0.32rem;
+    border-radius: 999px;
+    background: rgba(5, 7, 13, 0.92);
+    transform: translateX(-50%);
+  }
+
+  .device-phone__screen {
+    overflow: hidden;
+  }
+
+  .device-phone__screen img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Framed phone screens — cover the tall capture instead of growing forever. */
+  app-project-showcase-stage.project-showcase--featured .device-phone__screen {
+    height: 20rem;
+  }
+
+  app-project-showcase-stage.project-showcase--featured .device-phone__screen img {
+    height: 100%;
+  }
+
+  app-project-showcase-stage.project-showcase--compact .device-phone__screen {
+    height: 12.25rem;
+  }
+
+  app-project-showcase-stage.project-showcase--compact .device-phone__screen img {
+    height: 100%;
+  }
+
+  .project-card .device-phone__screen {
+    height: 15.25rem;
+  }
+
+  .project-card .device-phone__screen img {
+    height: 100%;
+  }
+
+  .loading-spinner-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--background) 55%, transparent);
+    backdrop-filter: blur(2px);
+    pointer-events: all;
+  }
+
+  .loading-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 3px solid color-mix(in srgb, var(--accent-cyan) 25%, transparent);
+    border-top-color: var(--accent-cyan);
+    border-radius: 999px;
+    animation: loading-spin 0.7s linear infinite;
+  }
+
+  @keyframes loading-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loading-spinner {
+      animation: none;
+      border-top-color: var(--accent-cyan);
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes showcase-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.45rem);
+    }
+  }
+
+  @keyframes showcase-float-phone {
+    0%,
+    100% {
+      transform: translateY(0) rotate(3deg);
+    }
+    50% {
+      transform: translateY(-0.55rem) rotate(2deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .device-laptop,
+    .device-phone {
+      animation: none !important;
+    }
+
+    .device-laptop {
+      transform: none;
+    }
+
+    .device-phone {
+      transform: rotate(2deg);
+    }
   }
 
   /* Do not set overflow on .analytics-page — it traps position:fixed (FAB / agent chat). */

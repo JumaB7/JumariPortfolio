@@ -1,0 +1,56 @@
+<div
+  class="project-showcase"
+  [class.project-showcase--pair]="pairMode()"
+  [class.project-showcase--flat]="stackMode() && !pairMode()"
+  aria-hidden="true"
+>
+  @if (label()) {
+    <p class="project-showcase__label">{{ label() }}</p>
+  }
+
+  <div
+    class="project-showcase__stage"
+    [class.project-showcase__stage--stack]="stackMode() && !pairMode()"
+    [class.project-showcase__stage--pair]="pairMode()"
+  >
+    @if (pairMode()) {
+      @if (laptop(); as laptop) {
+        <div class="device-laptop">
+          <div class="device-laptop__bezel">
+            <div class="device-laptop__chrome">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="device-laptop__screen">
+              <img [src]="laptop.image" [alt]="laptop.imageAlt" loading="lazy" />
+            </div>
+          </div>
+          <div class="device-laptop__base"></div>
+          <div class="device-laptop__shadow"></div>
+        </div>
+      }
+
+      @if (phone(); as phone) {
+        <div class="device-phone">
+          <div class="device-phone__notch"></div>
+          <div class="device-phone__screen">
+            <img [src]="phone.image" [alt]="phone.imageAlt" loading="lazy" />
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="project-showcase__stack">
+        @for (shot of shots(); track shot.image) {
+          <figure
+            class="project-shot"
+            [class.project-shot--phone]="shot.device === 'phone'"
+          >
+            <img [src]="shot.image" [alt]="shot.imageAlt" loading="lazy" />
+            @if (shot.caption) {
+              <figcaption>{{ shot.caption }}</figcaption>
+            }
+          </figure>
+        }
+      </div>
+    }
+  </div>
+</div>

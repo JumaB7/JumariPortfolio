@@ -295,7 +295,17 @@ export class AnalyticsChartService {
     projects: PortfolioAnalyticsProject[],
     reduceMotion: boolean,
   ): Options {
-    const dated = this.analytics.projectsWithDates(projects);
+    const dated = this.analytics
+      .projectsWithDates(projects)
+      .map((p) => {
+        const start = parseProjectDate(p.startDate);
+        const end = p.endDate ? parseProjectDate(p.endDate) : Date.now();
+        if (start === undefined || end === undefined || end < start) return undefined;
+        return { project: p, start, end };
+      })
+      .filter((row): row is NonNullable<typeof row> => !!row)
+      .sort((a, b) => a.start - b.start || a.project.name.localeCompare(b.project.name));
+
     if (!dated.length) {
       return emptyChartOptions(
         'Project timeline',
@@ -304,47 +314,87 @@ export class AnalyticsChartService {
       );
     }
 
-    const base = analyticsChartBase(reduceMotion);
+    const base = analyticsChartBase(reduceMotion, Math.max(280, 72 + dated.length * 44));
+    const categories = dated.map((row) => row.project.name);
     const series: SeriesOptionsType[] = [
       {
-        type: 'column',
-        name: 'Duration',
-        data: dated.map((p) => {
-          const start = Date.parse(p.startDate ?? '');
-          const end = p.endDate ? Date.parse(p.endDate) : Date.now();
-          return {
-            name: p.name,
-            y: Math.max(0, end - start),
-            color: p.status === 'in-progress' ? '#00D9FF' : '#3B82F6',
-          };
-        }),
+        type: 'xrange',
+        name: 'Active period',
+        borderRadius: 4,
+        borderWidth: 0,
+        pointPadding: 0.15,
+        groupPadding: 0.1,
+        data: dated.map((row, index) => ({
+          x: row.start,
+          x2: row.end,
+          y: index,
+          name: row.project.name,
+          color: row.project.status === 'in-progress' ? '#00D9FF' : '#3B82F6',
+        })),
+        dataLabels: {
+          enabled: false,
+        },
       },
     ];
 
     return {
       ...base,
-      chart: { ...base.chart, type: 'column' },
+      chart: { ...base.chart, type: 'xrange' },
       title: { ...base.title, text: 'Project timeline' },
       subtitle: {
         ...base.subtitle,
-        text: 'Showcase projects with known date ranges',
+        text: 'Active periods for showcase projects with known dates',
       },
       xAxis: {
-        categories: dated.map((p) => p.name),
+        type: 'datetime',
         labels: { style: { color: '#A3AEC0', fontSize: '11px' } },
         lineColor: 'rgba(192,199,209,0.16)',
+        gridLineColor: 'rgba(192,199,209,0.1)',
+        gridLineWidth: 1,
       },
       yAxis: {
-        title: { text: 'Duration (ms)', style: { color: '#A3AEC0' } },
-        labels: { style: { color: '#A3AEC0', fontSize: '11px' } },
-        gridLineColor: 'rgba(192,199,209,0.1)',
+        categories,
+        reversed: true,
+        title: { text: undefined },
+        labels: {
+          style: { color: '#A3AEC0', fontSize: '11px' },
+        },
+        gridLineColor: 'rgba(192,199,209,0.08)',
       },
       legend: { enabled: false },
       tooltip: {
         ...base.tooltip,
-        pointFormat: '<b>{point.name}</b>',
+        useHTML: true,
+        pointFormatter() {
+          const start = formatTimelineDate(this.x);
+          const end = formatTimelineDate((this as Point & { x2?: number }).x2);
+          return `<b>${this.name ?? ''}</b><br/>${start} → ${end}`;
+        },
       },
       series,
     };
   }
+}
+
+/** Accepts `YYYY-MM` or ISO dates from the analytics payload. */
+function parseProjectDate(value: string | undefined): number | undefined {
+  if (!value?.trim()) return undefined;
+  const monthOnly = /^(\d{4})-(\d{2})$/.exec(value.trim());
+  if (monthOnly) {
+    const year = Number(monthOnly[1]);
+    const month = Number(monthOnly[2]);
+    if (month < 1 || month > 12) return undefined;
+    return Date.UTC(year, month - 1, 1);
+  }
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+function formatTimelineDate(value: number | undefined): string {
+  if (value === undefined || Number.isNaN(value)) return 'Present';
+  return new Intl.DateTimeFormat('en-GB', {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(value);
 }

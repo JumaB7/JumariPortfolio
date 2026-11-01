@@ -63,6 +63,11 @@ export class HomeBase {
   readonly projectCards: ProjectCardView[] = this.portfolio.projects.map((project) => ({
     ...project,
     previewClass: PROJECT_PREVIEW_CLASS_BY_ID[project.id] ?? DEFAULT_PROJECT_PREVIEW_CLASS,
+    overviewShots: (
+      project.previewVisuals ??
+      (project.capabilities ?? []).flatMap((capability) => capability.visuals ?? [])
+    ).slice(0, 2),
+    cardFeatures: project.features.slice(0, 4),
     actionViews: project.actions.map((action): ProjectActionView => ({
       ...action,
       linkKind: this.resolveActionLinkKind(action.url),

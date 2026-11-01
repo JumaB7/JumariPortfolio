@@ -3,9 +3,116 @@ import {
   AboutContent,
   ExperienceItem,
   NavLink,
+  ProjectCapability,
   ProjectItem,
   SkillGroup,
 } from '../models/portfolio.model';
+
+const veldSupplyOrigin = environment.projects.veldSupplyUrl;
+
+/** Few curated visuals + discussion-first chapters (Linear-style product storytelling). */
+function veldSupplyCapabilities(): ProjectCapability[] {
+  return [
+    {
+      title: 'One storefront. Two widths.',
+      detail:
+        'Laptop and phone are the same Angular app — not a separate mobile site. At ~1024px the hero runs as a wide composition with a featured product card; at ~320px navigation, search, and CTAs stack into a single readable column. Layouts reflow; the catalogue and checkout stay on one codebase.',
+      href: `${veldSupplyOrigin}/`,
+      linkLabel: 'Open live shop',
+      visuals: [
+        {
+          image: '/projects/veld-supply/home-1024.jpg',
+          imageAlt: 'Veld Supply home hero on a laptop-width viewport',
+          caption: 'Laptop · 1024px',
+          device: 'laptop',
+        },
+        {
+          image: '/projects/veld-supply/home-320.png',
+          imageAlt: 'Veld Supply home hero on a phone-width viewport with search',
+          caption: 'Phone · 320px',
+          device: 'phone',
+        },
+      ],
+    },
+    {
+      title: 'Clients cannot buy more than stock',
+      detail:
+        'Every product shows on-hand count. The quantity stepper stops at available units — here the bag is capped at 23 when stock is 23. The UI is only the first gate: cart and checkout APIs re-check inventory and reject oversells, so a stale tab cannot promise gear that is already gone.',
+      href: `${veldSupplyOrigin}/product/VS-OPT-1042`,
+      linkLabel: 'Open a product',
+      visuals: [
+        {
+          image: '/projects/veld-supply/product-stock-1024.png',
+          imageAlt: 'Product page with quantity set to 23 matching units in stock',
+          caption: 'Laptop · stock-capped quantity',
+          frameClass: 'object-top',
+          device: 'laptop',
+        },
+      ],
+    },
+    {
+      title: 'Admin stays behind the role wall',
+      detail:
+        'Shop routes are public or customer-scoped. Admin routes (/admin/orders, products, sales, stock) require an authenticated admin claim — a client session is redirected to sign-in and never receives the desk UI or its APIs. Authorisation is enforced on the server from the JWT, not from a “hide the menu” trick on the client.',
+      href: `${veldSupplyOrigin}/admin/orders`,
+      linkLabel: 'Try the admin desk',
+      callout: 'JWT role claim on the API — not a hidden nav item — decides who reaches the desk.',
+    },
+    {
+      title: 'Search and find gear',
+      detail:
+        'On narrower layouts the shop exposes a dedicated Search gear field above the hero so buyers can jump straight to optics, apparel, or kit without hunting through categories. Desktop keeps category and featured paths front and centre; phone puts search within thumb reach.',
+      href: `${veldSupplyOrigin}/shop`,
+      linkLabel: 'Open the shop',
+      callout: 'Same catalogue, different chrome — search sits in the thumb zone on ~320px.',
+    },
+    {
+      title: 'Sales division, with charts',
+      detail:
+        'Paid orders only. The desk opens on period KPIs, then charts profit across months, sales versus profit, and contribution by category — so margin and mix are visible without exporting a spreadsheet.',
+      href: `${veldSupplyOrigin}/admin/sales`,
+      linkLabel: 'Open sales',
+      visuals: [
+        {
+          image: '/projects/veld-supply/sales-admin-1024.png',
+          imageAlt: 'Admin sales desk with KPIs and profit bar chart',
+          caption: 'Admin · sales overview',
+          device: 'laptop',
+        },
+        {
+          image: '/projects/veld-supply/sales-charts-1024.png',
+          imageAlt: 'Admin sales charts for margin, sales versus profit, and category',
+          caption: 'Admin · sales charts',
+          device: 'laptop',
+        },
+      ],
+    },
+    {
+      title: 'Catalogue: add and edit products',
+      detail:
+        'Admins create and update SKUs in place — name, SKU prefix, category, pricing, optics attributes, and stock — without a separate CMS. Soft-remove keeps historical orders intact while taking a product off the shop floor.',
+      href: `${veldSupplyOrigin}/admin/products`,
+      linkLabel: 'Open products',
+      callout: 'One products desk for create, edit, stock, and soft-remove — no separate CMS.',
+    },
+    {
+      title: 'PayFast checkout, amounts fixed on the server',
+      detail:
+        'Card numbers never touch the shop. Checkout continues on PayFast; the payable amount is computed and signed on the API so the client cannot rewrite the total. An order only counts as paid after a matching PayFast signature.',
+      href: `${veldSupplyOrigin}/product/VS-OPT-1042`,
+      linkLabel: 'See checkout note',
+      callout: 'Payable total is signed on the server. The browser never gets to invent the price.',
+    },
+    {
+      title: 'Account fields for delivery',
+      detail:
+        'Signed-in buyers keep personal and delivery details — name, email, phone, address — so checkout is not a blank form every time. The same account model feeds orders; admin accounts additionally unlock the desk.',
+      href: `${veldSupplyOrigin}/account`,
+      linkLabel: 'Open account',
+      callout: 'One account model for delivery details and, when the role allows, the admin desk.',
+    },
+  ];
+}
 
 export const NAV_LINKS: NavLink[] = [
   { id: 'home', label: 'Home' },
@@ -13,7 +120,7 @@ export const NAV_LINKS: NavLink[] = [
   { id: 'skills', label: 'Skills' },
   { id: 'projects', label: 'Projects' },
   { id: 'experience', label: 'Experience' },
-  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'overview', label: 'Overview' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -42,13 +149,17 @@ export const PROJECTS: ProjectItem[] = [
     name: 'Veld Supply',
     description:
       'Standalone South African e-commerce application with its own ASP.NET Core API and SQL Server database — shop and admin in one product.',
+    detailSummary:
+      'A South African shop and admin desk in one product — responsive from phone to laptop, stock-capped carts, role-gated admin, PayFast checkout, and a sales division with real charts.',
     tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'EF Core', 'SQL Server', 'Azure', 'PayFast'],
     features: [
-      'Shop + admin in one Angular app',
-      'PayFast checkout',
-      'Stock and order workflows',
-      'Own API and database, separate from other projects',
+      'Responsive storefront from ~320px phone to ~1024px laptop',
+      'Quantity and checkout capped by on-hand stock (API-enforced)',
+      'Admin routes gated by role — clients never see the desk',
+      'Sales KPIs plus profit and category charts',
+      'Product add/edit, PayFast checkout, account delivery fields',
     ],
+    capabilities: veldSupplyCapabilities(),
     delivery: {
       code: 'Angular + TypeScript SPA, ASP.NET Core Web API, Entity Framework Core, SQL Server.',
       deploy:
@@ -56,12 +167,30 @@ export const PROJECTS: ProjectItem[] = [
       host: 'Azure App Service for the web app/API and Azure SQL for the store database.',
     },
     previewLabel: 'Commerce platform',
+    previewVisuals: [
+      {
+        image: '/projects/veld-supply/home-1024.jpg',
+        imageAlt: 'Veld Supply storefront on a laptop-width viewport',
+        caption: 'Laptop · 1024px',
+        device: 'laptop',
+      },
+      {
+        image: '/projects/veld-supply/home-320.png',
+        imageAlt: 'Veld Supply storefront on a phone-width viewport',
+        caption: 'Phone · 320px',
+        device: 'phone',
+      },
+    ],
     featured: true,
     actions: [
       {
-        label: environment.projects.veldSupplyUrl ? 'View Project' : 'View Project — Coming soon',
-        url: environment.projects.veldSupplyUrl,
+        label: 'View details',
+        url: '/projects/veld-supply',
         primary: true,
+      },
+      {
+        label: environment.projects.veldSupplyUrl ? 'Open live site' : 'Open live site — Coming soon',
+        url: environment.projects.veldSupplyUrl,
       },
     ],
   },
@@ -69,17 +198,43 @@ export const PROJECTS: ProjectItem[] = [
     id: 'accountant-app',
     name: 'Accountant App',
     description:
-      'Accounting platform with one shared ASP.NET Core backend powering an admin dashboard web app and a mobile client.',
-    tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'SQL Server', 'Mobile'],
+      'Firm workspace for client work and deadlines — one ASP.NET Core API shared by an Angular admin desk and a mobile client. Admins manage memberships, client records, documents, and tax obligations; clients sign in with the contact email the firm has on file.',
+    tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'EF Core', 'SQL Server', 'Mobile', 'Azure'],
     features: [
-      'Shared API and database for web + mobile',
-      'Admin dashboard for day-to-day accounting work',
-      'Mobile client against the same backend',
+      'Firm workspace: clients, documents, obligations, and settings in one admin shell',
+      'Client profiles with type, reference, contact, and active status — add, edit, remove',
+      'Create-firm / sign-in flow for accountants; owner role on the desk',
+      'Mobile client portal against the same API — clients set their own password',
+      'Shared SQL database so admin and client stay in sync',
+    ],
+    previewVisuals: [
+      {
+        image: '/projects/accountant-app/admin-clients-1024.png',
+        imageAlt: 'Accountant Admin clients desk with active client list',
+        caption: 'Admin clients · laptop',
+        frameClass: 'object-top',
+        device: 'laptop',
+      },
+      {
+        image: '/projects/accountant-app/client-signin-320.png',
+        imageAlt: 'Accountant Client sign-in on a phone-width viewport',
+        caption: 'Client · phone',
+        frameClass: 'object-top',
+        device: 'phone',
+      },
+      {
+        image: '/projects/accountant-app/admin-signin-1024.png',
+        imageAlt: 'Accountant Admin sign-in workspace',
+        caption: 'Admin sign-in · laptop',
+        frameClass: 'object-top',
+        device: 'laptop',
+      },
     ],
     delivery: {
-      code: 'Angular admin SPA, mobile client, shared ASP.NET Core Web API, SQL Server.',
-      deploy: 'Admin web/API published to Azure; mobile client points at the shared hosted API.',
-      host: 'Azure-hosted API and admin dashboard; mobile app uses the same cloud database.',
+      code: 'Angular admin SPA + mobile client, shared ASP.NET Core Web API, EF Core, SQL Server.',
+      deploy:
+        'Admin web and API published to Azure; mobile client targets the same hosted API.',
+      host: 'Azure App Service for admin/API; shared Azure SQL (or cloud SQL) for firm and client data.',
     },
     previewLabel: 'Admin + mobile',
     actions: [
@@ -102,7 +257,9 @@ export const PROJECTS: ProjectItem[] = [
     id: 'portfolio-dashboard',
     name: 'Jumari Portfolio',
     description:
-      'This site: Angular marketing pages, financial and project analytics with Highcharts, and an in-process AI agent for grounded Q&A — one ASP.NET Core host and one SQL database.',
+      'This site — Angular marketing pages, financial and project analytics with Highcharts, and an in-process AI agent for grounded Q&A. One ASP.NET Core host serves the SPA from wwwroot; one SQL database backs overview metrics, analytics seed data, and agent tool results.',
+    detailSummary:
+      'This portfolio site ships marketing pages, financial and project analytics with Highcharts, and an in-process AI agent with allowlisted tools — one ASP.NET Core host serving the SPA from wwwroot and one SQL database.',
     tech: [
       'Angular',
       'Tailwind CSS',
@@ -114,24 +271,42 @@ export const PROJECTS: ProjectItem[] = [
       'Azure',
     ],
     features: [
-      'Responsive portfolio home (desktop + mobile layouts)',
-      'Financial KPIs and multi-chart demo (ZAR)',
-      'Project portfolio analytics view',
-      'Custom AI agent with allowlisted tools — no raw SQL',
-      'SPA served from the API wwwroot in production',
+      'Responsive portfolio home with desktop and mobile layouts',
+      'Financial KPIs and multi-chart demo in ZAR',
+      'Project portfolio analytics — mix, categories, and technology matrix',
+      'In-process AI agent with allowlisted tools — no raw SQL from the client',
+      'SPA copied into API wwwroot and zip-deployed with the backend',
     ],
     delivery: {
-      code: 'Angular + Tailwind frontend, ASP.NET Core Web API, EF Core migrations/seed, Highcharts, in-process analytics agent (no separate agent host).',
+      code: 'Angular + Tailwind SPA, ASP.NET Core Web API, EF Core migrations/seed, Highcharts, in-process analytics agent (no separate agent host).',
       deploy:
         'GitHub Actions on release — pnpm build the SPA, dotnet publish the API, copy the SPA into api/wwwroot, zip-deploy with the Azure publish profile.',
       host: 'Single Azure App Service (Linux) for site + API + agent; Azure SQL for UAT; SQL Server LocalDB for local development.',
     },
     previewLabel: 'Site + analytics',
+    previewVisuals: [
+      {
+        image: '/projects/jumari-portfolio/home-1024.jpg',
+        imageAlt: 'Jumari Portfolio home hero on a laptop-width viewport',
+        caption: 'Laptop · home',
+        device: 'laptop',
+      },
+      {
+        image: '/projects/jumari-portfolio/analytics-320.png',
+        imageAlt: 'Project portfolio analytics on a phone-width viewport',
+        caption: 'Phone · analytics',
+        device: 'phone',
+      },
+    ],
     actions: [
+      {
+        label: 'View details',
+        url: '/projects/portfolio-dashboard',
+        primary: true,
+      },
       {
         label: 'Explore Analytics Dashboard',
         url: '/dashboard',
-        primary: true,
       },
       {
         label: 'Ask the AI agent',

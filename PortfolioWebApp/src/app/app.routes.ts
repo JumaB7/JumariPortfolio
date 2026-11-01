@@ -4,9 +4,11 @@ import { AnalyticsDashboardComponent } from './analytics/analytics-dashboard.com
 import { FinancialAnalyticsViewComponent } from './analytics/financial/financial-analytics-view.component';
 import { ProjectPortfolioViewComponent } from './analytics/project-portfolio-view.component';
 import { HomeContainerComponent } from './home/home-container.component';
+import { ProjectDetailComponent } from './projects/project-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeContainerComponent },
+  { path: 'projects/:id', component: ProjectDetailComponent },
   { path: 'dashboard/agent', component: DashboardAgentComponent },
   {
     path: 'dashboard',
