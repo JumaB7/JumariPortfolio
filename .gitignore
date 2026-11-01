@@ -15,15 +15,18 @@ Thumbs.db
 !.env.example
 **/secrets.json
 **/appsettings.json
-**/appsettings.Development.json
-**/appsettings.*.local.json
-**/appsettings.Local.json
+**/appsettings.*.json
+!**/appsettings.Example.json
 **/Properties/PublishProfiles/**
 **/*.publishsettings
 **/*.pfx
 **/*.pem
 **/*.key
 **/user-secrets.json
+*.mdf
+*.ldf
+*.sqlite
+*.db
 
 # Local EF tools
 PortfolioAPI/.tools/
