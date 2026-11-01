@@ -41,9 +41,20 @@ export const PROJECTS: ProjectItem[] = [
     id: 'veld-supply',
     name: 'Veld Supply',
     description:
-      'Standalone South African e-commerce application with its own ASP.NET Core API and SQL Server database.',
-    tech: ['Angular', 'ASP.NET Core', 'SQL Server', 'Azure'],
-    features: ['Shop + admin in one app', 'PayFast checkout', 'Stock and order workflows'],
+      'Standalone South African e-commerce application with its own ASP.NET Core API and SQL Server database — shop and admin in one product.',
+    tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'EF Core', 'SQL Server', 'Azure', 'PayFast'],
+    features: [
+      'Shop + admin in one Angular app',
+      'PayFast checkout',
+      'Stock and order workflows',
+      'Own API and database, separate from other projects',
+    ],
+    delivery: {
+      code: 'Angular + TypeScript SPA, ASP.NET Core Web API, Entity Framework Core, SQL Server.',
+      deploy:
+        'GitHub Actions on the release branch — build the SPA and API, package them together, zip-deploy to Azure.',
+      host: 'Azure App Service for the web app/API and Azure SQL for the store database.',
+    },
     previewLabel: 'Commerce platform',
     featured: true,
     actions: [
@@ -58,9 +69,18 @@ export const PROJECTS: ProjectItem[] = [
     id: 'accountant-app',
     name: 'Accountant App',
     description:
-      'Accounting platform with a shared backend for an admin dashboard web app and a mobile application.',
-    tech: ['Angular', 'ASP.NET Core', 'SQL Server', 'Mobile'],
-    features: ['Shared API and database', 'Admin dashboard', 'Mobile client'],
+      'Accounting platform with one shared ASP.NET Core backend powering an admin dashboard web app and a mobile client.',
+    tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'SQL Server', 'Mobile'],
+    features: [
+      'Shared API and database for web + mobile',
+      'Admin dashboard for day-to-day accounting work',
+      'Mobile client against the same backend',
+    ],
+    delivery: {
+      code: 'Angular admin SPA, mobile client, shared ASP.NET Core Web API, SQL Server.',
+      deploy: 'Admin web/API published to Azure; mobile client points at the shared hosted API.',
+      host: 'Azure-hosted API and admin dashboard; mobile app uses the same cloud database.',
+    },
     previewLabel: 'Admin + mobile',
     actions: [
       {
@@ -80,18 +100,33 @@ export const PROJECTS: ProjectItem[] = [
   },
   {
     id: 'portfolio-dashboard',
-    name: 'Portfolio Dashboard',
+    name: 'Jumari Portfolio',
     description:
-      'Financial analytics showcase with KPIs, Highcharts, and filters — plus the original project-portfolio analytics view and a custom AI agent for grounded Q&A on the demo data.',
-    tech: ['Angular', 'Highcharts', 'ASP.NET Core', 'SQL Server', 'AI agent'],
+      'This site: Angular marketing pages, financial and project analytics with Highcharts, and an in-process AI agent for grounded Q&A — one ASP.NET Core host and one SQL database.',
+    tech: [
+      'Angular',
+      'Tailwind CSS',
+      'Highcharts',
+      'ASP.NET Core',
+      'EF Core',
+      'SQL Server',
+      'GitHub Actions',
+      'Azure',
+    ],
     features: [
+      'Responsive portfolio home (desktop + mobile layouts)',
       'Financial KPIs and multi-chart demo (ZAR)',
       'Project portfolio analytics view',
-      'Custom AI agent for grounded Q&A',
-      'Allowlisted analytics tools — no raw SQL',
-      'Isolated from other project databases',
+      'Custom AI agent with allowlisted tools — no raw SQL',
+      'SPA served from the API wwwroot in production',
     ],
-    previewLabel: 'Analytics view',
+    delivery: {
+      code: 'Angular + Tailwind frontend, ASP.NET Core Web API, EF Core migrations/seed, Highcharts, in-process analytics agent (no separate agent host).',
+      deploy:
+        'GitHub Actions on release — pnpm build the SPA, dotnet publish the API, copy the SPA into api/wwwroot, zip-deploy with the Azure publish profile.',
+      host: 'Single Azure App Service (Linux) for site + API + agent; Azure SQL for UAT; SQL Server LocalDB for local development.',
+    },
+    previewLabel: 'Site + analytics',
     actions: [
       {
         label: 'Explore Analytics Dashboard',

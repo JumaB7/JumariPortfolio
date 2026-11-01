@@ -9,12 +9,23 @@ export interface ProjectAction {
   primary?: boolean;
 }
 
+export interface ProjectDelivery {
+  /** Languages, frameworks, and libraries used to build it. */
+  code: string;
+  /** How releases get to the environment (CI/CD, manual publish, stores). */
+  deploy: string;
+  /** Where the live app and data run. */
+  host: string;
+}
+
 export interface ProjectItem {
   id: string;
   name: string;
   description: string;
   tech: string[];
   features: string[];
+  /** Optional build / deploy / host breakdown shown on project cards. */
+  delivery?: ProjectDelivery;
   previewLabel: string;
   featured?: boolean;
   actions: ProjectAction[];

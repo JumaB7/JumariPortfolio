@@ -274,6 +274,28 @@
                     <span class="tech-tag">{{ tech }}</span>
                   }
                 </div>
+                @if (project.delivery) {
+                  <dl class="mt-6 mb-0 grid gap-3 border-t border-border pt-5">
+                    <div>
+                      <dt class="m-0 text-[0.72rem] font-semibold tracking-[0.12em] text-accent-cyan uppercase">
+                        Built with
+                      </dt>
+                      <dd class="project-copy mt-1.5 mb-0">{{ project.delivery.code }}</dd>
+                    </div>
+                    <div>
+                      <dt class="m-0 text-[0.72rem] font-semibold tracking-[0.12em] text-accent-cyan uppercase">
+                        Deploy
+                      </dt>
+                      <dd class="project-copy mt-1.5 mb-0">{{ project.delivery.deploy }}</dd>
+                    </div>
+                    <div>
+                      <dt class="m-0 text-[0.72rem] font-semibold tracking-[0.12em] text-accent-cyan uppercase">
+                        Host
+                      </dt>
+                      <dd class="project-copy mt-1.5 mb-0">{{ project.delivery.host }}</dd>
+                    </div>
+                  </dl>
+                }
                 <ul class="mt-6 mb-0 list-none space-y-2.5 p-0">
                   @for (feature of project.features; track feature) {
                     <li class="project-copy text-accent-silver">→ {{ feature }}</li>

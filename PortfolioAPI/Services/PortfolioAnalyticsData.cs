@@ -51,11 +51,11 @@ public static class PortfolioAnalyticsData
                     "veld-supply",
                     "Veld Supply",
                     "Full-stack web applications",
-                    ["Angular", "ASP.NET Core", "SQL Server", "Azure"],
+                    ["Angular", "ASP.NET Core", "SQL Server", "Azure", "PayFast"],
                     "completed",
                     null,
                     null,
-                    "Standalone South African e-commerce application with its own ASP.NET Core API and SQL Server database."),
+                    "South African e-commerce app — Angular + ASP.NET Core, GitHub Actions deploy, Azure App Service + Azure SQL."),
                 new(
                     "accountant-app",
                     "Accountant App",
@@ -64,16 +64,16 @@ public static class PortfolioAnalyticsData
                     "in-progress",
                     null,
                     null,
-                    "Accounting platform with a shared backend for an admin dashboard web app and a mobile application."),
+                    "Shared ASP.NET Core API for an Angular admin dashboard and mobile client, hosted on Azure."),
                 new(
                     "portfolio-dashboard",
-                    "Portfolio Dashboard",
+                    "Jumari Portfolio",
                     "AI/data analytics",
-                    ["Angular", "Highcharts", "ASP.NET Core", "SQL Server"],
-                    "in-progress",
+                    ["Angular", "Highcharts", "ASP.NET Core", "SQL Server", "Azure", "GitHub Actions"],
+                    "completed",
                     null,
                     null,
-                    "Data dashboard inside this portfolio, powered by the portfolio API and analytics agent."),
+                    "This portfolio site + analytics + in-process agent — one Azure App Service, Azure SQL UAT, GitHub Actions on release."),
             ]);
 
     public static DashboardOverview ToOverview(PortfolioAnalyticsDatasetDto data)
