@@ -161,11 +161,11 @@
         </p>
       </div>
       <div class="mt-8 grid gap-5">
-        @for (project of projects; track project.id; let i = $index) {
+        @for (project of projectCards; track project.id; let i = $index) {
           <article class="surface-card project-card overflow-hidden bg-surface-elevated" [appReveal]="i * 80">
             <div
               class="project-preview relative min-h-[10.5rem] border-b border-border"
-              [ngClass]="previewClass(project)"
+              [ngClass]="project.previewClass"
               aria-hidden="true"
             >
               <div class="project-preview-grid absolute inset-0 opacity-30"></div>
@@ -276,8 +276,8 @@
                 }
               </ul>
               <div class="project-actions mt-6 flex flex-col gap-2.5 border-t border-border pt-5">
-                @for (action of project.actions; track action.label) {
-                  @if (isAppRoute(action)) {
+                @for (action of project.actionViews; track action.label) {
+                  @if (action.linkKind === 'route') {
                     <a
                       class="btn w-full"
                       [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
@@ -285,7 +285,7 @@
                     >
                       {{ action.label }}
                     </a>
-                  } @else if (isInternal(action)) {
+                  } @else if (action.linkKind === 'hash') {
                     <a
                       class="btn w-full"
                       [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
@@ -293,7 +293,7 @@
                     >
                       {{ action.label }}
                     </a>
-                  } @else if (action.url) {
+                  } @else if (action.linkKind === 'external') {
                     <a
                       class="btn w-full"
                       [ngClass]="action.primary ? 'btn-primary' : 'btn-secondary'"
@@ -348,11 +348,36 @@
                   {{ item.title }}
                 </h3>
                 <p class="mt-2 mb-0 text-sm font-medium text-accent-cyan">
-                  {{ item.organization }} · {{ item.dates }}
+                  @if (item.url) {
+                    <a
+                      class="text-accent-cyan underline decoration-accent-cyan/35 underline-offset-4 transition hover:decoration-accent-cyan"
+                      [href]="item.url"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ item.organization }}
+                    </a>
+                  } @else {
+                    {{ item.organization }}
+                  }
+                  · {{ item.dates }}
                   @if (item.location) {
                     <span class="text-text-muted"> · {{ item.location }}</span>
                   }
                 </p>
+                @if (item.url) {
+                  <p class="mt-2 mb-0 text-sm text-text-muted">
+                    Public link:
+                    <a
+                      class="text-accent-cyan underline decoration-accent-cyan/35 underline-offset-4 transition hover:decoration-accent-cyan"
+                      [href]="item.url"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ item.urlLabel || item.url }}
+                    </a>
+                  </p>
+                }
                 <p class="body-copy mt-3 mb-0">{{ item.description }}</p>
 
                 @if (item.bullets?.length) {
@@ -370,6 +395,19 @@
                         <h4 class="m-0 text-base font-semibold tracking-[-0.015em] text-text-primary">
                           {{ section.title }}
                         </h4>
+                        @if (section.url) {
+                          <p class="mt-2 mb-0 text-sm text-text-muted">
+                            Public link:
+                            <a
+                              class="text-accent-cyan underline decoration-accent-cyan/35 underline-offset-4 transition hover:decoration-accent-cyan"
+                              [href]="section.url"
+                              target="_blank"
+                              rel="noopener"
+                            >
+                              {{ section.urlLabel || section.url }}
+                            </a>
+                          </p>
+                        }
                         @if (section.summary) {
                           <p class="body-copy mt-2 mb-0">{{ section.summary }}</p>
                         }
@@ -522,7 +560,7 @@
   </section>
 </main>
 
-<footer class="section-pad border-t border-border bg-surface !py-10">
+<footer class="section-pad border-t border-border bg-surface py-10!">
   <div class="content-shell flex flex-col gap-6">
     <div>
       <p class="m-0 text-lg font-semibold tracking-[-0.02em] text-text-primary">Jumari Blignaut</p>

@@ -11,7 +11,8 @@
       </span>
     </div>
     <p class="mt-3 mb-0 max-w-2xl text-[1.05rem] leading-relaxed text-text-secondary">
-      Interactive Highcharts views of showcase project data — technologies, categories, and timeline.
+      Interactive Highcharts views of personal and professional project work — technologies, categories, and timeline.
+      Professional entries stay documented under Experience; they are mirrored here for analytics only.
     </p>
     <p
       class="mt-3 mb-0 inline-flex items-center gap-2 rounded-lg border border-border bg-surface-elevated/80 px-3 py-1.5 text-xs text-text-muted"
@@ -25,7 +26,7 @@
     <label class="analytics-field">
       <span class="analytics-field__label">Data period</span>
       <select
-        class="field !min-h-11 !py-2"
+        class="field min-h-11! py-2!"
         [value]="period()"
         (change)="period.set('showcase')"
         aria-label="Data period"
@@ -68,10 +69,26 @@
   } @else {
     <section class="mt-8 rounded-2xl border border-border bg-surface-elevated/70 p-4 md:p-5" aria-label="Filters">
       <div class="flex flex-wrap items-end gap-3">
+        @if (kindOptions().length > 1) {
+          <label class="analytics-field min-w-[10rem] flex-1">
+            <span class="analytics-field__label">Type</span>
+            <select
+              class="field min-h-11! py-2!"
+              [value]="filters().kind"
+              (change)="setKind($any($event.target).value)"
+            >
+              <option value="all">All types</option>
+              @for (kind of kindOptions(); track kind.id) {
+                <option [value]="kind.id">{{ kind.label }}</option>
+              }
+            </select>
+          </label>
+        }
+
         <label class="analytics-field min-w-[10rem] flex-1">
           <span class="analytics-field__label">Category</span>
           <select
-            class="field !min-h-11 !py-2"
+            class="field min-h-11! py-2!"
             [value]="filters().category"
             (change)="setCategory($any($event.target).value)"
           >
@@ -85,7 +102,7 @@
         <label class="analytics-field min-w-[10rem] flex-1">
           <span class="analytics-field__label">Technology</span>
           <select
-            class="field !min-h-11 !py-2"
+            class="field min-h-11! py-2!"
             [value]="filters().technology"
             (change)="setTechnology($any($event.target).value)"
           >
@@ -100,13 +117,13 @@
           <label class="analytics-field min-w-[10rem] flex-1">
             <span class="analytics-field__label">Status</span>
             <select
-              class="field !min-h-11 !py-2"
+              class="field min-h-11! py-2!"
               [value]="filters().status"
               (change)="setStatus($any($event.target).value)"
             >
               <option value="all">All statuses</option>
-              @for (status of statusOptions(); track status) {
-                <option [value]="status">{{ statusLabel(status) }}</option>
+              @for (status of statusOptions(); track status.id) {
+                <option [value]="status.id">{{ status.label }}</option>
               }
             </select>
           </label>
@@ -114,8 +131,8 @@
 
         <button
           type="button"
-          class="btn btn-secondary !min-h-11"
-          [disabled]="!hasActiveFilters()"
+          class="btn btn-secondary min-h-11!"
+          [disabled]="hasActiveFilters!()"
           (click)="resetFilters()"
         >
           Reset filters
@@ -142,7 +159,7 @@
         <article class="analytics-kpi">
           <p class="analytics-kpi__label">Total Projects</p>
           <p class="analytics-kpi__value">{{ kpis().totalProjects }}</p>
-          <p class="analytics-kpi__hint">Showcase projects in the current filter</p>
+          <p class="analytics-kpi__hint">Personal + professional in the current filter</p>
         </article>
         <article class="analytics-kpi">
           <p class="analytics-kpi__label">Years of Experience</p>
@@ -166,6 +183,7 @@
           <highcharts-chart
             class="analytics-chart analytics-chart--tall block w-full max-w-full"
             [options]="techChart()"
+            [oneToOne]="true"
           />
         </article>
 
@@ -173,6 +191,7 @@
           <highcharts-chart
             class="analytics-chart block w-full max-w-full"
             [options]="categoryChart()"
+            [oneToOne]="true"
           />
         </article>
 
@@ -180,6 +199,7 @@
           <highcharts-chart
             class="analytics-chart block w-full max-w-full"
             [options]="matrixChart()"
+            [oneToOne]="true"
           />
         </article>
 
@@ -187,6 +207,7 @@
           <highcharts-chart
             class="analytics-chart block w-full max-w-full"
             [options]="timelineChart()"
+            [oneToOne]="true"
           />
         </article>
       </section>
@@ -198,12 +219,12 @@
         >
           <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p class="section-label !mb-2">Selection</p>
+              <p class="section-label mb-2!">Selection</p>
               <h2 class="m-0 text-lg font-semibold text-text-primary">{{ selectionTitle() }}</h2>
             </div>
             <button
               type="button"
-              class="btn btn-secondary !min-h-10 !px-3 !text-sm"
+              class="btn btn-secondary min-h-10! px-3! text-sm!"
               (click)="clearSelection()"
             >
               Clear
@@ -214,15 +235,37 @@
             <ul class="mt-4 mb-0 grid list-none gap-3 p-0 md:grid-cols-2">
               @for (project of selectionProjects(); track project.id) {
                 <li class="rounded-xl border border-border bg-surface p-4">
-                  <p class="m-0 font-semibold text-text-primary">{{ project.name }}</p>
-                  <p class="mt-1 mb-0 text-sm text-text-secondary">{{ project.category }}</p>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <p class="m-0 font-semibold text-text-primary">{{ project.name }}</p>
+                    <span class="tech-tag py-0.5! text-[0.65rem]! uppercase tracking-[0.08em]">
+                      {{ kindLabelById[project.kind ?? 'personal'] }}
+                    </span>
+                  </div>
+                  <p class="mt-1 mb-0 text-sm text-text-secondary">
+                    {{ project.category }}
+                    @if (project.organization) {
+                      <span class="text-text-muted"> · {{ project.organization }}</span>
+                    }
+                  </p>
+                  @if (project.url) {
+                    <p class="mt-2 mb-0 text-sm">
+                      <a
+                        class="text-accent-cyan underline decoration-accent-cyan/35 underline-offset-4 transition hover:decoration-accent-cyan"
+                        [href]="project.url"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        Open public link
+                      </a>
+                    </p>
+                  }
                   <div class="mt-3 flex flex-wrap gap-2">
                     @for (tech of project.technologies; track tech) {
                       <span
-                        class="tech-tag !py-1 !text-xs"
+                        class="tech-tag py-1! text-xs!"
                         [ngClass]="
                           sel.kind === 'technology' && tech === sel.value
-                            ? '!border-accent-cyan/50 !text-accent-cyan'
+                            ? 'border-accent-cyan/50! text-accent-cyan!'
                             : ''
                         "
                       >
@@ -233,7 +276,7 @@
                 </li>
               }
             </ul>
-          } @else if (sel.kind === 'matrix' && !sel.used) {
+          } @else if (sel.kind === 'matrix' && sel.used!) {
             <p class="mt-3 mb-0 text-sm text-text-secondary">
               This cell indicates the technology is not part of the project stack.
             </p>

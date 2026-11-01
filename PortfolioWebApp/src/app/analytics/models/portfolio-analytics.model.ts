@@ -1,4 +1,12 @@
-export type ProjectStatus = 'completed' | 'in-progress';
+export enum ProjectStatus {
+  Completed = 'completed',
+  InProgress = 'in-progress',
+}
+
+export enum ProjectKind {
+  Personal = 'personal',
+  Professional = 'professional',
+}
 
 export interface PortfolioAnalyticsProject {
   id: string;
@@ -9,6 +17,10 @@ export interface PortfolioAnalyticsProject {
   startDate?: string;
   endDate?: string;
   description?: string;
+  /** personal = independent work; professional = employer / client delivery. */
+  kind?: ProjectKind;
+  url?: string;
+  organization?: string;
 }
 
 export interface PortfolioOwnerHighlight {
@@ -34,10 +46,13 @@ export interface PortfolioAnalyticsDataset {
   projects: PortfolioAnalyticsProject[];
 }
 
+export type AnalyticsFilterAll = 'all';
+
 export interface AnalyticsFilters {
-  category: string | 'all';
-  technology: string | 'all';
-  status: ProjectStatus | 'all';
+  kind: ProjectKind | AnalyticsFilterAll;
+  category: string | AnalyticsFilterAll;
+  technology: string | AnalyticsFilterAll;
+  status: ProjectStatus | AnalyticsFilterAll;
 }
 
 export interface AnalyticsKpis {

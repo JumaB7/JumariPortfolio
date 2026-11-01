@@ -74,7 +74,7 @@ export class FinancialChartService {
       return emptyChartOptions('Revenue vs. Expenses', 'No data for the current filters.', reduceMotion);
     }
 
-    const base = analyticsChartBase(reduceMotion);
+    const base = analyticsChartBase(reduceMotion, 360);
     const formatRand = (v: number) => this.finance.formatRand(v);
     const formatCompact = (v: number) => this.finance.formatCompactRand(v);
 
@@ -147,7 +147,7 @@ export class FinancialChartService {
       return emptyChartOptions('Cash Flow Trend', 'No data for the current filters.', reduceMotion);
     }
 
-    const base = analyticsChartBase(reduceMotion);
+    const base = analyticsChartBase(reduceMotion, 360);
     const formatRand = (v: number) => this.finance.formatRand(v);
     const formatCompact = (v: number) => this.finance.formatCompactRand(v);
 
@@ -228,7 +228,7 @@ export class FinancialChartService {
       return emptyChartOptions('Expense Breakdown', 'No data for the current filters.', reduceMotion);
     }
 
-    const base = analyticsChartBase(reduceMotion);
+    const base = analyticsChartBase(reduceMotion, 360);
     const formatRand = (v: number) => this.finance.formatRand(v);
     const total = categories.reduce((s, c) => s + c.actual, 0);
     const palette = [CYAN, BLUE, '#60A5FA', PURPLE, '#1E3A8A'];
@@ -296,7 +296,7 @@ export class FinancialChartService {
       return emptyChartOptions('Budget vs. Actual', 'No data for the current filters.', reduceMotion);
     }
 
-    const base = analyticsChartBase(reduceMotion);
+    const base = analyticsChartBase(reduceMotion, 360);
     const formatRand = (v: number) => this.finance.formatRand(v);
     const formatCompact = (v: number) => this.finance.formatCompactRand(v);
     const ordered = [...categories].reverse();

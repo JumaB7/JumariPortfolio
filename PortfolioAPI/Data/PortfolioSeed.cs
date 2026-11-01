@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PortfolioAPI.Services;
 
 namespace PortfolioAPI.Data;
@@ -18,6 +19,11 @@ public static class PortfolioSeed
         if (!db.Profiles.Any())
         {
             SeedPortfolio(db);
+        }
+        else
+        {
+            // Existing DBs (UAT/local) keep profile rows; still upsert project catalogue.
+            UpsertProjects(db);
         }
 
         if (!db.FinancialMonthDepts.Any())
@@ -81,23 +87,55 @@ public static class PortfolioSeed
             });
         }
 
-        var projectOrder = 0;
-        foreach (var project in source.Projects)
+        UpsertProjects(db, source.Projects);
+    }
+
+    private static void UpsertProjects(
+        PortfolioDbContext db,
+        IReadOnlyList<PortfolioAPI.Contracts.PortfolioAnalyticsProjectDto>? projects = null)
+    {
+        projects ??= PortfolioAnalyticsData.Create().Projects;
+        var existing = db.Projects.Include(p => p.Technologies).ToDictionary(p => p.Id);
+        var order = 0;
+        foreach (var project in projects)
         {
-            db.Projects.Add(new PortfolioProject
+            if (existing.TryGetValue(project.Id, out var row))
             {
-                Id = project.Id,
-                Name = project.Name,
-                Category = project.Category,
-                Status = project.Status,
-                StartDate = project.StartDate,
-                EndDate = project.EndDate,
-                Description = project.Description,
-                SortOrder = projectOrder++,
-                Technologies = project.Technologies
-                    .Select(t => new ProjectTechnology { Name = t })
-                    .ToList(),
-            });
+                row.Name = project.Name;
+                row.Category = project.Category;
+                row.Status = project.Status;
+                row.StartDate = project.StartDate;
+                row.EndDate = project.EndDate;
+                row.Description = project.Description;
+                row.Kind = string.IsNullOrWhiteSpace(project.Kind) ? "personal" : project.Kind;
+                row.Url = project.Url;
+                row.Organization = project.Organization;
+                row.SortOrder = order++;
+                db.ProjectTechnologies.RemoveRange(row.Technologies);
+                row.Technologies = project.Technologies
+                    .Select(t => new ProjectTechnology { Name = t, ProjectId = row.Id })
+                    .ToList();
+            }
+            else
+            {
+                db.Projects.Add(new PortfolioProject
+                {
+                    Id = project.Id,
+                    Name = project.Name,
+                    Category = project.Category,
+                    Status = project.Status,
+                    StartDate = project.StartDate,
+                    EndDate = project.EndDate,
+                    Description = project.Description,
+                    Kind = string.IsNullOrWhiteSpace(project.Kind) ? "personal" : project.Kind,
+                    Url = project.Url,
+                    Organization = project.Organization,
+                    SortOrder = order++,
+                    Technologies = project.Technologies
+                        .Select(t => new ProjectTechnology { Name = t })
+                        .ToList(),
+                });
+            }
         }
     }
 

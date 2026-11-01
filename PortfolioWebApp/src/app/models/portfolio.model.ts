@@ -3,10 +3,16 @@ export interface NavLink {
   label: string;
 }
 
+export type ProjectActionLinkKind = 'route' | 'hash' | 'external' | 'disabled';
+
 export interface ProjectAction {
   label: string;
   url: string;
   primary?: boolean;
+}
+
+export interface ProjectActionView extends ProjectAction {
+  linkKind: ProjectActionLinkKind;
 }
 
 export interface ProjectDelivery {
@@ -31,11 +37,19 @@ export interface ProjectItem {
   actions: ProjectAction[];
 }
 
+export interface ProjectCardView extends ProjectItem {
+  previewClass: string;
+  actionViews: ProjectActionView[];
+}
+
 export interface ExperienceSection {
   title: string;
   summary?: string;
   tech?: string[];
   bullets: string[];
+  /** Public product / programme link from the CV, when available. */
+  url?: string;
+  urlLabel?: string;
 }
 
 export interface ExperienceItem {
@@ -47,6 +61,9 @@ export interface ExperienceItem {
   bullets?: string[];
   sections?: ExperienceSection[];
   tech: string[];
+  /** Public organisation link from the CV, when available. */
+  url?: string;
+  urlLabel?: string;
 }
 
 export interface SkillGroup {

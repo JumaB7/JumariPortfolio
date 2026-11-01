@@ -101,7 +101,7 @@ import { AgentChatStateService } from './services/agent-chat-state.service';
         <textarea
           id="agent-question"
           rows="2"
-          class="field w-full !min-h-[3.25rem] resize-none text-sm"
+          class="field w-full min-h-13! resize-none text-sm"
           [ngModel]="chat.draft()"
           (ngModelChange)="chat.setDraft($event)"
           (keydown.enter)="onEnter($event)"
@@ -112,9 +112,9 @@ import { AgentChatStateService } from './services/agent-chat-state.service';
           <p class="m-0 text-[0.65rem] text-text-muted">Enter to send</p>
           <button
             type="button"
-            class="btn btn-primary !min-h-9 !px-3 !py-1.5 text-sm"
-            [ngClass]="{ 'opacity-50': !chat.canSend() }"
-            [disabled]="!chat.canSend()"
+            class="btn btn-primary min-h-9! px-3! py-1.5! text-sm"
+            [ngClass]="{ 'opacity-50': chat.canSend!() }"
+            [disabled]="chat.canSend!()"
             (click)="chat.send()"
           >
             {{ chat.sending() ? 'Asking…' : 'Ask' }}

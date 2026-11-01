@@ -5,7 +5,7 @@ import {
   NavLink,
   ProjectItem,
   SkillGroup,
-} from './portfolio.model';
+} from '../models/portfolio.model';
 
 export const NAV_LINKS: NavLink[] = [
   { id: 'home', label: 'Home' },
@@ -150,6 +150,8 @@ export const EXPERIENCE: ExperienceItem[] = [
     description:
       'Contributed to the development and maintenance of software solutions across multiple industries, including financial technology, higher education, fleet telematics and workflow automation.',
     tech: ['Angular', 'C#', '.NET', 'TypeScript', 'Highcharts', 'NestJS', 'SQL', 'Azure'],
+    url: 'https://matogen.com/',
+    urlLabel: 'matogen.com',
     sections: [
       {
         title: 'Purple Group — EasyEquities and EasyID Web Applications',
@@ -163,6 +165,8 @@ export const EXPERIENCE: ExperienceItem[] = [
           'Swagger',
           'Git',
         ],
+        url: 'https://www.easyequities.co.za/',
+        urlLabel: 'easyequities.co.za',
         bullets: [
           'Contributed to the development and maintenance of web applications for EasyEquities and EasyID, working across interconnected projects and shared libraries.',
           'Developed and maintained frontend and backend functionality using Angular, Node.js, C# and .NET Framework.',
@@ -173,6 +177,8 @@ export const EXPERIENCE: ExperienceItem[] = [
       {
         title: 'North-West University — WISL',
         tech: ['PHP', 'Angular', 'SQL', 'Dropinbase', 'Docker'],
+        url: 'https://services.nwu.ac.za/centre-teaching-and-learning-ctl/work-integrated-and-service-learning-wisl',
+        urlLabel: 'NWU WISL',
         bullets: [
           'Contributed to the development and maintenance of the WISL web application.',
           'Worked with frontend, backend and database technologies as part of the development team.',
@@ -183,6 +189,8 @@ export const EXPERIENCE: ExperienceItem[] = [
         summary:
           'As part of a development team, worked on a multi-tenant fleet telematics application used to ingest, process and visualize high-volume vehicle data for truck fleets; covering fuel efficiency, trip analysis and driver/vehicle performance scoring.',
         tech: ['Angular', 'NestJS', 'Node.js', 'TypeScript', 'Chart.js', 'Firebase / Firestore'],
+        url: 'https://cypherfuel.com/',
+        urlLabel: 'cypherfuel.com',
         bullets: [
           'Built and maintained Angular UI for fleet dashboards, per-vehicle and per-day views, trip-related screens and interactive charts, including styling, responsive layout and usability improvements across the application.',
           'Worked with raw telematics and trip data (GPS, CAN bus / vehicle IO, odometer and related counters) and implemented logic to transform that data into operational metrics.',
@@ -194,6 +202,8 @@ export const EXPERIENCE: ExperienceItem[] = [
         title: 'Jira Workflow Automation — Matogen Zebra',
         summary: 'Short-term project',
         tech: ['SQL', 'Jira', 'Docker'],
+        url: 'https://matogen.com/',
+        urlLabel: 'matogen.com',
         bullets: [
           'Independently developed an automated system to manage workshop orders and Jira tickets.',
         ],
@@ -207,6 +217,8 @@ export const EXPERIENCE: ExperienceItem[] = [
     location: 'Potchefstroom, South Africa',
     description: 'Academic achievement: Graduated with Distinction.',
     tech: ['Engineering'],
+    url: 'https://www.nwu.ac.za/',
+    urlLabel: 'nwu.ac.za',
   },
   {
     title: 'A Serious Game for Children with Fetal Alcohol Syndrome',

@@ -5,8 +5,8 @@ import { RouterLink } from '@angular/router';
 import { HighchartsChartComponent } from 'highcharts-angular';
 import { CountUpDirective } from '../directives/count-up.directive';
 import { RevealDirective } from '../directives/reveal.directive';
-import { HomeBaseDirective } from './home-base.directive';
 import { AuroraBackgroundComponent } from './aurora-background.component';
+import { HomeBase } from './home-base';
 
 @Component({
   selector: 'app-home-desktop',
@@ -22,4 +22,4 @@ import { AuroraBackgroundComponent } from './aurora-background.component';
   templateUrl: './home-desktop.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeDesktopComponent extends HomeBaseDirective {}
+export class HomeDesktopComponent extends HomeBase {}

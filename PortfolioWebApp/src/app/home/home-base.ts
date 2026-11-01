@@ -1,19 +1,30 @@
-import { Directive, DestroyRef, computed, inject, signal } from '@angular/core';
+import { DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import type { Options } from 'highcharts';
 import { catchError, fromEvent, of } from 'rxjs';
+import {
+  DEFAULT_PROJECT_PREVIEW_CLASS,
+  PROJECT_PREVIEW_CLASS_BY_ID,
+} from '../constants/analytics.constants';
+import { CONTACT_STATUS_MESSAGES } from '../constants/contact.constants';
 import { ContactStatus } from '../models/contact.model';
 import { ChartSeriesPoint, DashboardOverview } from '../models/dashboard.model';
-import { ProjectAction, ProjectItem } from '../models/portfolio.model';
+import {
+  ProjectActionLinkKind,
+  ProjectActionView,
+  ProjectCardView,
+} from '../models/portfolio.model';
 import { ContactService } from '../services/contact.service';
 import { DashboardService } from '../services/dashboard.service';
 import { PortfolioService } from '../services/portfolio.service';
+import { ValidationService } from '../services/validation.service';
 
-@Directive()
-export class HomeBaseDirective {
+/** Shared home logic for desktop/mobile — plain TS base (no empty @Directive). */
+export class HomeBase {
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
+  private readonly validation = inject(ValidationService);
   private readonly portfolio = inject(PortfolioService);
   private readonly dashboardService = inject(DashboardService);
   private readonly contactService = inject(ContactService);
@@ -21,7 +32,6 @@ export class HomeBaseDirective {
   readonly navLinks = this.portfolio.navLinks;
   readonly about = this.portfolio.about;
   readonly skillGroups = this.portfolio.skillGroups;
-  readonly projects = this.portfolio.projects;
   readonly experience = this.portfolio.experience;
   readonly email = this.portfolio.email;
   readonly linkedInUrl = this.portfolio.linkedInUrl;
@@ -50,10 +60,19 @@ export class HomeBaseDirective {
     this.buildColumn('Project categories', this.overview()?.projectCategories ?? []),
   );
 
+  readonly projectCards: ProjectCardView[] = this.portfolio.projects.map((project) => ({
+    ...project,
+    previewClass: PROJECT_PREVIEW_CLASS_BY_ID[project.id] ?? DEFAULT_PROJECT_PREVIEW_CLASS,
+    actionViews: project.actions.map((action): ProjectActionView => ({
+      ...action,
+      linkKind: this.resolveActionLinkKind(action.url),
+    })),
+  }));
+
   readonly form = this.fb.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(120)]],
-    email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
-    message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(4000)]],
+    name: ['', this.validation.contactNameValidators()],
+    email: ['', this.validation.contactEmailValidators()],
+    message: ['', this.validation.contactMessageValidators()],
   });
 
   constructor() {
@@ -86,24 +105,6 @@ export class HomeBaseDirective {
     this.menuOpen.set(false);
   }
 
-  previewClass(project: ProjectItem): string {
-    if (project.id === 'veld-supply') {
-      return 'project-preview--commerce';
-    }
-    if (project.id === 'accountant-app') {
-      return 'project-preview--admin';
-    }
-    return 'project-preview--analytics';
-  }
-
-  isInternal(action: ProjectAction): boolean {
-    return action.url.startsWith('#');
-  }
-
-  isAppRoute(action: ProjectAction): boolean {
-    return action.url.startsWith('/');
-  }
-
   submit(): void {
     if (this.form.invalid || this.submitting()) {
       this.form.markAllAsTouched();
@@ -117,15 +118,22 @@ export class HomeBaseDirective {
       next: () => {
         this.submitting.set(false);
         this.status.set('sent');
-        this.statusMessage.set('Message sent. I’ll get back to you soon.');
+        this.statusMessage.set(CONTACT_STATUS_MESSAGES.sent);
         this.form.reset();
       },
       error: () => {
         this.submitting.set(false);
         this.status.set('error');
-        this.statusMessage.set('Could not send right now. Please email me directly.');
+        this.statusMessage.set(CONTACT_STATUS_MESSAGES.error);
       },
     });
+  }
+
+  private resolveActionLinkKind(url: string): ProjectActionLinkKind {
+    if (!url) return 'disabled';
+    if (url.startsWith('/')) return 'route';
+    if (url.startsWith('#')) return 'hash';
+    return 'external';
   }
 
   private updateActiveSection(): void {

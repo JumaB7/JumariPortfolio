@@ -6,7 +6,7 @@ import {
   NAV_LINKS,
   PROJECTS,
   SKILL_GROUPS,
-} from '../models/portfolio-content';
+} from '../constants/portfolio.constants';
 import {
   AboutContent,
   ExperienceItem,

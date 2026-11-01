@@ -30,7 +30,7 @@
     <label class="analytics-field min-w-[11rem] flex-1">
       <span class="analytics-field__label">Date range</span>
       <select
-        class="field !min-h-11 !py-2"
+        class="field min-h-11! py-2!"
         [value]="filters().dateRange"
         (change)="setDateRange($any($event.target).value)"
       >
@@ -43,7 +43,7 @@
     <label class="analytics-field min-w-[11rem] flex-1">
       <span class="analytics-field__label">Department</span>
       <select
-        class="field !min-h-11 !py-2"
+        class="field min-h-11! py-2!"
         [value]="filters().department"
         (change)="setDepartment($any($event.target).value)"
       >
@@ -57,7 +57,7 @@
     <label class="analytics-field min-w-[11rem] flex-1">
       <span class="analytics-field__label">Category</span>
       <select
-        class="field !min-h-11 !py-2"
+        class="field min-h-11! py-2!"
         [value]="filters().category"
         (change)="setCategory($any($event.target).value)"
       >
@@ -70,8 +70,8 @@
 
     <button
       type="button"
-      class="btn btn-secondary !min-h-11"
-      [disabled]="!hasActiveFilters()"
+      class="btn btn-secondary min-h-11!"
+      [disabled]="hasActiveFilters!()"
       (click)="resetFilters()"
     >
       Reset filters
@@ -81,56 +81,66 @@
   <p class="mt-3 mb-0 text-xs text-text-muted">{{ sourceLabel() }}</p>
 </section>
 
-<section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key performance indicators">
-  @for (card of kpis(); track card.id) {
-    <article class="financial-kpi" [ngClass]="accentClass(card.accent)">
-      <div class="flex items-start justify-between gap-3">
-        <div class="min-w-0">
-          <p class="analytics-kpi__label">{{ card.label }}</p>
-          <p class="analytics-kpi__value !text-[clamp(1.45rem,2.4vw,1.85rem)]">{{ card.valueLabel }}</p>
-          <p
-            class="mt-2 mb-0 text-xs font-medium"
-            [ngClass]="card.deltaPositive ? 'text-emerald-400' : 'text-rose-400'"
-          >
-            {{ card.deltaLabel }}
-          </p>
+@if (loadStatus() === 'loading') {
+  <div class="analytics-state mt-6" role="status">Loading financial analytics…</div>
+} @else if (loadError(); as error) {
+  <div class="analytics-state mt-6 text-rose-300" role="alert">{{ error }}</div>
+} @else {
+  <section class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Key performance indicators">
+    @for (card of kpis(); track card.id) {
+      <article class="financial-kpi" [ngClass]="accentClassByAccent[card.accent]">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="analytics-kpi__label">{{ card.label }}</p>
+            <p class="analytics-kpi__value text-[clamp(1.45rem,2.4vw,1.85rem)]!">{{ card.valueLabel }}</p>
+            <p
+              class="mt-2 mb-0 text-xs font-medium"
+              [ngClass]="card.deltaPositive ? 'text-emerald-400' : 'text-rose-400'"
+            >
+              {{ card.deltaLabel }}
+            </p>
+          </div>
+          <div class="financial-kpi__spark w-[5.5rem] shrink-0 pt-1">
+            @if (sparklineOptions().get(card.id); as spark) {
+              <highcharts-chart class="block h-11 w-full" [options]="spark" [oneToOne]="true" />
+            }
+          </div>
         </div>
-        <div class="financial-kpi__spark w-[5.5rem] shrink-0 pt-1">
-          @if (sparklineOptions().get(card.id); as spark) {
-            <highcharts-chart class="block h-11 w-full" [options]="spark" />
-          }
-        </div>
-      </div>
+      </article>
+    }
+  </section>
+
+  <section class="mt-6 grid gap-5 lg:grid-cols-2" aria-label="Financial charts">
+    <article class="analytics-chart-card">
+      <highcharts-chart
+        class="analytics-chart analytics-chart--tall block w-full max-w-full"
+        [options]="revenueExpenseChart()"
+        [oneToOne]="true"
+      />
     </article>
-  }
-</section>
 
-<section class="mt-6 grid gap-5 lg:grid-cols-2" aria-label="Financial charts">
-  <article class="analytics-chart-card">
-    <highcharts-chart
-      class="analytics-chart analytics-chart--tall block w-full max-w-full"
-      [options]="revenueExpenseChart()"
-    />
-  </article>
+    <article class="analytics-chart-card">
+      <highcharts-chart
+        class="analytics-chart analytics-chart--tall block w-full max-w-full"
+        [options]="cashFlowChart()"
+        [oneToOne]="true"
+      />
+    </article>
 
-  <article class="analytics-chart-card">
-    <highcharts-chart
-      class="analytics-chart analytics-chart--tall block w-full max-w-full"
-      [options]="cashFlowChart()"
-    />
-  </article>
+    <article class="analytics-chart-card">
+      <highcharts-chart
+        class="analytics-chart analytics-chart--tall block w-full max-w-full"
+        [options]="expenseDonutChart()"
+        [oneToOne]="true"
+      />
+    </article>
 
-  <article class="analytics-chart-card">
-    <highcharts-chart
-      class="analytics-chart analytics-chart--tall block w-full max-w-full"
-      [options]="expenseDonutChart()"
-    />
-  </article>
-
-  <article class="analytics-chart-card">
-    <highcharts-chart
-      class="analytics-chart analytics-chart--tall block w-full max-w-full"
-      [options]="budgetChart()"
-    />
-  </article>
-</section>
+    <article class="analytics-chart-card">
+      <highcharts-chart
+        class="analytics-chart analytics-chart--tall block w-full max-w-full"
+        [options]="budgetChart()"
+        [oneToOne]="true"
+      />
+    </article>
+  </section>
+}

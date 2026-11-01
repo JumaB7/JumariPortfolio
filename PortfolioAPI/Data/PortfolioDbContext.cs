@@ -70,6 +70,9 @@ public class PortfolioDbContext(DbContextOptions<PortfolioDbContext> options) : 
             e.Property(x => x.Status).HasMaxLength(40);
             e.Property(x => x.StartDate).HasMaxLength(20);
             e.Property(x => x.EndDate).HasMaxLength(20);
+            e.Property(x => x.Kind).HasMaxLength(20).HasDefaultValue("personal");
+            e.Property(x => x.Url).HasMaxLength(500);
+            e.Property(x => x.Organization).HasMaxLength(200);
         });
 
         modelBuilder.Entity<ProjectTechnology>(e =>

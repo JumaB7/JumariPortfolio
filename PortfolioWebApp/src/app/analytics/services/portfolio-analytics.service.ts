@@ -8,9 +8,12 @@ import {
   AnalyticsKpis,
   PortfolioAnalyticsDataset,
   PortfolioAnalyticsProject,
+  ProjectKind,
+  ProjectStatus,
 } from '../models/portfolio-analytics.model';
 
 const DEFAULT_FILTERS: AnalyticsFilters = {
+  kind: 'all',
   category: 'all',
   technology: 'all',
   status: 'all',
@@ -27,7 +30,19 @@ export class PortfolioAnalyticsService {
       .pipe(
         map((data) => ({
           ...data,
-          projects: data.projects ?? [],
+          projects: (data.projects ?? []).map((project) => ({
+            ...project,
+            kind:
+              project.kind === ProjectKind.Professional
+                ? ProjectKind.Professional
+                : ProjectKind.Personal,
+            status:
+              project.status === 'in-progress'
+                ? ProjectStatus.InProgress
+                : project.status === 'completed'
+                  ? ProjectStatus.Completed
+                  : project.status,
+          })),
         })),
       );
   }
@@ -41,6 +56,8 @@ export class PortfolioAnalyticsService {
     filters: AnalyticsFilters,
   ): PortfolioAnalyticsProject[] {
     return projects.filter((project) => {
+      const kind = project.kind ?? ProjectKind.Personal;
+      if (filters.kind !== 'all' && kind !== filters.kind) return false;
       if (filters.category !== 'all' && project.category !== filters.category) return false;
       if (filters.technology !== 'all' && !project.technologies.includes(filters.technology)) {
         return false;
@@ -48,6 +65,15 @@ export class PortfolioAnalyticsService {
       if (filters.status !== 'all' && project.status !== filters.status) return false;
       return true;
     });
+  }
+
+  uniqueKinds(projects: PortfolioAnalyticsProject[]): ProjectKind[] {
+    const set = new Set(
+      projects.map((p) =>
+        p.kind === ProjectKind.Professional ? ProjectKind.Professional : ProjectKind.Personal,
+      ),
+    );
+    return [...set].sort((a, b) => a.localeCompare(b));
   }
 
   buildKpis(

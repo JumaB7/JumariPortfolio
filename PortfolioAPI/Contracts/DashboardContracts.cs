@@ -51,4 +51,8 @@ public record PortfolioAnalyticsProjectDto(
     string? Status,
     string? StartDate,
     string? EndDate,
-    string? Description);
+    string? Description,
+    /// <summary>personal = independent work; professional = employer / client delivery.</summary>
+    string Kind = "personal",
+    string? Url = null,
+    string? Organization = null);

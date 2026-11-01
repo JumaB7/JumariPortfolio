@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
+import { catchError, filter, map, of, startWith } from 'rxjs';
 import { AgentChatPanelComponent } from '../agent/agent-chat-panel.component';
 
 @Component({
@@ -31,6 +31,7 @@ export class AnalyticsDashboardComponent {
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
       map(() => this.router.url),
       startWith(this.router.url),
+      catchError(() => of(this.router.url)),
     ),
     { initialValue: this.router.url },
   );

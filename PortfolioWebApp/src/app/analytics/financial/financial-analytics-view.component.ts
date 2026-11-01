@@ -17,6 +17,7 @@ import {
   FinancialDemoDataset,
   FinancialFilters,
 } from './models/financial-analytics.model';
+import { FINANCIAL_KPI_ACCENT_CLASS } from '../../constants/analytics.constants';
 import {
   DATE_RANGE_OPTIONS,
   FinancialAnalyticsService,
@@ -34,20 +35,42 @@ export class FinancialAnalyticsViewComponent {
   private readonly charts = inject(FinancialChartService);
 
   readonly dateRangeOptions = DATE_RANGE_OPTIONS;
+  readonly accentClassByAccent = FINANCIAL_KPI_ACCENT_CLASS;
 
   readonly filters = signal<FinancialFilters>(this.finance.defaultFilters());
 
   private readonly reduceMotion =
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  private readonly dataset = toSignal(
+  private readonly loadState = toSignal(
     this.finance.getDataset().pipe(
-      map((data): FinancialDemoDataset | null => data),
-      catchError(() => of(null)),
-      startWith(null),
+      map(
+        (data): { status: 'ready'; data: FinancialDemoDataset } | { status: 'error'; message: string } => ({
+          status: 'ready',
+          data,
+        }),
+      ),
+      catchError(() =>
+        of({
+          status: 'error' as const,
+          message: 'Could not load financial analytics. Is the API running on :5157?',
+        }),
+      ),
+      startWith({ status: 'loading' as const }),
     ),
-    { initialValue: null },
+    { initialValue: { status: 'loading' as const } },
   );
+
+  readonly loadStatus = computed(() => this.loadState().status);
+  readonly loadError = computed(() => {
+    const state = this.loadState();
+    return state.status === 'error' ? state.message : null;
+  });
+
+  private readonly dataset = computed(() => {
+    const state = this.loadState();
+    return state.status === 'ready' ? state.data : null;
+  });
 
   readonly departments = computed(() => this.dataset()?.departments ?? []);
   readonly categories = computed(() => this.dataset()?.categories ?? []);
@@ -122,12 +145,5 @@ export class FinancialAnalyticsViewComponent {
 
   resetFilters(): void {
     this.filters.set(this.finance.defaultFilters());
-  }
-
-  accentClass(accent: string): string {
-    if (accent === 'blue') return 'financial-kpi--blue';
-    if (accent === 'purple') return 'financial-kpi--purple';
-    if (accent === 'teal') return 'financial-kpi--teal';
-    return 'financial-kpi--cyan';
   }
 }

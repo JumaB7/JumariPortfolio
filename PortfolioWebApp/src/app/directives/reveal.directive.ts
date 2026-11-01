@@ -8,10 +8,6 @@ import {
   signal,
 } from '@angular/core';
 
-function prefersReducedMotion(): boolean {
-  return typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
 @Directive({
   selector: '[appReveal]',
   host: {
@@ -34,8 +30,8 @@ export class RevealDirective {
   private readonly destroyRef = inject(DestroyRef);
 
   /** Hide until revealed — only when motion is allowed (avoids post-paint flash). */
-  readonly armed = signal(!prefersReducedMotion());
-  readonly visible = signal(prefersReducedMotion());
+  readonly armed = signal(!RevealDirective.prefersReducedMotion());
+  readonly visible = signal(RevealDirective.prefersReducedMotion());
 
   constructor() {
     afterNextRender(() => this.setup());
@@ -69,5 +65,11 @@ export class RevealDirective {
 
     observer.observe(this.el.nativeElement);
     this.destroyRef.onDestroy(() => observer.disconnect());
+  }
+
+  private static prefersReducedMotion(): boolean {
+    return (
+      typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
   }
 }

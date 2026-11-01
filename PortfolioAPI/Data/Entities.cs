@@ -69,6 +69,10 @@ public class PortfolioProject
     public string? StartDate { get; set; }
     public string? EndDate { get; set; }
     public string? Description { get; set; }
+    /// <summary>personal | professional</summary>
+    public string Kind { get; set; } = "personal";
+    public string? Url { get; set; }
+    public string? Organization { get; set; }
     public int SortOrder { get; set; }
     public List<ProjectTechnology> Technologies { get; set; } = [];
 }

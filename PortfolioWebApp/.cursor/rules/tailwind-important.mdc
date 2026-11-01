@@ -1,0 +1,41 @@
+---
+description: Use Tailwind v4 suffix important modifiers (utility!), never prefix (!utility)
+globs: "**/*.{html,ts,css}"
+alwaysApply: false
+---
+
+# Tailwind important modifiers
+
+This project uses **Tailwind CSS v4**. Prefer the canonical important form that IntelliSense suggests.
+
+## Rule
+
+- **Do:** put `!` at the **end** of the utility: `min-h-11!`, `px-3!`, `text-sm!`
+- **Don't:** put `!` at the **start**: `!min-h-11`, `!px-3`, `!text-sm`
+
+Arbitrary values follow the same pattern: `min-h-[3.25rem]!` (or the scale equivalent such as `min-h-13!` when IntelliSense offers it).
+
+Variants keep the important on the utility token:
+
+- Correct: `hover:bg-surface!`, `md:min-h-11!`
+- Wrong: `hover:!bg-surface`, `md:!min-h-11`
+
+## Examples
+
+```html
+<!-- Wrong -->
+<button class="btn btn-primary !min-h-9 !px-3 !py-1.5">Ask</button>
+
+<!-- Right -->
+<button class="btn btn-primary min-h-9! px-3! py-1.5!">Ask</button>
+```
+
+```ts
+// Wrong
+[ngClass]="cond ? '!border-accent-cyan/50 !text-accent-cyan' : ''"
+
+// Right
+[ngClass]="cond ? 'border-accent-cyan/50! text-accent-cyan!' : ''"
+```
+
+Do **not** change CSS `!important` declarations in stylesheets, TypeScript/Angular `!` (non-null / negation), or attribute bindings like `[disabled]="!canSend()"`.

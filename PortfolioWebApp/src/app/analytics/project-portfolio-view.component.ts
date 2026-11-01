@@ -12,9 +12,14 @@ import { HighchartsChartComponent } from 'highcharts-angular';
 import type { Options } from 'highcharts';
 import { catchError, map, of, startWith } from 'rxjs';
 import {
+  PROJECT_KIND_LABELS,
+  PROJECT_STATUS_LABELS,
+} from '../constants/analytics.constants';
+import {
   AnalyticsFilters,
   AnalyticsLoadState,
   AnalyticsSelection,
+  ProjectKind,
   ProjectStatus,
 } from './models/portfolio-analytics.model';
 import { AnalyticsChartService } from './services/analytics-chart.service';
@@ -76,15 +81,29 @@ export class ProjectPortfolioViewComponent {
     return this.analytics.buildKpis(this.filteredProjects(), data.yearsExperience);
   });
 
+  readonly kindOptions = computed(() =>
+    this.analytics.uniqueKinds(this.allProjects()).map((id) => ({
+      id,
+      label: PROJECT_KIND_LABELS[id],
+    })),
+  );
   readonly categoryOptions = computed(() => this.analytics.uniqueCategories(this.allProjects()));
   readonly technologyOptions = computed(() =>
     this.analytics.uniqueTechnologies(this.allProjects()),
   );
-  readonly statusOptions = computed(() => this.analytics.uniqueStatuses(this.allProjects()));
+  readonly statusOptions = computed(() =>
+    this.analytics.uniqueStatuses(this.allProjects()).map((id) => ({
+      id,
+      label: PROJECT_STATUS_LABELS[id],
+    })),
+  );
+  readonly kindLabelById = PROJECT_KIND_LABELS;
 
   readonly hasActiveFilters = computed(() => {
     const f = this.filters();
-    return f.category !== 'all' || f.technology !== 'all' || f.status !== 'all';
+    return (
+      f.kind !== 'all' || f.category !== 'all' || f.technology !== 'all' || f.status !== 'all'
+    );
   });
 
   readonly lastUpdated = computed(() => this.dataset()?.generatedAt ?? null);
@@ -151,6 +170,11 @@ export class ProjectPortfolioViewComponent {
     this.destroyRef.onDestroy(() => this.selection.set(null));
   }
 
+  setKind(value: string): void {
+    this.filters.update((f) => ({ ...f, kind: value as ProjectKind | 'all' }));
+    this.selection.set(null);
+  }
+
   setCategory(value: string): void {
     this.filters.update((f) => ({ ...f, category: value as AnalyticsFilters['category'] }));
     this.selection.set(null);
@@ -176,12 +200,5 @@ export class ProjectPortfolioViewComponent {
 
   clearSelection(): void {
     this.selection.set(null);
-  }
-
-  statusLabel(status?: ProjectStatus | 'all'): string {
-    if (status === 'completed') return 'Completed';
-    if (status === 'in-progress') return 'In progress';
-    if (status === 'all') return 'All statuses';
-    return 'Unknown';
   }
 }

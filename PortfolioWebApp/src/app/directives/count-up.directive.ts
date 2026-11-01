@@ -33,7 +33,7 @@ export class CountUpDirective {
 
   private setup(): void {
     const target = this.appCountUp();
-    const parsed = parseMetric(target);
+    const parsed = this.parseMetric(target);
 
     const reduced =
       typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -87,16 +87,16 @@ export class CountUpDirective {
 
     requestAnimationFrame(tick);
   }
-}
 
-function parseMetric(
-  value: string,
-): { prefix: string; value: number; suffix: string } | null {
-  const match = value.trim().match(/^([^0-9]*)(\d+)(.*)$/);
-  if (!match) return null;
-  return {
-    prefix: match[1] ?? '',
-    value: Number(match[2]),
-    suffix: match[3] ?? '',
-  };
+  private parseMetric(
+    value: string,
+  ): { prefix: string; value: number; suffix: string } | null {
+    const match = value.trim().match(/^([^0-9]*)(\d+)(.*)$/);
+    if (!match) return null;
+    return {
+      prefix: match[1] ?? '',
+      value: Number(match[2]),
+      suffix: match[3] ?? '',
+    };
+  }
 }

@@ -72,7 +72,10 @@ public class PortfolioContentService(PortfolioDbContext db)
                     p.Status,
                     p.StartDate,
                     p.EndDate,
-                    p.Description))
+                    p.Description,
+                    string.IsNullOrWhiteSpace(p.Kind) ? "personal" : p.Kind,
+                    p.Url,
+                    p.Organization))
                 .ToList());
     }
 }

@@ -10,10 +10,12 @@ export const ANALYTICS_CHART_COLORS = [
   '#94A3B8',
 ];
 
-export function analyticsChartBase(reduceMotion: boolean): Options {
+export function analyticsChartBase(reduceMotion: boolean, height = 320): Options {
   return {
     chart: {
       backgroundColor: 'transparent',
+      height,
+      reflow: true,
       style: { fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' },
       animation: reduceMotion ? false : { duration: 450 },
       spacing: [12, 12, 8, 12],
