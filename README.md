@@ -2,13 +2,17 @@
 
 Personal portfolio site — Angular SPA + ASP.NET Core API + in-process analytics agent, one Azure App Service (Veld Supply pattern).
 
+**Detailed integration guide** (languages, why Angular/signals/Tailwind, agent pipeline, charts, animations, deploy): see [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+
 ## Stack
 
 | Part | Choice |
 | --- | --- |
-| Frontend | Angular (`PortfolioWebApp`) |
-| Backend | ASP.NET Core Web API (`PortfolioAPI`) — dashboard, financial analytics, contact, **AI agent** |
+| Frontend | Angular 22 + TypeScript + Tailwind 4 (`PortfolioWebApp`) |
+| Backend | ASP.NET Core (.NET 10) Web API (`PortfolioAPI`) — dashboard, financial analytics, contact, **portfolio agent** |
 | Database | SQL Server (LocalDB locally; Azure SQL for UAT) |
+| Charts | Highcharts (heatmap, xrange, financial series) |
+| Agent | In-process rule router + allowlisted SQL tools (no LLM host) |
 
 ## Run locally
 
