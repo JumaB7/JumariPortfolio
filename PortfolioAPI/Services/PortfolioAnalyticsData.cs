@@ -7,6 +7,52 @@ namespace PortfolioAPI.Services;
 /// </summary>
 public static class PortfolioAnalyticsData
 {
+    /// <summary>
+    /// First-person showcase copy for "what's her best project?" — grounded in real project names.
+    /// </summary>
+    public const string BestProjectReflection =
+        "Honestly, it's very hard to pick. Each project has its own strong point. "
+        + "On EasyEquities I worked with an amazing team and learned so much from my seniors about coding practices. "
+        + "On CypherFuel I had the privilege of working with technical calculations and scoring systems directly from raw telematics data — as a math lover, that was very enjoyable. "
+        + "On NWU WISL I had the pleasure of learning more about Dropinbase, Angular, PHP and security from a very experienced senior developer. "
+        + "For my personal projects, it's hard to choose because each of them has some element of me or something I enjoy doing. "
+        + "Each of them made me grow as a person and as a developer, so I would label them all as \"best\". "
+        + "Ask about any project by name if you want the details.";
+
+    /// <summary>Curated recruiter-style answers (first person), keyed for the interview tool.</summary>
+    public static readonly IReadOnlyDictionary<string, string> InterviewAnswers =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["current_work"] =
+                "Right now I'm building an accounting web app and a client-side mobile app for accounting firms — "
+                + "helping them gather documents from clients before deadlines. "
+                + "It's one of my personal projects on this portfolio (Accountant App).",
+            ["next_role"] =
+                "I want to keep growing, keep learning, and gain exposure to more of the software world.",
+            ["availability"] =
+                "I can start in January 2027.",
+            ["remote"] =
+                "My preference is fully remote.",
+            ["visa"] =
+                "I'm looking for fully remote roles, so I don't need visa sponsorship for on-site work.",
+            ["proud_of"] =
+                "Professionally, EasyEquities — I learned a huge amount from an amazing team. "
+                + "Personally, I'm proud of the accounting project and of learning to build an AI agent for this portfolio.",
+            ["easyequities_contribution"] =
+                "On EasyEquities we contributed evenly as a team. I focused on full-stack work: creating components from scratch, "
+                + "fixing bugs, integrating new API endpoints, updating older components, and doing code reviews. "
+                + "I was fully responsible for all the charts — at that stage I had the most Highcharts experience on the team.",
+            ["frontend_vs_fullstack"] =
+                "I enjoy frontend more, but I'm full-stack and equally strong on both sides.",
+            ["fintech"] =
+                "Yes — I've done professional fintech delivery on EasyEquities (and EasyID) at Matogen for Purple Group.",
+            ["mentoring"] =
+                "I haven't formally mentored juniors yet.",
+            ["ways_of_working"] =
+                "Yes — I'm comfortable with code reviews, Agile ways of working, and CI/CD "
+                + "(including GitHub Actions deploys on my personal Azure projects).",
+        };
+
     public static PortfolioAnalyticsDatasetDto Create() =>
         new(
             "Portfolio site content shared with the AI agent",
@@ -36,15 +82,15 @@ public static class PortfolioAnalyticsData
                     "Matogen",
                     "01/2023 – Present",
                     "Potchefstroom, South Africa",
-                    "Contributed to the development and maintenance of software solutions across financial technology, higher education, fleet telematics and workflow automation.",
+                    "Full-stack delivery across Purple Group (EasyEquities / EasyID), NWU WISL, CypherFuel fleet telematics, and internal workflow automation. Day-to-day: Angular + .NET features, shared component libraries, API integration, Highcharts, code reviews, and production support.",
                     ["Angular", "C#", ".NET", "TypeScript", "Highcharts", "NestJS", "SQL", "Azure"]),
                 new(
                     "Bachelor of Engineering in Computer and Electronic Engineering",
                     "North-West University",
                     "2019 – 2022",
                     "Potchefstroom, South Africa",
-                    "Academic achievement: Graduated with Distinction.",
-                    ["Engineering"]),
+                    "BEng Computer and Electronic Engineering, graduated with Distinction. Strong foundation in maths, systems, and software that still shapes how I approach scoring, data, and full-stack problem solving.",
+                    ["Engineering", "Mathematics"]),
             ],
             [
                 new(
@@ -55,7 +101,7 @@ public static class PortfolioAnalyticsData
                     "completed",
                     "2025-03",
                     "2025-11",
-                    "South African e-commerce app — Angular + ASP.NET Core, GitHub Actions deploy, Azure App Service + Azure SQL.",
+                    "Personal South African e-commerce showcase: Angular storefront + ASP.NET Core API, PayFast payments, GitHub Actions CI/CD to Azure App Service and Azure SQL.",
                     "personal",
                     "https://veld-supply-cpdddtaqf8epdpe0.southafricanorth-01.azurewebsites.net",
                     null),
@@ -67,7 +113,7 @@ public static class PortfolioAnalyticsData
                     "in-progress",
                     "2025-06",
                     null,
-                    "Shared ASP.NET Core API for an Angular admin dashboard and mobile client, hosted on Azure.",
+                    "Personal product for accounting firms: admin web app plus client mobile app to gather documents from clients before deadlines. Shared ASP.NET Core API, Angular admin, Expo/mobile client, Azure hosting.",
                     "personal",
                     null,
                     null),
@@ -79,7 +125,7 @@ public static class PortfolioAnalyticsData
                     "completed",
                     "2025-08",
                     "2025-11",
-                    "This portfolio site + analytics + in-process agent — one Azure App Service, Azure SQL UAT, GitHub Actions on release.",
+                    "This portfolio site — projects, skills, experience, analytics dashboard, and an in-process rule-based AI agent over the same SQL showcase dataset. One Azure App Service + Azure SQL UAT, shipped via GitHub Actions.",
                     "personal",
                     null,
                     null),
@@ -91,7 +137,7 @@ public static class PortfolioAnalyticsData
                     "completed",
                     "2023-01",
                     null,
-                    "Professional delivery at Matogen for Purple Group — EasyEquities and EasyID web applications across shared libraries.",
+                    "Professional fintech at Matogen for Purple Group. Full-stack on EasyEquities / EasyID: new components, API integrations, bug fixes, reviews, and owned all Highcharts work when that was my deepest FE strength on the team.",
                     "professional",
                     "https://www.easyequities.co.za/",
                     "Matogen / Purple Group"),
@@ -103,7 +149,7 @@ public static class PortfolioAnalyticsData
                     "completed",
                     "2023-03",
                     "2024-08",
-                    "Professional delivery at Matogen for North-West University — Work Integrated and Service Learning (WISL) web application.",
+                    "Professional delivery at Matogen for North-West University — Work Integrated and Service Learning (WISL). Learned Dropinbase, Angular, PHP, and security practices alongside a very experienced senior developer.",
                     "professional",
                     "https://services.nwu.ac.za/centre-teaching-and-learning-ctl/work-integrated-and-service-learning-wisl",
                     "Matogen / North-West University"),
@@ -115,7 +161,7 @@ public static class PortfolioAnalyticsData
                     "completed",
                     "2023-08",
                     null,
-                    "Professional delivery at Matogen — multi-tenant fleet telematics for fuel efficiency, trip analysis, and vehicle/driver scoring.",
+                    "Professional multi-tenant fleet telematics at Matogen — fuel efficiency, trip analysis, and vehicle/driver scoring from raw telematics data. Strong maths/scoring focus; Angular + NestJS + Firebase.",
                     "professional",
                     "https://cypherfuel.com/",
                     "Matogen / CypherFuel"),
@@ -127,11 +173,39 @@ public static class PortfolioAnalyticsData
                     "completed",
                     "2024-02",
                     "2024-04",
-                    "Short-term professional project at Matogen — automated workshop orders and Jira ticket management.",
+                    "Short-term professional project at Matogen — automated workshop orders and Jira ticket management with SQL, Jira, and Docker.",
                     "professional",
                     "https://matogen.com/",
                     "Matogen"),
             ]);
+
+    /// <summary>Aliases → project id for router / detail lookup.</summary>
+    public static readonly IReadOnlyDictionary<string, string> ProjectAliases =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["veld supply"] = "veld-supply",
+            ["veld"] = "veld-supply",
+            ["accountant app"] = "accountant-app",
+            ["accounting app"] = "accountant-app",
+            ["accounting"] = "accountant-app",
+            ["portfolio"] = "portfolio-dashboard",
+            ["portfolio dashboard"] = "portfolio-dashboard",
+            ["jumari portfolio"] = "portfolio-dashboard",
+            ["ai agent"] = "portfolio-dashboard",
+            ["easyequities"] = "purple-easyequities",
+            ["easy equities"] = "purple-easyequities",
+            ["easyid"] = "purple-easyequities",
+            ["easy id"] = "purple-easyequities",
+            ["purple"] = "purple-easyequities",
+            ["nwu"] = "nwu-wisl",
+            ["nwu wisl"] = "nwu-wisl",
+            ["wisl"] = "nwu-wisl",
+            ["cypherfuel"] = "cypherfuel",
+            ["cypher fuel"] = "cypherfuel",
+            ["fleet"] = "cypherfuel",
+            ["zebra"] = "matogen-zebra",
+            ["jira"] = "matogen-zebra",
+        };
 
     public static DashboardOverview ToOverview(PortfolioAnalyticsDatasetDto data)
     {

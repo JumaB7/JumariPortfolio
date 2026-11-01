@@ -25,8 +25,7 @@ public class AgentOrchestrator(AgentTools tools)
         if (route is null)
         {
             return new AgentChatResponse(
-                AgentRouter.UnsupportedAnswer
-                + " Examples: “How many projects?”, “Top technologies?”, “Tell me about Veld Supply”.",
+                AgentRouter.UnsupportedAnswer,
                 [],
                 "rule-router",
                 0,

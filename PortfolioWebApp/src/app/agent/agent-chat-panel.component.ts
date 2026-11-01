@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AGENT_SAMPLE_PROMPTS } from '../constants/agent.constants';
 import { ToolResultsComponent } from './components/tool-results.component';
 import { AgentChatStateService } from './services/agent-chat-state.service';
 
@@ -62,7 +63,7 @@ import { AgentChatStateService } from './services/agent-chat-state.service';
         <section class="space-y-3" aria-live="polite">
           @if (chat.turns().length === 0) {
             <p class="m-0 text-xs text-text-muted">
-              Ask about Jumari, skills, experience, projects, or contact — grounded on site content.
+              Ask recruiter-style or portfolio questions — answers are grounded on site content.
             </p>
           }
 
@@ -128,12 +129,7 @@ export class AgentChatPanelComponent {
   readonly chat = inject(AgentChatStateService);
   readonly closed = output<void>();
 
-  readonly samplePrompts = [
-    'Who is Jumari?',
-    'What are the skills?',
-    'Where has Jumari worked?',
-    'Tell me about Veld Supply',
-  ] as const;
+  readonly samplePrompts = AGENT_SAMPLE_PROMPTS;
 
   onEnter(event: Event): void {
     const keyboard = event as KeyboardEvent;
