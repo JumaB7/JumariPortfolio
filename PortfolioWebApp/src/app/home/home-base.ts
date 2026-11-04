@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder } from '@angular/forms';
@@ -126,10 +127,14 @@ export class HomeBase {
         this.statusMessage.set(CONTACT_STATUS_MESSAGES.sent);
         this.form.reset();
       },
-      error: () => {
+      error: (err: unknown) => {
         this.submitting.set(false);
         this.status.set('error');
-        this.statusMessage.set(CONTACT_STATUS_MESSAGES.error);
+        this.statusMessage.set(
+          err instanceof HttpErrorResponse && err.status === 429
+            ? CONTACT_STATUS_MESSAGES.rateLimited
+            : CONTACT_STATUS_MESSAGES.error,
+        );
       },
     });
   }

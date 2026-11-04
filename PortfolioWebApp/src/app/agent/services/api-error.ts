@@ -9,6 +9,9 @@ export function readApiErrorMessage(err: unknown): string {
     if (detail && typeof detail === 'object' && typeof detail.message === 'string') {
       return detail.message;
     }
+    if (err.status === 429) {
+      return 'Too many questions right now. Please wait a moment and try again.';
+    }
     if (err.status === 0) {
       return 'Could not reach the analytics agent. Is PortfolioAPI running?';
     }

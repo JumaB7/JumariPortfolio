@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PortfolioAPI.Agent;
 using PortfolioAPI.Contracts;
+using PortfolioAPI.RateLimiting;
 
 namespace PortfolioAPI.Controllers;
 
@@ -9,6 +11,7 @@ namespace PortfolioAPI.Controllers;
 public class AgentController(AgentOrchestrator orchestrator) : ControllerBase
 {
     [HttpPost("chat")]
+    [EnableRateLimiting(PortfolioRateLimiting.Agent)]
     public async Task<ActionResult<AgentChatResponse>> Chat(
         [FromBody] AgentChatRequest request,
         CancellationToken ct)

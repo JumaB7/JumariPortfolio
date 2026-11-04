@@ -8,6 +8,7 @@ import {
   PROJECT_PREVIEW_CLASS_BY_ID,
 } from '../constants/analytics.constants';
 import { RevealDirective } from '../directives/reveal.directive';
+import { ErrorPageComponent } from '../error/error-page.component';
 import { ProjectShowcaseStageComponent } from '../home/project-showcase-stage.component';
 import {
   ProjectActionLinkKind,
@@ -18,7 +19,7 @@ import { PortfolioService } from '../services/portfolio.service';
 
 @Component({
   selector: 'app-project-detail',
-  imports: [NgClass, RouterLink, RevealDirective, ProjectShowcaseStageComponent],
+  imports: [NgClass, RouterLink, RevealDirective, ProjectShowcaseStageComponent, ErrorPageComponent],
   templateUrl: './project-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

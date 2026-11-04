@@ -8,4 +8,5 @@ export const CONTACT_LIMITS = {
 export const CONTACT_STATUS_MESSAGES = {
   sent: 'Message sent. I’ll get back to you soon.',
   error: 'Could not send right now. Please email me directly.',
+  rateLimited: 'Too many messages from this connection. Please wait a bit, or email me directly.',
 } as const;

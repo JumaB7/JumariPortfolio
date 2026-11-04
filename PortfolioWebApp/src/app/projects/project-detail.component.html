@@ -197,12 +197,5 @@
     </div>
   </footer>
 } @else {
-  <main class="py-12 md:py-16">
-    <div class="content-shell" appReveal>
-      <p class="section-label">Projects</p>
-      <h1 class="section-title m-0">Project not found</h1>
-      <p class="section-copy mt-4">That project id is not in this portfolio.</p>
-      <a routerLink="/" fragment="projects" class="btn btn-primary mt-8">Back to projects</a>
-    </div>
-  </main>
+  <app-error-page [code]="404" />
 }
