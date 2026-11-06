@@ -68,6 +68,10 @@ jobs:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/release'
     runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Download the build
         uses: actions/download-artifact@v4
@@ -75,11 +79,24 @@ jobs:
       - name: Put the site in the API
         run: mkdir -p api/wwwroot && cp -a site/. api/wwwroot/
 
+      - name: Check the deployment package
+        run: |
+          test -f api/PortfolioAPI.dll
+          test -f api/PortfolioAPI.runtimeconfig.json
+          test -f api/wwwroot/index.html
+          test ! -d api/api
+
+      - name: Sign in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Publish to UAT
         uses: azure/webapps-deploy@v3
         with:
           app-name: JumariPortfolio
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: api
 
   deploy-production:
@@ -92,7 +109,7 @@ jobs:
       - name: Download the build
         uses: actions/download-artifact@v4
 
-      # Stub until PRODUCTION_HOST + publish profile exist (same pattern as Veld Supply).
+      # Stub until PRODUCTION_HOST and a production OIDC deploy exist.
       - name: Publish to production
         env:
           PRODUCTION_HOST: ${{ vars.PRODUCTION_HOST }}
