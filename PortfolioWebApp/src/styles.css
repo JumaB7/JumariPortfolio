@@ -358,8 +358,19 @@
       );
   }
 
+  .hero-greeting {
+    color: color-mix(in srgb, var(--text-secondary) 78%, var(--accent-blue));
+    font-weight: 500;
+  }
+
+  .hero-firstname {
+    color: var(--text-primary);
+    font-weight: 800;
+  }
+
   .hero-name-accent {
     color: #6ec8dc;
+    font-weight: 800;
     -webkit-text-stroke: 0.4px rgba(4, 8, 16, 0.55);
     paint-order: stroke fill;
     text-shadow:
@@ -438,9 +449,10 @@
   }
 
   .hero-title {
-    font-size: clamp(2.4rem, 6.5vw, 4.4rem);
+    font-size: clamp(1.45rem, 0.55rem + 4.8vw, 4.4rem);
     line-height: 1.05;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow-wrap: normal;
   }
 
   app-aurora-background.hero-aurora,

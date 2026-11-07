@@ -21,7 +21,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PortfolioDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Portfolio")));
+builder.Services.AddMemoryCache();
+builder.Services.Configure<DashboardOverviewCacheOptions>(_ => { });
+builder.Services.AddSingleton<DashboardOverviewCacheGate>();
 builder.Services.AddScoped<PortfolioContentService>();
+builder.Services.AddScoped<IPortfolioContentService>(sp => sp.GetRequiredService<PortfolioContentService>());
+builder.Services.AddScoped<IDashboardOverviewService, DashboardOverviewService>();
 builder.Services.AddScoped<FinancialContentService>();
 builder.Services.AddScoped<AgentTools>();
 builder.Services.AddScoped<AgentOrchestrator>();
@@ -45,6 +50,8 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<PortfolioDbContext>();
     db.Database.Migrate();
     PortfolioSeed.Apply(db);
+    // Seed upserts project catalogue on startup — drop any stale overview.
+    scope.ServiceProvider.GetRequiredService<IDashboardOverviewService>().Invalidate();
 }
 
 if (app.Environment.IsDevelopment())

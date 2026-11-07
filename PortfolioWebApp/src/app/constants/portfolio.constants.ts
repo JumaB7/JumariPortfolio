@@ -148,9 +148,9 @@ export const PROJECTS: ProjectItem[] = [
     id: 'veld-supply',
     name: 'Veld Supply',
     description:
-      'Standalone South African e-commerce application with its own ASP.NET Core API and SQL Server database — shop and admin in one product.',
+      'An e-commerce website I built from the ground up, with a customer storefront and an admin area for managing products, orders and sales. It includes a shopping cart, stock management and PayFast checkout.',
     detailSummary:
-      'A South African shop and admin desk in one product — responsive from phone to laptop, stock-capped carts, role-gated admin, PayFast checkout, and a sales division with real charts.',
+      'I built the Angular storefront and .NET API, connected the application to SQL Server, and deployed it to Azure. The project includes customer and admin functionality, stock checks, payment integration and sales charts.',
     tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'EF Core', 'SQL Server', 'Azure', 'PayFast'],
     features: [
       'Responsive storefront from ~320px phone to ~1024px laptop',
@@ -198,7 +198,7 @@ export const PROJECTS: ProjectItem[] = [
     id: 'accountant-app',
     name: 'Accountant App',
     description:
-      'Firm workspace for client work and deadlines — one ASP.NET Core API shared by an Angular admin desk and a mobile client. Admins manage memberships, client records, documents, and tax obligations; clients sign in with the contact email the firm has on file.',
+      "A web and mobile application I'm developing for accounting firms. It gives firms a place to manage clients, documents and tax deadlines, while clients can use a mobile portal to access their information and submit documents.",
     tech: ['Angular', 'TypeScript', 'ASP.NET Core', 'EF Core', 'SQL Server', 'Mobile', 'Azure'],
     features: [
       'Firm workspace: clients, documents, obligations, and settings in one admin shell',
@@ -257,9 +257,9 @@ export const PROJECTS: ProjectItem[] = [
     id: 'portfolio-dashboard',
     name: 'Jumari Portfolio',
     description:
-      'This site — Angular marketing pages, financial and project analytics with Highcharts, and an in-process AI agent for grounded Q&A. One ASP.NET Core host serves the SPA from wwwroot; one SQL database backs overview metrics, analytics seed data, and agent tool results.',
+      'My personal portfolio website, where I showcase my work and experiment with different technologies. It includes an analytics dashboard with interactive Highcharts visualisations and an AI agent.',
     detailSummary:
-      'This portfolio site ships marketing pages, financial and project analytics with Highcharts, and an in-process AI agent with allowlisted tools — one ASP.NET Core host serving the SPA from wwwroot and one SQL database.',
+      'I built the Angular frontend and ASP.NET Core backend, with SQL Server handling the data. The dashboard gives visitors a closer look at the projects and analytics behind the portfolio.',
     tech: [
       'Angular',
       'Tailwind CSS',
@@ -323,7 +323,7 @@ export const EXPERIENCE: ExperienceItem[] = [
     dates: '01/2023 – Present',
     location: 'Potchefstroom, South Africa',
     description:
-      'Contributed to the development and maintenance of software solutions across multiple industries, including financial technology, higher education, fleet telematics and workflow automation.',
+      'Worked on several software projects across financial technology, higher education, fleet management and workflow automation. My work has included building application features, integrating APIs, working with databases, developing interactive charts and maintaining existing applications.',
     tech: ['Angular', 'C#', '.NET', 'TypeScript', 'Highcharts', 'NestJS', 'SQL', 'Azure'],
     url: 'https://matogen.com/',
     urlLabel: 'matogen.com',
@@ -343,10 +343,10 @@ export const EXPERIENCE: ExperienceItem[] = [
         url: 'https://www.easyequities.co.za/',
         urlLabel: 'easyequities.co.za',
         bullets: [
-          'Contributed to the development and maintenance of web applications for EasyEquities and EasyID, working across interconnected projects and shared libraries.',
-          'Developed and maintained frontend and backend functionality using Angular, Node.js, C# and .NET Framework.',
-          'Implemented and enhanced interactive data visualizations using Highcharts, including graph styling and interactive functionality.',
-          'Investigated and resolved software defects, maintained existing features, and contributed to application improvements.',
+          'Worked on the EasyEquities and EasyID applications as part of the development team.',
+          'Developed frontend components and backend functionality using Angular, Node.js, C# and .NET.',
+          'Integrated API endpoints, fixed bugs and updated existing features and shared components.',
+          'Developed and maintained interactive Highcharts visualisations, including chart layouts, styling and functionality.',
         ],
       },
       {
@@ -355,32 +355,34 @@ export const EXPERIENCE: ExperienceItem[] = [
         url: 'https://services.nwu.ac.za/centre-teaching-and-learning-ctl/work-integrated-and-service-learning-wisl',
         urlLabel: 'NWU WISL',
         bullets: [
-          'Contributed to the development and maintenance of the WISL web application.',
-          'Worked with frontend, backend and database technologies as part of the development team.',
+          'Worked on the Work Integrated and Service Learning (WISL) application.',
+          'Worked across the frontend, backend and database, using Angular, PHP and SQL.',
+          'Used Dropinbase alongside Angular, PHP and SQL to develop and maintain application functionality.',
         ],
       },
       {
         title: 'CypherFuel — Fleet Telematics',
         summary:
-          'As part of a development team, worked on a multi-tenant fleet telematics application used to ingest, process and visualize high-volume vehicle data for truck fleets; covering fuel efficiency, trip analysis and driver/vehicle performance scoring.',
+          'Worked on a fleet management application that processes vehicle and trip data to help monitor fuel efficiency and driver performance.',
         tech: ['Angular', 'NestJS', 'Node.js', 'TypeScript', 'Chart.js', 'Firebase / Firestore'],
         url: 'https://cypherfuel.com/',
         urlLabel: 'cypherfuel.com',
         bullets: [
-          'Built and maintained Angular UI for fleet dashboards, per-vehicle and per-day views, trip-related screens and interactive charts, including styling, responsive layout and usability improvements across the application.',
-          'Worked with raw telematics and trip data (GPS, CAN bus / vehicle IO, odometer and related counters) and implemented logic to transform that data into operational metrics.',
-          'Developed and refined scoring and calculation models across driving, vehicle, environmental and road factors; including weighting logic, odometer/CAN odometer handling, payload, road classification, altitude/elevation, ambient conditions and related trip metrics; so results could be displayed accurately in the application.',
-          'Contributed to NestJS services supporting telematics processing, scoring and summary generation used by the frontend.',
+          'Developed and maintained Angular dashboards, vehicle views, trip screens and interactive charts.',
+          'Worked with vehicle data from GPS, CAN bus and odometer readings to calculate useful trip and vehicle metrics.',
+          'Implemented and refined scoring calculations involving driving behaviour, vehicle performance, road conditions, payload and environmental factors.',
+          'Contributed to NestJS services used for telematics processing, scoring and generating summaries for the frontend.',
         ],
       },
       {
         title: 'Jira Workflow Automation — Matogen Zebra',
-        summary: 'Short-term project',
-        tech: ['SQL', 'Jira', 'Docker'],
+        summary:
+          'A short-term project focused on automating workshop orders and Jira ticket management.',
+        tech: ['Laravel', 'PHP', 'SQL', 'Jira', 'Docker'],
         url: 'https://matogen.com/',
         urlLabel: 'matogen.com',
         bullets: [
-          'Independently developed an automated system to manage workshop orders and Jira tickets.',
+          'Independently developed a system using Laravel to automate workshop orders and Jira ticket management.',
         ],
       },
     ],
@@ -401,10 +403,9 @@ export const EXPERIENCE: ExperienceItem[] = [
     dates: '01/2022 – 11/2022',
     location: 'Potchefstroom, South Africa',
     description:
-      'Additional project completed alongside the Bachelor of Engineering degree.',
+      'A final-year engineering project where I developed an Android game using Unity, designed to support children with Fetal Alcohol Syndrome.',
     tech: ['Unity', 'Android'],
     bullets: [
-      'Designed and implemented an Android mobile game using Unity to support children with Fetal Alcohol Syndrome.',
       'Developed gameplay targeting attention, motor skills and impulse control, including dynamic difficulty adjustment based on player performance.',
       'Conducted informal testing as part of the project evaluation.',
     ],
@@ -413,15 +414,15 @@ export const EXPERIENCE: ExperienceItem[] = [
 
 export const ABOUT: AboutContent = {
   summary: [
-    'Full-Stack Software Engineer with nearly four years of professional experience developing and maintaining web applications across financial technology, higher education and fleet telematics. Experienced in frontend and backend development, with a strong technical foundation in C#, .NET, Angular, TypeScript and SQL.',
-    'Skilled in building application features, integrating databases and APIs, developing interactive data visualisations, and troubleshooting complex software issues. Comfortable working with established codebases, shared libraries and collaborative development teams. Holds a Bachelor of Engineering in Computer and Electronic Engineering from North-West University, completed with distinction.',
+    "I'm a software engineer based in Potchefstroom, South Africa, with around four years of professional experience. I've worked on applications in financial technology, higher education and fleet management, contributing to both frontend and backend development.",
+    "Most of my day-to-day work has involved Angular, TypeScript, C#, .NET and SQL. I've also worked with PHP, Node.js and different data visualisation libraries. I enjoy working through technical problems, especially when there's data, calculations or a tricky piece of functionality to figure out.",
   ],
   highlights: [
     {
       label: 'Education',
       value: 'BEng Computer & Electronic Engineering — NWU (Distinction)',
     },
-    { label: 'Experience', value: 'Nearly 4 years professional' },
+    { label: 'Experience', value: 'Around 4 years' },
     { label: 'Focus', value: 'Angular · ASP.NET · SQL Server · Azure' },
     { label: 'Based in', value: 'Potchefstroom, South Africa' },
   ],

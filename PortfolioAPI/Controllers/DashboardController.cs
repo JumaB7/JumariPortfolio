@@ -9,13 +9,15 @@ namespace PortfolioAPI.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting(PortfolioRateLimiting.ApiRead)]
-public class DashboardController(PortfolioContentService content) : ControllerBase
+public class DashboardController(
+    IDashboardOverviewService overview,
+    IPortfolioContentService content) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<DashboardOverview>> Get(CancellationToken ct)
     {
-        var data = await content.GetAnalyticsAsync(ct);
-        return data is null ? NotFound() : Ok(PortfolioAnalyticsData.ToOverview(data));
+        var data = await overview.GetOverviewAsync(ct);
+        return data is null ? NotFound() : Ok(data);
     }
 
     [HttpGet("analytics")]
