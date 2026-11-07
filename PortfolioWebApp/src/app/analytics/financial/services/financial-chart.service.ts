@@ -228,14 +228,14 @@ export class FinancialChartService {
       return emptyChartOptions('Expense Breakdown', 'No data for the current filters.', reduceMotion);
     }
 
-    const base = analyticsChartBase(reduceMotion, 360);
+    const base = analyticsChartBase(reduceMotion, 400);
     const formatRand = (v: number) => this.finance.formatRand(v);
     const total = categories.reduce((s, c) => s + c.actual, 0);
     const palette = [CYAN, BLUE, '#60A5FA', PURPLE, '#1E3A8A'];
 
     return {
       ...base,
-      chart: { ...base.chart, type: 'pie' },
+      chart: { ...base.chart, type: 'pie', spacing: [24, 28, 28, 28] },
       title: { ...base.title, text: 'Expense Breakdown' },
       subtitle: {
         ...base.subtitle,
@@ -254,11 +254,13 @@ export class FinancialChartService {
         verticalAlign: 'middle',
         layout: 'vertical',
         itemMarginBottom: 8,
+        padding: 8,
       },
       plotOptions: {
         pie: {
           innerSize: '62%',
           borderWidth: 0,
+          size: '78%',
           dataLabels: { enabled: false },
           showInLegend: true,
         },
@@ -283,6 +285,9 @@ export class FinancialChartService {
                 align: 'center',
                 verticalAlign: 'bottom',
                 layout: 'horizontal',
+              },
+              plotOptions: {
+                pie: { size: '70%' },
               },
             },
           },

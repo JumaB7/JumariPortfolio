@@ -1,11 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import type { Options, Point, SeriesOptionsType } from 'highcharts';
+import type { Chart, Options, Point, SeriesOptionsType } from 'highcharts';
 import {
   AnalyticsSelection,
   PortfolioAnalyticsProject,
 } from '../models/portfolio-analytics.model';
 import { PortfolioAnalyticsService } from './portfolio-analytics.service';
-import { analyticsChartBase, emptyChartOptions } from './analytics-chart-theme';
+import {
+  analyticsChartBase,
+  emptyChartOptions,
+  syncDonutCenterLabel,
+} from './analytics-chart-theme';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsChartService {
@@ -56,7 +60,12 @@ export class AnalyticsChartService {
 
     return {
       ...base,
-      chart: { ...base.chart, type: 'column' },
+      chart: {
+        ...base.chart,
+        type: 'column',
+        height: 380,
+        spacingBottom: 28,
+      },
       title: { ...base.title, text: 'Technology distribution' },
       subtitle: {
         ...base.subtitle,
@@ -67,6 +76,7 @@ export class AnalyticsChartService {
         labels: {
           style: { color: '#A3AEC0', fontSize: '11px' },
           autoRotation: [-35],
+          overflow: 'allow',
         },
         lineColor: 'rgba(192,199,209,0.16)',
         tickColor: 'rgba(192,199,209,0.16)',
@@ -89,7 +99,7 @@ export class AnalyticsChartService {
           {
             condition: { maxWidth: 560 },
             chartOptions: {
-              chart: { type: 'bar' },
+              chart: { type: 'bar', height: Math.max(380, 80 + usage.length * 36) },
               xAxis: { labels: { autoRotation: undefined } },
             },
           },
@@ -113,7 +123,7 @@ export class AnalyticsChartService {
     }
 
     const total = distribution.reduce((sum, d) => sum + d.y, 0);
-    const base = analyticsChartBase(reduceMotion);
+    const base = analyticsChartBase(reduceMotion, 400);
     const series: SeriesOptionsType[] = [
       {
         type: 'pie',
@@ -124,21 +134,22 @@ export class AnalyticsChartService {
 
     return {
       ...base,
-      chart: { ...base.chart, type: 'pie' },
-      title: {
-        text: `<div style="text-align:center"><span style="font-size:1.5rem;color:#F2F5FA;font-weight:700">${total}</span><br/><span style="font-size:0.75rem;color:#A3AEC0">projects</span></div>`,
-        align: 'center',
-        verticalAlign: 'middle',
-        useHTML: true,
-        y: 18,
+      chart: {
+        ...base.chart,
+        type: 'pie',
+        spacing: [48, 36, 36, 36],
+        events: {
+          render() {
+            syncDonutCenterLabel(this as Chart, total);
+          },
+        },
       },
+      title: { ...base.title, text: 'Project type distribution' },
       subtitle: {
         ...base.subtitle,
-        text: 'Project type distribution',
-        align: 'left',
-        verticalAlign: 'top',
-        y: 8,
+        text: 'Share of showcase projects by category',
       },
+      legend: { enabled: false },
       tooltip: {
         ...base.tooltip,
         pointFormat: '<b>{point.y}</b> ({point.percentage:.0f}%)',
@@ -150,6 +161,8 @@ export class AnalyticsChartService {
           borderWidth: 0,
           allowPointSelect: true,
           cursor: 'pointer',
+          size: '68%',
+          center: ['50%', '50%'],
           dataLabels: {
             enabled: true,
             format: '{point.name}: {point.percentage:.0f}%',
@@ -159,11 +172,12 @@ export class AnalyticsChartService {
               fontWeight: '500',
               textOutline: 'none',
             },
-            distance: 14,
-            crop: true,
-            overflow: 'justify',
+            distance: 18,
+            crop: false,
+            overflow: 'allow',
+            connectorColor: 'rgba(163,174,192,0.55)',
+            connectorWidth: 1,
           },
-          showInLegend: true,
           point: {
             events: {
               click() {
@@ -181,7 +195,6 @@ export class AnalyticsChartService {
   technologyMatrix(
     projects: PortfolioAnalyticsProject[],
     reduceMotion: boolean,
-    onSelect: (selection: AnalyticsSelection) => void,
   ): Options {
     const matrix = this.analytics.technologyMatrix(projects);
     if (!matrix.projects.length || !matrix.technologies.length) {
@@ -203,31 +216,20 @@ export class AnalyticsChartService {
         dataLabels: { enabled: false },
         colsize: 1,
         rowsize: 1,
-        cursor: 'pointer',
-        point: {
-          events: {
-            click() {
-              const point = this as Point;
-              const x = point.x ?? 0;
-              const y = point.y ?? 0;
-              onSelect({
-                kind: 'matrix',
-                project: matrix.projects[y] ?? '',
-                technology: matrix.technologies[x] ?? '',
-                used: Number(point.value) === 1,
-              });
-            },
-          },
-        },
       },
     ];
+
+    const rowHeight = 52;
+    const chartHeight = Math.max(340, 110 + matrix.projects.length * rowHeight);
 
     return {
       ...base,
       chart: {
         ...base.chart,
         type: 'heatmap',
-        height: Math.max(280, 72 + matrix.projects.length * 48),
+        height: chartHeight,
+        spacingBottom: 28,
+        marginLeft: 160,
       },
       title: { ...base.title, text: 'Project technology matrix' },
       subtitle: {
@@ -239,6 +241,7 @@ export class AnalyticsChartService {
         labels: {
           style: { color: '#A3AEC0', fontSize: '10px' },
           autoRotation: [-40],
+          overflow: 'allow',
         },
         lineColor: 'rgba(192,199,209,0.14)',
       },
@@ -246,7 +249,10 @@ export class AnalyticsChartService {
         categories: matrix.projects,
         title: { text: undefined },
         reversed: true,
-        labels: { style: { color: '#A3AEC0', fontSize: '11px' } },
+        labels: {
+          style: { color: '#A3AEC0', fontSize: '11px' },
+          overflow: 'allow',
+        },
         gridLineColor: 'rgba(192,199,209,0.08)',
       },
       colorAxis: {
@@ -283,7 +289,10 @@ export class AnalyticsChartService {
             condition: { maxWidth: 700 },
             chartOptions: {
               legend: { enabled: false },
-              chart: { height: Math.max(300, 80 + matrix.projects.length * 56) },
+              chart: {
+                height: Math.max(340, 110 + matrix.projects.length * 56),
+                marginLeft: 120,
+              },
             },
           },
         ],
@@ -314,16 +323,19 @@ export class AnalyticsChartService {
       );
     }
 
-    const base = analyticsChartBase(reduceMotion, Math.max(280, 72 + dated.length * 44));
     const categories = dated.map((row) => row.project.name);
+    const longestLabel = categories.reduce((max, name) => Math.max(max, name.length), 0);
+    const labelMargin = Math.min(240, Math.max(128, Math.round(longestLabel * 7.2)));
+    const chartHeight = Math.max(360, 120 + dated.length * 52);
+    const base = analyticsChartBase(reduceMotion, chartHeight);
     const series: SeriesOptionsType[] = [
       {
         type: 'xrange',
         name: 'Active period',
         borderRadius: 4,
         borderWidth: 0,
-        pointPadding: 0.15,
-        groupPadding: 0.1,
+        pointPadding: 0.18,
+        groupPadding: 0.12,
         data: dated.map((row, index) => ({
           x: row.start,
           x2: row.end,
@@ -339,7 +351,13 @@ export class AnalyticsChartService {
 
     return {
       ...base,
-      chart: { ...base.chart, type: 'xrange' },
+      chart: {
+        ...base.chart,
+        type: 'xrange',
+        marginLeft: labelMargin,
+        spacingBottom: 28,
+        spacingRight: 20,
+      },
       title: { ...base.title, text: 'Project timeline' },
       subtitle: {
         ...base.subtitle,
@@ -358,6 +376,8 @@ export class AnalyticsChartService {
         title: { text: undefined },
         labels: {
           style: { color: '#A3AEC0', fontSize: '11px' },
+          overflow: 'allow',
+          reserveSpace: true,
         },
         gridLineColor: 'rgba(192,199,209,0.08)',
       },

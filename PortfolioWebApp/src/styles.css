@@ -327,12 +327,13 @@
     display: block;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .highcharts-container,
   .highcharts-container svg {
     max-width: 100% !important;
+    overflow: visible !important;
   }
 
   .hero-atmosphere {
@@ -954,6 +955,13 @@
     animation: loading-spin 0.7s linear infinite;
   }
 
+  .loading-spinner--sm {
+    width: 0.95rem;
+    height: 0.95rem;
+    border-width: 2px;
+    flex-shrink: 0;
+  }
+
   @keyframes loading-spin {
     to {
       transform: rotate(360deg);
@@ -1213,21 +1221,23 @@
 
   .analytics-chart-card {
     min-width: 0;
-    overflow: hidden;
+    overflow: visible;
     border: 1px solid var(--border);
     border-radius: 1rem;
     background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
-    padding: 0.75rem 0.5rem 0.35rem;
+    padding: 1rem 0.75rem 1rem;
   }
 
+  /* Let Highcharts own the rendered height so dynamic charts are not clipped. */
   .analytics-chart {
-    height: 320px;
-    min-height: 320px;
+    display: block;
+    width: 100%;
+    min-height: 360px;
+    height: auto;
   }
 
   .analytics-chart--tall {
-    height: 360px;
-    min-height: 360px;
+    min-height: 400px;
   }
 
   .analytics-state {

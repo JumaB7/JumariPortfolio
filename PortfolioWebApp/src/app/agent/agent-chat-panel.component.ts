@@ -75,7 +75,15 @@ import { AgentChatStateService } from './services/agent-chat-state.service';
               </div>
 
               @if (turn.loading) {
-                <p class="mt-2 mb-0 text-sm text-text-secondary">Thinking…</p>
+                <div
+                  class="mt-2 flex items-center gap-2 text-sm text-text-secondary"
+                  role="status"
+                  aria-live="polite"
+                  aria-busy="true"
+                >
+                  <span class="loading-spinner loading-spinner--sm" aria-hidden="true"></span>
+                  <span>Thinking…</span>
+                </div>
               }
 
               @if (turn.error) {

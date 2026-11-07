@@ -124,9 +124,7 @@ export class ProjectPortfolioViewComponent {
   );
 
   readonly matrixChart = computed<Options>(() =>
-    this.charts.technologyMatrix(this.filteredProjects(), this.reduceMotion, (s) =>
-      this.selection.set(s),
-    ),
+    this.charts.technologyMatrix(this.filteredProjects(), this.reduceMotion),
   );
 
   readonly timelineChart = computed<Options>(() =>
@@ -146,9 +144,6 @@ export class ProjectPortfolioViewComponent {
     if (sel.kind === 'project') {
       return projects.filter((p) => p.name === sel.value);
     }
-    if (sel.kind === 'matrix') {
-      return projects.filter((p) => p.name === sel.project);
-    }
     return [];
   });
 
@@ -158,11 +153,6 @@ export class ProjectPortfolioViewComponent {
     if (sel.kind === 'technology') return `Projects using ${sel.value}`;
     if (sel.kind === 'category') return `Projects in ${sel.value}`;
     if (sel.kind === 'project') return sel.value;
-    if (sel.kind === 'matrix') {
-      return sel.used
-        ? `${sel.project} uses ${sel.technology}`
-        : `${sel.project} does not use ${sel.technology}`;
-    }
     return '';
   });
 

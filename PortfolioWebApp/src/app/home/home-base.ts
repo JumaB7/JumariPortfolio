@@ -168,7 +168,7 @@ export class HomeBase {
         backgroundColor: 'transparent',
         style: { fontFamily: 'Inter, sans-serif' },
         animation: reduceMotion ? false : { duration: 650 },
-        spacing: [8, 8, 8, 8],
+        spacing: [16, 20, 20, 20],
       },
       title: { text: undefined },
       credits: { enabled: false },
@@ -193,12 +193,14 @@ export class HomeBase {
     const base = this.chartBase();
     return {
       ...base,
-      chart: { ...base.chart, type: 'pie' },
+      chart: { ...base.chart, type: 'pie', spacing: [20, 28, 28, 28] },
+      legend: { enabled: false },
       plotOptions: {
         ...base.plotOptions,
         pie: {
           innerSize: '58%',
           borderWidth: 0,
+          size: '70%',
           dataLabels: {
             enabled: true,
             format: '{point.name}: {point.percentage:.0f}%',
@@ -208,11 +210,11 @@ export class HomeBase {
               fontWeight: '500',
               textOutline: 'none',
             },
-            distance: 12,
-            crop: true,
-            overflow: 'justify',
+            distance: 16,
+            crop: false,
+            overflow: 'allow',
+            connectorColor: 'rgba(163,174,192,0.55)',
           },
-          showInLegend: true,
         },
       },
       colors: ['#3B82F6', '#00D9FF', '#7DD3FC', '#64748B', '#C0C7D1'],

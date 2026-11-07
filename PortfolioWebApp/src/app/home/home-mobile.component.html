@@ -441,7 +441,7 @@
             <p class="mt-1 mb-3 text-sm text-text-secondary">
               Relative emphasis across the stack used in these portfolio projects.
             </p>
-            <highcharts-chart class="block h-[260px] w-full max-w-full" [options]="techChart()" />
+            <highcharts-chart class="block min-h-[260px] w-full max-w-full overflow-visible" [options]="techChart()" />
           </article>
           <article class="surface-card min-w-0 overflow-hidden bg-surface-elevated p-5" [appReveal]="140">
             <div class="mb-1 flex items-baseline justify-between gap-3">
@@ -449,7 +449,7 @@
               <span class="text-[0.65rem] font-medium tracking-wide text-text-muted uppercase">Illustrative</span>
             </div>
             <p class="mt-1 mb-3 text-sm text-text-secondary">Count of showcased projects by category.</p>
-            <highcharts-chart class="block h-[260px] w-full max-w-full" [options]="categoryChart()" />
+            <highcharts-chart class="block min-h-[260px] w-full max-w-full overflow-visible" [options]="categoryChart()" />
           </article>
         </div>
         <div class="mt-6 flex flex-wrap gap-2.5" appReveal>

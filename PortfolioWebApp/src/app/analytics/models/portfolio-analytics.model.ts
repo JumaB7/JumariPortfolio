@@ -66,7 +66,6 @@ export type AnalyticsSelection =
   | { kind: 'technology'; value: string }
   | { kind: 'category'; value: string }
   | { kind: 'project'; value: string }
-  | { kind: 'matrix'; project: string; technology: string; used: boolean }
   | null;
 
 export type AnalyticsLoadState =

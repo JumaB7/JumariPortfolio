@@ -1,4 +1,4 @@
-import type { Options } from 'highcharts';
+import type { Chart, Options, SVGElement } from 'highcharts';
 
 export const ANALYTICS_CHART_COLORS = [
   '#22D3EE',
@@ -10,7 +10,13 @@ export const ANALYTICS_CHART_COLORS = [
   '#94A3B8',
 ];
 
-export function analyticsChartBase(reduceMotion: boolean, height = 320): Options {
+const DONUT_CENTER_LABEL_KEY = '_portfolioDonutCenterLabel';
+
+type ChartWithDonutLabel = Chart & {
+  [DONUT_CENTER_LABEL_KEY]?: SVGElement;
+};
+
+export function analyticsChartBase(reduceMotion: boolean, height = 360): Options {
   return {
     chart: {
       backgroundColor: 'transparent',
@@ -18,7 +24,8 @@ export function analyticsChartBase(reduceMotion: boolean, height = 320): Options
       reflow: true,
       style: { fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' },
       animation: reduceMotion ? false : { duration: 450 },
-      spacing: [12, 12, 8, 12],
+      // Leave room for titles, axis labels, and pie connectors.
+      spacing: [20, 24, 24, 24],
     },
     title: {
       align: 'left',
@@ -69,6 +76,42 @@ export function analyticsChartBase(reduceMotion: boolean, height = 320): Options
     },
     colors: ANALYTICS_CHART_COLORS,
   };
+}
+
+/**
+ * Pins the donut hole label to the pie series centre on each render.
+ * Highcharts floating HTML titles do not reliably centre inside the ring.
+ */
+export function syncDonutCenterLabel(chart: Chart, total: number, unit = 'projects'): void {
+  const pie = chart.series[0] as { center?: number[] } | undefined;
+  const center = pie?.center;
+  if (!center || center.length < 2) {
+    return;
+  }
+
+  const host = chart as ChartWithDonutLabel;
+  host[DONUT_CENTER_LABEL_KEY]?.destroy();
+
+  const cx = chart.plotLeft + center[0];
+  const cy = chart.plotTop + center[1];
+  const html =
+    `<div style="text-align:center;line-height:1.15;white-space:nowrap">` +
+    `<span style="display:block;font-size:1.5rem;color:#F2F5FA;font-weight:700">${total}</span>` +
+    `<span style="display:block;font-size:0.75rem;color:#A3AEC0;font-weight:500">${unit}</span>` +
+    `</div>`;
+
+  const label = chart.renderer
+    .label(html, cx, cy, undefined, undefined, undefined, true)
+    .attr({ padding: 0, zIndex: 7 })
+    .add();
+
+  const box = label.getBBox();
+  label.attr({
+    x: cx - box.width / 2,
+    y: cy - box.height / 2,
+  });
+
+  host[DONUT_CENTER_LABEL_KEY] = label;
 }
 
 export function emptyChartOptions(title: string, message: string, reduceMotion: boolean): Options {

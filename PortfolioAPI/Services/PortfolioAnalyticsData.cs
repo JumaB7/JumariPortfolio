@@ -14,7 +14,7 @@ public static class PortfolioAnalyticsData
         "Honestly, it's very hard to pick. Each project has its own strong point. "
         + "On EasyEquities I worked with an amazing team and learned so much from my seniors about coding practices. "
         + "On CypherFuel I had the privilege of working with technical calculations and scoring systems directly from raw telematics data — as a math lover, that was very enjoyable. "
-        + "On NWU WISL I had the pleasure of learning more about Dropinbase, Angular, PHP and security from a very experienced senior developer. "
+        + "On NWU WISL I worked with Dropinbase, Angular, PHP, and SQL. "
         + "For my personal projects, it's hard to choose because each of them has some element of me or something I enjoy doing. "
         + "Each of them made me grow as a person and as a developer, so I would label them all as \"best\". "
         + "Ask about any project by name if you want the details.";
@@ -41,7 +41,7 @@ public static class PortfolioAnalyticsData
             ["easyequities_contribution"] =
                 "On EasyEquities we contributed evenly as a team. I focused on full-stack work: creating components from scratch, "
                 + "fixing bugs, integrating new API endpoints, updating older components, and doing code reviews. "
-                + "I was fully responsible for all the charts — at that stage I had the most Highcharts experience on the team.",
+                + "I owned most of the charts.",
             ["frontend_vs_fullstack"] =
                 "I enjoy frontend more, but I'm full-stack and equally strong on both sides.",
             ["fintech"] =
@@ -99,8 +99,8 @@ public static class PortfolioAnalyticsData
                     "Full-stack web applications",
                     ["Angular", "ASP.NET Core", "SQL Server", "Azure", "PayFast"],
                     "completed",
-                    "2025-03",
-                    "2025-11",
+                    "2025-10",
+                    null,
                     "Personal South African e-commerce showcase: Angular storefront + ASP.NET Core API, PayFast payments, GitHub Actions CI/CD to Azure App Service and Azure SQL.",
                     "personal",
                     "https://veldsupply.jumariblignaut.dev",
@@ -123,8 +123,8 @@ public static class PortfolioAnalyticsData
                     "AI/data analytics",
                     ["Angular", "Highcharts", "ASP.NET Core", "SQL Server", "Azure", "GitHub Actions"],
                     "completed",
-                    "2025-08",
-                    "2025-11",
+                    "2025-10",
+                    null,
                     "This portfolio site — projects, skills, experience, analytics dashboard, and an in-process rule-based AI agent over the same SQL showcase dataset. One Azure App Service + Azure SQL UAT, shipped via GitHub Actions.",
                     "personal",
                     null,
@@ -134,10 +134,10 @@ public static class PortfolioAnalyticsData
                     "EasyEquities & EasyID",
                     "Financial technology",
                     ["Angular", "Tailwind CSS", "Node.js", "C#", ".NET Framework", "Highcharts", "Swagger", "Git"],
-                    "completed",
-                    "2023-01",
+                    "in-progress",
+                    "2025-01",
                     null,
-                    "Professional fintech at Matogen for Purple Group. Full-stack on EasyEquities / EasyID: new components, API integrations, bug fixes, reviews, and owned all Highcharts work when that was my deepest FE strength on the team.",
+                    "Professional fintech at Matogen for Purple Group. Full-stack on EasyEquities / EasyID: new components, API integrations, bug fixes, reviews, and most of the Highcharts visualisations.",
                     "professional",
                     "https://www.easyequities.co.za/",
                     "Matogen / Purple Group"),
@@ -147,9 +147,9 @@ public static class PortfolioAnalyticsData
                     "Higher education",
                     ["PHP", "Angular", "SQL", "Dropinbase", "Docker"],
                     "completed",
-                    "2023-03",
-                    "2024-08",
-                    "Professional delivery at Matogen for North-West University — Work Integrated and Service Learning (WISL). Learned Dropinbase, Angular, PHP, and security practices alongside a very experienced senior developer.",
+                    "2024-01",
+                    "2025-02",
+                    "Professional delivery at Matogen for North-West University — Work Integrated and Service Learning (WISL). Full-stack work with Dropinbase, Angular, PHP, and SQL.",
                     "professional",
                     "https://services.nwu.ac.za/centre-teaching-and-learning-ctl/work-integrated-and-service-learning-wisl",
                     "Matogen / North-West University"),
@@ -159,8 +159,8 @@ public static class PortfolioAnalyticsData
                     "Fleet telematics",
                     ["Angular", "NestJS", "Node.js", "TypeScript", "Chart.js", "Firebase / Firestore"],
                     "completed",
-                    "2023-08",
-                    null,
+                    "2023-07",
+                    "2024-06",
                     "Professional multi-tenant fleet telematics at Matogen — fuel efficiency, trip analysis, and vehicle/driver scoring from raw telematics data. Strong maths/scoring focus; Angular + NestJS + Firebase.",
                     "professional",
                     "https://cypherfuel.com/",
@@ -169,10 +169,10 @@ public static class PortfolioAnalyticsData
                     "matogen-zebra",
                     "Matogen Zebra — Jira Workflow Automation",
                     "Workflow automation",
-                    ["SQL", "Jira", "Docker"],
+                    ["Laravel", "PHP", "SQL", "Jira", "Docker"],
                     "completed",
-                    "2024-02",
-                    "2024-04",
+                    "2024-08-05",
+                    "2024-08-12",
                     "Short-term professional project at Matogen — automated workshop orders and Jira ticket management with SQL, Jira, and Docker.",
                     "professional",
                     "https://matogen.com/",
