@@ -103,7 +103,7 @@ public static class PortfolioAnalyticsData
                     null,
                     "Personal South African e-commerce showcase: Angular storefront + ASP.NET Core API, PayFast payments, GitHub Actions CI/CD to Azure App Service and Azure SQL.",
                     "personal",
-                    "https://veldsupply.jumariblignaut.dev",
+                    null,
                     null),
                 new(
                     "accountant-app",

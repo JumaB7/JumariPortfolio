@@ -8,7 +8,7 @@ export const environment = {
   githubUrl: 'https://github.com/JumaB7',
   cvUrl: '/cv/Jumari_Blignaut_CV_2026.pdf',
   projects: {
-    veldSupplyUrl: 'https://veldsupply.jumariblignaut.dev',
+    veldSupplyUrl: '',
     accountantAdminUrl: '',
     accountantMobileUrl: '',
   },

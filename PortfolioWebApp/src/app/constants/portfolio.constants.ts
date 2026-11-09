@@ -8,8 +8,6 @@ import {
   SkillGroup,
 } from '../models/portfolio.model';
 
-const veldSupplyOrigin = environment.projects.veldSupplyUrl;
-
 /** Few curated visuals + discussion-first chapters (Linear-style product storytelling). */
 function veldSupplyCapabilities(): ProjectCapability[] {
   return [
@@ -17,8 +15,6 @@ function veldSupplyCapabilities(): ProjectCapability[] {
       title: 'One storefront. Two widths.',
       detail:
         'Laptop and phone are the same Angular app — not a separate mobile site. At ~1024px the hero runs as a wide composition with a featured product card; at ~320px navigation, search, and CTAs stack into a single readable column. Layouts reflow; the catalogue and checkout stay on one codebase.',
-      href: `${veldSupplyOrigin}/`,
-      linkLabel: 'Open live shop',
       visuals: [
         {
           image: '/projects/veld-supply/home-1024.jpg',
@@ -38,8 +34,6 @@ function veldSupplyCapabilities(): ProjectCapability[] {
       title: 'Clients cannot buy more than stock',
       detail:
         'Every product shows on-hand count. The quantity stepper stops at available units — here the bag is capped at 23 when stock is 23. The UI is only the first gate: cart and checkout APIs re-check inventory and reject oversells, so a stale tab cannot promise gear that is already gone.',
-      href: `${veldSupplyOrigin}/product/VS-OPT-1042`,
-      linkLabel: 'Open a product',
       visuals: [
         {
           image: '/projects/veld-supply/product-stock-1024.png',
@@ -54,24 +48,18 @@ function veldSupplyCapabilities(): ProjectCapability[] {
       title: 'Admin stays behind the role wall',
       detail:
         'Shop routes are public or customer-scoped. Admin routes (/admin/orders, products, sales, stock) require an authenticated admin claim — a client session is redirected to sign-in and never receives the desk UI or its APIs. Authorisation is enforced on the server from the JWT, not from a “hide the menu” trick on the client.',
-      href: `${veldSupplyOrigin}/admin/orders`,
-      linkLabel: 'Try the admin desk',
       callout: 'JWT role claim on the API — not a hidden nav item — decides who reaches the desk.',
     },
     {
       title: 'Search and find gear',
       detail:
         'On narrower layouts the shop exposes a dedicated Search gear field above the hero so buyers can jump straight to optics, apparel, or kit without hunting through categories. Desktop keeps category and featured paths front and centre; phone puts search within thumb reach.',
-      href: `${veldSupplyOrigin}/shop`,
-      linkLabel: 'Open the shop',
       callout: 'Same catalogue, different chrome — search sits in the thumb zone on ~320px.',
     },
     {
       title: 'Sales division, with charts',
       detail:
         'Paid orders only. The desk opens on period KPIs, then charts profit across months, sales versus profit, and contribution by category — so margin and mix are visible without exporting a spreadsheet.',
-      href: `${veldSupplyOrigin}/admin/sales`,
-      linkLabel: 'Open sales',
       visuals: [
         {
           image: '/projects/veld-supply/sales-admin-1024.png',
@@ -91,24 +79,18 @@ function veldSupplyCapabilities(): ProjectCapability[] {
       title: 'Catalogue: add and edit products',
       detail:
         'Admins create and update SKUs in place — name, SKU prefix, category, pricing, optics attributes, and stock — without a separate CMS. Soft-remove keeps historical orders intact while taking a product off the shop floor.',
-      href: `${veldSupplyOrigin}/admin/products`,
-      linkLabel: 'Open products',
       callout: 'One products desk for create, edit, stock, and soft-remove — no separate CMS.',
     },
     {
       title: 'PayFast checkout, amounts fixed on the server',
       detail:
         'Card numbers never touch the shop. Checkout continues on PayFast; the payable amount is computed and signed on the API so the client cannot rewrite the total. An order only counts as paid after a matching PayFast signature.',
-      href: `${veldSupplyOrigin}/product/VS-OPT-1042`,
-      linkLabel: 'See checkout note',
       callout: 'Payable total is signed on the server. The browser never gets to invent the price.',
     },
     {
       title: 'Account fields for delivery',
       detail:
         'Signed-in buyers keep personal and delivery details — name, email, phone, address — so checkout is not a blank form every time. The same account model feeds orders; admin accounts additionally unlock the desk.',
-      href: `${veldSupplyOrigin}/account`,
-      linkLabel: 'Open account',
       callout: 'One account model for delivery details and, when the role allows, the admin desk.',
     },
   ];
@@ -121,6 +103,7 @@ export const NAV_LINKS: NavLink[] = [
   { id: 'projects', label: 'Projects' },
   { id: 'experience', label: 'Experience' },
   { id: 'overview', label: 'Overview' },
+  { id: 'analytics', label: 'Analytics', route: '/dashboard/financial' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -187,10 +170,6 @@ export const PROJECTS: ProjectItem[] = [
         label: 'View details',
         url: '/projects/veld-supply',
         primary: true,
-      },
-      {
-        label: environment.projects.veldSupplyUrl ? 'Open live site' : 'Open live site — Coming soon',
-        url: environment.projects.veldSupplyUrl,
       },
     ],
   },

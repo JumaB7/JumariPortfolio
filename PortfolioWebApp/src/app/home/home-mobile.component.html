@@ -2,8 +2,14 @@
   class="fixed inset-x-0 top-0 z-50 border-b border-border bg-surface/88 backdrop-blur-xl"
 >
   <div class="content-shell flex h-[var(--nav-height)] items-center justify-between gap-4">
-    <a href="#home" class="text-[1.05rem] font-semibold tracking-[-0.02em] text-text-primary no-underline">
-      Jumari Blignaut
+    <a href="#home" class="inline-flex items-center no-underline" aria-label="Jumari Blignaut home">
+      <img
+        src="/logo-j-layered.png"
+        alt="Jumari Blignaut"
+        class="h-8 w-auto max-w-36 object-contain object-left"
+        width="256"
+        height="213"
+      />
     </a>
     <button
       type="button"
@@ -24,13 +30,23 @@
     <div id="mobile-nav" class="border-t border-border bg-surface px-5 py-4">
       <div class="flex flex-col gap-3">
         @for (link of navLinks; track link.id) {
-          <a
-            [href]="'#' + link.id"
-            class="rounded-lg px-3 py-2 text-base font-medium text-text-secondary no-underline hover:bg-surface-elevated hover:text-text-primary"
-            (click)="closeMenu()"
-          >
-            {{ link.label }}
-          </a>
+          @if (link.route) {
+            <a
+              [routerLink]="link.route"
+              class="rounded-lg px-3 py-2 text-base font-medium text-text-secondary no-underline hover:bg-surface-elevated hover:text-text-primary"
+              (click)="closeMenu()"
+            >
+              {{ link.label }}
+            </a>
+          } @else {
+            <a
+              [href]="'#' + link.id"
+              class="rounded-lg px-3 py-2 text-base font-medium text-text-secondary no-underline hover:bg-surface-elevated hover:text-text-primary"
+              (click)="closeMenu()"
+            >
+              {{ link.label }}
+            </a>
+          }
         }
         <a
           class="btn btn-primary mt-2"

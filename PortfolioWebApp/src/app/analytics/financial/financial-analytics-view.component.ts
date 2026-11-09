@@ -37,7 +37,6 @@ export class FinancialAnalyticsViewComponent {
   readonly dateRangeOptions = DATE_RANGE_OPTIONS;
   readonly accentClassByAccent = FINANCIAL_KPI_ACCENT_CLASS;
   readonly loadCopy = ANALYTICS_LOAD_COPY;
-  readonly skeletonSlots = [0, 1, 2, 3];
 
   readonly filters = signal<FinancialFilters>(this.finance.defaultFilters());
 

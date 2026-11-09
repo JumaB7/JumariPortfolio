@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import type { Chart, Options, Point, SeriesOptionsType } from 'highcharts';
 import {
-  AnalyticsSelection,
   PortfolioAnalyticsProject,
+  ProjectStatus,
+  ProjectTimelineRow,
 } from '../models/portfolio-analytics.model';
 import { PortfolioAnalyticsService } from './portfolio-analytics.service';
 import {
@@ -18,7 +19,6 @@ export class AnalyticsChartService {
   technologyDistribution(
     projects: PortfolioAnalyticsProject[],
     reduceMotion: boolean,
-    onSelect: (selection: AnalyticsSelection) => void,
   ): Options {
     const usage = this.analytics.technologyUsage(projects);
     if (!usage.length) {
@@ -46,15 +46,6 @@ export class AnalyticsChartService {
           },
         })),
         borderRadius: 5,
-        cursor: 'pointer',
-        point: {
-          events: {
-            click() {
-              const point = this as Point;
-              onSelect({ kind: 'technology', value: String(point.name ?? point.category) });
-            },
-          },
-        },
       },
     ];
 
@@ -111,7 +102,6 @@ export class AnalyticsChartService {
   categoryDonut(
     projects: PortfolioAnalyticsProject[],
     reduceMotion: boolean,
-    onSelect: (selection: AnalyticsSelection) => void,
   ): Options {
     const distribution = this.analytics.categoryDistribution(projects);
     if (!distribution.length) {
@@ -159,8 +149,7 @@ export class AnalyticsChartService {
         pie: {
           innerSize: '62%',
           borderWidth: 0,
-          allowPointSelect: true,
-          cursor: 'pointer',
+          allowPointSelect: false,
           size: '68%',
           center: ['50%', '50%'],
           dataLabels: {
@@ -177,14 +166,6 @@ export class AnalyticsChartService {
             overflow: 'allow',
             connectorColor: 'rgba(163,174,192,0.55)',
             connectorWidth: 1,
-          },
-          point: {
-            events: {
-              click() {
-                const point = this as Point;
-                onSelect({ kind: 'category', value: String(point.name) });
-              },
-            },
           },
         },
       },
@@ -300,20 +281,35 @@ export class AnalyticsChartService {
     };
   }
 
+  projectTimelineRows(projects: PortfolioAnalyticsProject[]): ProjectTimelineRow[] {
+    const dated = this.datedProjects(projects);
+    if (!dated.length) return [];
+
+    const min = Math.min(...dated.map((row) => row.start));
+    const max = Math.max(...dated.map((row) => row.end));
+    const spanMs = Math.max(max - min, 1);
+
+    return dated.map((row) => {
+      const rawSpan = ((row.end - row.start) / spanMs) * 100;
+      const span = Math.min(100, Math.max(rawSpan, 8));
+      const offset = Math.min(Math.max(((row.start - min) / spanMs) * 100, 0), 100 - span);
+      return {
+        id: row.project.id,
+        name: row.project.name,
+        startLabel: formatTimelineDate(row.start),
+        endLabel: row.project.endDate ? formatTimelineDate(row.end) : 'Present',
+        offset: Math.round(offset * 10) / 10,
+        span: Math.round(span * 10) / 10,
+        inProgress: row.project.status === ProjectStatus.InProgress || !row.project.endDate,
+      };
+    });
+  }
+
   projectTimeline(
     projects: PortfolioAnalyticsProject[],
     reduceMotion: boolean,
   ): Options {
-    const dated = this.analytics
-      .projectsWithDates(projects)
-      .map((p) => {
-        const start = parseProjectDate(p.startDate);
-        const end = p.endDate ? parseProjectDate(p.endDate) : Date.now();
-        if (start === undefined || end === undefined || end < start) return undefined;
-        return { project: p, start, end };
-      })
-      .filter((row): row is NonNullable<typeof row> => !!row)
-      .sort((a, b) => a.start - b.start || a.project.name.localeCompare(b.project.name));
+    const dated = this.datedProjects(projects);
 
     if (!dated.length) {
       return emptyChartOptions(
@@ -394,6 +390,25 @@ export class AnalyticsChartService {
       series,
     };
   }
+
+  private datedProjects(projects: PortfolioAnalyticsProject[]): DatedProject[] {
+    return this.analytics
+      .projectsWithDates(projects)
+      .map((project) => {
+        const start = parseProjectDate(project.startDate);
+        const end = project.endDate ? parseProjectDate(project.endDate) : Date.now();
+        if (start === undefined || end === undefined || end < start) return undefined;
+        return { project, start, end };
+      })
+      .filter((row): row is DatedProject => !!row)
+      .sort((a, b) => a.start - b.start || a.project.name.localeCompare(b.project.name));
+  }
+}
+
+interface DatedProject {
+  project: PortfolioAnalyticsProject;
+  start: number;
+  end: number;
 }
 
 /** Accepts `YYYY-MM` or ISO dates from the analytics payload. */

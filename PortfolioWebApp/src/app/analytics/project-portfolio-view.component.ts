@@ -1,8 +1,7 @@
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   computed,
   inject,
   signal,
@@ -16,10 +15,10 @@ import {
   PROJECT_KIND_LABELS,
   PROJECT_STATUS_LABELS,
 } from '../constants/analytics.constants';
+import { BreakpointDirective } from '../directives/breakpoint.directive';
 import {
   AnalyticsFilters,
   AnalyticsLoadState,
-  AnalyticsSelection,
   ProjectKind,
   ProjectStatus,
 } from './models/portfolio-analytics.model';
@@ -29,19 +28,16 @@ import { PortfolioAnalyticsService } from './services/portfolio-analytics.servic
 @Component({
   selector: 'app-project-portfolio-view',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, DatePipe, HighchartsChartComponent],
+  imports: [DatePipe, HighchartsChartComponent, BreakpointDirective],
   templateUrl: './project-portfolio-view.component.html',
 })
 export class ProjectPortfolioViewComponent {
-  private readonly destroyRef = inject(DestroyRef);
   private readonly analytics = inject(PortfolioAnalyticsService);
   private readonly charts = inject(AnalyticsChartService);
 
   readonly filters = signal<AnalyticsFilters>(this.analytics.defaultFilters());
-  readonly selection = signal<AnalyticsSelection>(null);
   readonly period = signal<'showcase'>('showcase');
   readonly loadCopy = ANALYTICS_LOAD_COPY;
-  readonly skeletonSlots = [0, 1, 2, 3];
 
   private readonly reduceMotion =
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -106,8 +102,6 @@ export class ProjectPortfolioViewComponent {
       label: PROJECT_STATUS_LABELS[id],
     })),
   );
-  readonly kindLabelById = PROJECT_KIND_LABELS;
-
   readonly hasActiveFilters = computed(() => {
     const f = this.filters();
     return (
@@ -121,15 +115,11 @@ export class ProjectPortfolioViewComponent {
   );
 
   readonly techChart = computed<Options>(() =>
-    this.charts.technologyDistribution(this.filteredProjects(), this.reduceMotion, (s) =>
-      this.selection.set(s),
-    ),
+    this.charts.technologyDistribution(this.filteredProjects(), this.reduceMotion),
   );
 
   readonly categoryChart = computed<Options>(() =>
-    this.charts.categoryDonut(this.filteredProjects(), this.reduceMotion, (s) =>
-      this.selection.set(s),
-    ),
+    this.charts.categoryDonut(this.filteredProjects(), this.reduceMotion),
   );
 
   readonly matrixChart = computed<Options>(() =>
@@ -140,48 +130,18 @@ export class ProjectPortfolioViewComponent {
     this.charts.projectTimeline(this.filteredProjects(), this.reduceMotion),
   );
 
-  readonly selectionProjects = computed(() => {
-    const sel = this.selection();
-    const projects = this.filteredProjects();
-    if (!sel) return [];
-    if (sel.kind === 'technology') {
-      return projects.filter((p) => p.technologies.includes(sel.value));
-    }
-    if (sel.kind === 'category') {
-      return projects.filter((p) => p.category === sel.value);
-    }
-    if (sel.kind === 'project') {
-      return projects.filter((p) => p.name === sel.value);
-    }
-    return [];
-  });
-
-  readonly selectionTitle = computed(() => {
-    const sel = this.selection();
-    if (!sel) return '';
-    if (sel.kind === 'technology') return `Projects using ${sel.value}`;
-    if (sel.kind === 'category') return `Projects in ${sel.value}`;
-    if (sel.kind === 'project') return sel.value;
-    return '';
-  });
-
-  constructor() {
-    this.destroyRef.onDestroy(() => this.selection.set(null));
-  }
+  readonly timelineRows = computed(() => this.charts.projectTimelineRows(this.filteredProjects()));
 
   setKind(value: string): void {
     this.filters.update((f) => ({ ...f, kind: value as ProjectKind | 'all' }));
-    this.selection.set(null);
   }
 
   setCategory(value: string): void {
     this.filters.update((f) => ({ ...f, category: value as AnalyticsFilters['category'] }));
-    this.selection.set(null);
   }
 
   setTechnology(value: string): void {
     this.filters.update((f) => ({ ...f, technology: value as AnalyticsFilters['technology'] }));
-    this.selection.set(null);
   }
 
   setStatus(value: string): void {
@@ -189,16 +149,10 @@ export class ProjectPortfolioViewComponent {
       ...f,
       status: value as ProjectStatus | 'all',
     }));
-    this.selection.set(null);
   }
 
   resetFilters(): void {
     this.filters.set(this.analytics.defaultFilters());
-    this.selection.set(null);
-  }
-
-  clearSelection(): void {
-    this.selection.set(null);
   }
 
   retryLoad(): void {

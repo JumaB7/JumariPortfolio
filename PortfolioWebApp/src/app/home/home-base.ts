@@ -181,6 +181,7 @@ export class HomeBase {
     const offset = 120;
     let current = 'home';
     for (const link of this.navLinks) {
+      if (link.route) continue;
       const el = document.getElementById(link.id);
       if (!el) continue;
       if (el.getBoundingClientRect().top - offset <= 0) {

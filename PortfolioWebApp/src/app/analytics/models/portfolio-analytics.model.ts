@@ -62,11 +62,17 @@ export interface AnalyticsKpis {
   projectCategories: number;
 }
 
-export type AnalyticsSelection =
-  | { kind: 'technology'; value: string }
-  | { kind: 'category'; value: string }
-  | { kind: 'project'; value: string }
-  | null;
+export interface ProjectTimelineRow {
+  id: string;
+  name: string;
+  startLabel: string;
+  endLabel: string;
+  /** Horizontal start of the bar, 0–100 across the shared date range. */
+  offset: number;
+  /** Bar length, 0–100, with a minimum so short projects stay visible. */
+  span: number;
+  inProgress: boolean;
+}
 
 export type AnalyticsLoadState =
   | { status: 'loading' }

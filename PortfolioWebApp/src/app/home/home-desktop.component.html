@@ -2,28 +2,42 @@
   class="fixed inset-x-0 top-0 z-50 border-b border-border bg-surface/88 backdrop-blur-xl"
 >
   <div class="content-shell flex h-[var(--nav-height)] items-center justify-between gap-4">
-    <a href="#home" class="inline-flex items-center gap-2 text-[1.05rem] font-semibold tracking-[-0.02em] text-text-primary no-underline">
-      <span class="h-1.5 w-1.5 rounded-full bg-accent-cyan shadow-[0_0_8px_rgba(0,217,255,0.7)]" aria-hidden="true"></span>
-      Jumari Blignaut
+    <a href="#home" class="inline-flex items-center no-underline" aria-label="Jumari Blignaut home">
+      <img
+        src="/logo-j-layered.png"
+        alt="Jumari Blignaut"
+        class="h-9 w-auto max-w-40 object-contain object-left"
+        width="256"
+        height="213"
+      />
     </a>
     <nav class="flex items-center gap-7" aria-label="Primary">
       @for (link of navLinks; track link.id) {
-        <a
-          [href]="'#' + link.id"
-          class="relative text-sm font-medium no-underline transition-colors"
-          [ngClass]="
-            activeSection() === link.id
-              ? 'text-text-primary'
-              : 'text-text-secondary hover:text-text-primary'
-          "
-        >
-          {{ link.label }}
-          @if (activeSection() === link.id) {
-            <span
-              class="absolute -bottom-2 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-accent-cyan shadow-[0_0_12px_rgba(0,217,255,0.55)]"
-            ></span>
-          }
-        </a>
+        @if (link.route) {
+          <a
+            [routerLink]="link.route"
+            class="text-sm font-medium text-text-secondary no-underline transition-colors hover:text-text-primary"
+          >
+            {{ link.label }}
+          </a>
+        } @else {
+          <a
+            [href]="'#' + link.id"
+            class="relative text-sm font-medium no-underline transition-colors"
+            [ngClass]="
+              activeSection() === link.id
+                ? 'text-text-primary'
+                : 'text-text-secondary hover:text-text-primary'
+            "
+          >
+            {{ link.label }}
+            @if (activeSection() === link.id) {
+              <span
+                class="absolute -bottom-2 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-accent-cyan shadow-[0_0_12px_rgba(0,217,255,0.55)]"
+              ></span>
+            }
+          </a>
+        }
       }
       <a class="btn btn-primary min-h-10! px-4! text-sm!" [href]="cvUrl" target="_blank" rel="noopener">
         View CV

@@ -1055,18 +1055,14 @@
     padding: 0.35rem 0.5rem 0.75rem;
   }
 
-  .dashboard-sidebar__avatar {
-    display: grid;
-    place-items: center;
-    border-radius: 999px;
-    border: 1px solid rgba(34, 211, 238, 0.35);
-    background: linear-gradient(135deg, rgba(14, 143, 173, 0.35), rgba(59, 130, 246, 0.25));
-    color: var(--text-primary);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    height: 2.5rem;
-    width: 2.5rem;
+  .dashboard-sidebar__logo {
+    display: block;
+    height: 2.75rem;
+    width: auto;
+    max-width: 4.5rem;
+    object-fit: contain;
+    object-position: left center;
+    flex-shrink: 0;
   }
 
   .dashboard-sidebar__nav {
@@ -1074,6 +1070,22 @@
     flex: 1;
     flex-direction: column;
     gap: 0.35rem;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .dashboard-nav-label {
+    margin: 0.85rem 0 0.15rem;
+    padding: 0 0.8rem;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .dashboard-nav-label:first-child {
+    margin-top: 0;
   }
 
   .dashboard-sidebar__footer {
@@ -1238,6 +1250,12 @@
 
   .analytics-chart--tall {
     min-height: 400px;
+  }
+
+  .analytics-chart-loading {
+    display: grid;
+    min-height: 22rem;
+    place-items: center;
   }
 
   .analytics-state {

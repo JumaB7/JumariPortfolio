@@ -43,6 +43,13 @@ builder.Services.AddScoped<IDashboardOverviewService, DashboardOverviewService>(
 builder.Services.AddScoped<FinancialContentService>();
 builder.Services.AddScoped<AgentTools>();
 builder.Services.AddScoped<AgentOrchestrator>();
+builder.Services.Configure<ContactEmailOptions>(
+    builder.Configuration.GetSection(ContactEmailOptions.SectionName));
+builder.Services.AddHttpClient<IContactEmailService, ResendContactEmailService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.resend.com/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 builder.Services.AddPortfolioRateLimiting(builder.Configuration);
 
 var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>()

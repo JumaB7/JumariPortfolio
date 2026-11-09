@@ -33,3 +33,18 @@ export const ANALYTICS_LOAD_COPY = {
   projectsError: 'Could not load portfolio analytics.',
   retry: 'Try again',
 } as const;
+
+export const DASHBOARD_SITE_LINKS = [
+  { id: 'home', label: 'Home', fragment: 'home' },
+  { id: 'about', label: 'About', fragment: 'about' },
+  { id: 'skills', label: 'Skills', fragment: 'skills' },
+  { id: 'projects', label: 'Projects', fragment: 'projects' },
+  { id: 'experience', label: 'Experience', fragment: 'experience' },
+  { id: 'overview', label: 'Overview', fragment: 'overview' },
+  { id: 'contact', label: 'Contact', fragment: 'contact' },
+] as const;
+
+export const DASHBOARD_ANALYTICS_LINKS = [
+  { id: 'financial', label: 'Financial Analytics', route: '/dashboard/financial' },
+  { id: 'portfolio', label: 'Project Portfolio', route: '/dashboard/projects' },
+] as const;

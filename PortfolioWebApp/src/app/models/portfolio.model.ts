@@ -1,6 +1,8 @@
 export interface NavLink {
   id: string;
   label: string;
+  /** In-app route. Section links omit this and scroll to `id`. */
+  route?: string;
 }
 
 export type ProjectActionLinkKind = 'route' | 'hash' | 'external' | 'disabled';

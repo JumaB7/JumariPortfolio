@@ -1,7 +1,14 @@
 <div class="dashboard-shell">
   <aside class="dashboard-sidebar" [class.dashboard-sidebar--open]="mobileNavOpen()">
     <div class="dashboard-sidebar__brand">
-      <div class="dashboard-sidebar__avatar" aria-hidden="true">JB</div>
+      <img
+        class="dashboard-sidebar__logo"
+        src="/logo-j-layered.png"
+        alt=""
+        width="256"
+        height="213"
+        aria-hidden="true"
+      />
       <div>
         <p class="m-0 text-sm font-semibold text-text-primary">Jumari Blignaut</p>
         <p class="mt-0.5 mb-0 text-xs text-text-muted">Portfolio Demo</p>
@@ -9,38 +16,29 @@
     </div>
 
     <nav class="dashboard-sidebar__nav" aria-label="Dashboard sections">
-      <a
-        routerLink="/dashboard/financial"
-        routerLinkActive="is-active"
-        class="dashboard-nav-link"
-        (click)="closeMobileNav()"
-      >
-        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M4 19V5M4 19h16M8 16V9M12 16v-5M16 16V7"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-          />
-        </svg>
-        Financial Analytics
-      </a>
-      <a
-        routerLink="/dashboard/projects"
-        routerLinkActive="is-active"
-        class="dashboard-nav-link"
-        (click)="closeMobileNav()"
-      >
-        <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M4 7h16M4 12h16M4 17h10"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-          />
-        </svg>
-        Project Portfolio
-      </a>
+      <p class="dashboard-nav-label">Site</p>
+      @for (link of siteLinks; track link.id) {
+        <a
+          class="dashboard-nav-link"
+          routerLink="/"
+          [fragment]="link.fragment"
+          (click)="closeMobileNav()"
+        >
+          {{ link.label }}
+        </a>
+      }
+
+      <p class="dashboard-nav-label">Analytics</p>
+      @for (link of analyticsLinks; track link.id) {
+        <a
+          class="dashboard-nav-link"
+          [routerLink]="link.route"
+          routerLinkActive="is-active"
+          (click)="closeMobileNav()"
+        >
+          {{ link.label }}
+        </a>
+      }
     </nav>
 
     <div class="dashboard-sidebar__footer">

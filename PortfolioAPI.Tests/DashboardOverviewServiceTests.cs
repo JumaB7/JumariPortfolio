@@ -182,7 +182,7 @@ public class DashboardOverviewServiceTests
                     "2025-11",
                     "Shop",
                     "personal",
-                    "https://veldsupply.jumariblignaut.dev",
+                    null,
                     null),
                 new PortfolioAnalyticsProjectDto(
                     "portfolio-dashboard",

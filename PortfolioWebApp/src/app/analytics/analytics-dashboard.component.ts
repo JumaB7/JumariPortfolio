@@ -9,6 +9,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { catchError, filter, map, of, startWith } from 'rxjs';
 import { AgentChatPanelComponent } from '../agent/agent-chat-panel.component';
+import { DASHBOARD_ANALYTICS_LINKS, DASHBOARD_SITE_LINKS } from '../constants/analytics.constants';
 
 @Component({
   selector: 'app-analytics-dashboard',
@@ -25,6 +26,8 @@ export class AnalyticsDashboardComponent {
 
   readonly agentOpen = signal(false);
   readonly mobileNavOpen = signal(false);
+  readonly siteLinks = DASHBOARD_SITE_LINKS;
+  readonly analyticsLinks = DASHBOARD_ANALYTICS_LINKS;
 
   private readonly url = toSignal(
     this.router.events.pipe(
