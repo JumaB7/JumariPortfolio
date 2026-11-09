@@ -15,7 +15,7 @@ import { AgentChatStateService } from './services/agent-chat-state.service';
   template: `
     <button
       type="button"
-      class="fixed right-4 bottom-4 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-border-highlight bg-[linear-gradient(135deg,#0c7a96_0%,#0e8fad_100%)] text-white shadow-[0_10px_28px_rgba(8,47,73,0.45)] transition-[transform,box-shadow] hover:scale-[1.04] hover:shadow-[0_12px_32px_rgba(8,47,73,0.5)] sm:right-5 sm:bottom-5"
+      class="fixed right-4 bottom-4 z-60 flex h-14 w-14 items-center justify-center rounded-full border border-border-highlight bg-[linear-gradient(135deg,#0c7a96_0%,#0e8fad_100%)] text-white shadow-[0_10px_28px_rgba(8,47,73,0.45)] transition-[transform,box-shadow] hover:scale-[1.04] hover:shadow-[0_12px_32px_rgba(8,47,73,0.5)] sm:right-5 sm:bottom-5"
       [attr.aria-label]="chat.open() ? 'Close portfolio agent' : 'Open portfolio agent'"
       [attr.aria-expanded]="chat.open()"
       (click)="chat.togglePanel()"

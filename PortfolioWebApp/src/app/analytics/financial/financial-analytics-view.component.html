@@ -27,7 +27,7 @@
   aria-label="Filters"
 >
   <div class="flex flex-wrap items-end gap-3">
-    <label class="analytics-field min-w-[11rem] flex-1">
+    <label class="analytics-field min-w-44 flex-1">
       <span class="analytics-field__label">Date range</span>
       <select
         class="field min-h-11! py-2!"
@@ -40,7 +40,7 @@
       </select>
     </label>
 
-    <label class="analytics-field min-w-[11rem] flex-1">
+    <label class="analytics-field min-w-44 flex-1">
       <span class="analytics-field__label">Department</span>
       <select
         class="field min-h-11! py-2!"
@@ -54,7 +54,7 @@
       </select>
     </label>
 
-    <label class="analytics-field min-w-[11rem] flex-1">
+    <label class="analytics-field min-w-44 flex-1">
       <span class="analytics-field__label">Category</span>
       <select
         class="field min-h-11! py-2!"
@@ -108,7 +108,7 @@
               {{ card.deltaLabel }}
             </p>
           </div>
-          <div class="financial-kpi__spark w-[5.5rem] shrink-0 pt-1">
+          <div class="financial-kpi__spark w-22 shrink-0 pt-1">
             @if (sparklineOptions().get(card.id); as spark) {
               <highcharts-chart class="block h-11 w-full" [options]="spark" [oneToOne]="true" />
             }

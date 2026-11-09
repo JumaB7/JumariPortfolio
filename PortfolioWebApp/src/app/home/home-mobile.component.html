@@ -1,7 +1,7 @@
 <header
   class="fixed inset-x-0 top-0 z-50 border-b border-border bg-surface/88 backdrop-blur-xl"
 >
-  <div class="content-shell flex h-[var(--nav-height)] items-center justify-between gap-4">
+  <div class="content-shell flex h-(--nav-height) items-center justify-between gap-4">
     <a href="#home" class="inline-flex items-center no-underline" aria-label="Jumari Blignaut home">
       <img
         src="/logo-j-layered.png"
@@ -71,7 +71,7 @@
   >
     <div class="hero-atmosphere pointer-events-none absolute inset-0" aria-hidden="true"></div>
     <app-aurora-background (contentReady)="onHeroContentReady()" />
-    <div class="hero-content-veil pointer-events-none absolute inset-0 z-[2]" aria-hidden="true"></div>
+    <div class="hero-content-veil pointer-events-none absolute inset-0 z-2" aria-hidden="true"></div>
 
     <div class="content-shell hero-content py-14">
       <div class="hero-copy-panel min-w-0">
@@ -115,13 +115,13 @@
         </div>
         @if (about.highlights.length) {
           <aside class="surface-card bg-surface-elevated p-6" [appReveal]="120">
-            <p class="m-0 mb-5 text-[0.75rem] font-semibold tracking-[0.16em] text-accent-cyan uppercase">
+            <p class="m-0 mb-5 text-xs font-semibold tracking-[0.16em] text-accent-cyan uppercase">
               Snapshot
             </p>
             <dl class="m-0 space-y-5">
               @for (item of about.highlights; track item.label) {
                 <div>
-                  <dt class="m-0 text-[0.75rem] font-semibold tracking-[0.14em] text-accent-cyan uppercase">
+                  <dt class="m-0 text-xs font-semibold tracking-[0.14em] text-accent-cyan uppercase">
                     {{ item.label }}
                   </dt>
                   <dd class="mt-2 mb-0 text-base font-medium leading-snug text-text-primary">
@@ -177,12 +177,12 @@
         @for (project of projectCards; track project.id; let i = $index) {
           <article class="surface-card project-card overflow-hidden bg-surface-elevated" [appReveal]="i * 80">
             <div
-              class="project-preview relative min-h-[13rem] border-b border-border"
+              class="project-preview relative min-h-52 border-b border-border"
               [ngClass]="project.previewClass"
               aria-hidden="true"
             >
               <div class="project-preview-grid absolute inset-0 opacity-20"></div>
-              <div class="project-preview-scale relative flex h-full min-h-[13rem] flex-col justify-start pt-3 pb-3">
+              <div class="project-preview-scale relative flex h-full min-h-52 flex-col justify-start pt-3 pb-3">
                 @if (project.overviewShots.length) {
                   <app-project-showcase-stage
                     [shots]="project.overviewShots"
@@ -199,7 +199,7 @@
                         <div class="flex h-20 items-end gap-1.5 rounded-lg border border-border bg-surface px-2 pt-3 pb-2">
                           @for (h of [40, 65, 48, 80, 55]; track h) {
                             <div
-                              class="flex-1 rounded-t-md bg-gradient-to-t from-accent-blue to-accent-cyan"
+                              class="flex-1 rounded-t-md bg-linear-to-t from-accent-blue to-accent-cyan"
                               [ngClass]="
                                 h === 40
                                   ? 'h-[40%]'
@@ -315,7 +315,7 @@
       </div>
       <div class="relative mt-8">
         <div
-          class="pointer-events-none absolute top-3 bottom-3 left-[0.6875rem] w-px bg-[color-mix(in_srgb,var(--accent-blue)_45%,transparent)]"
+          class="pointer-events-none absolute top-3 bottom-3 left-2.75 w-px bg-[color-mix(in_srgb,var(--accent-blue)_45%,transparent)]"
           aria-hidden="true"
         ></div>
         <div class="space-y-5">
@@ -457,7 +457,7 @@
             <p class="mt-1 mb-3 text-sm text-text-secondary">
               Relative emphasis across the stack used in these portfolio projects.
             </p>
-            <highcharts-chart class="block min-h-[260px] w-full max-w-full overflow-visible" [options]="techChart()" />
+            <highcharts-chart class="block min-h-65 w-full max-w-full overflow-visible" [options]="techChart()" />
           </article>
           <article class="surface-card min-w-0 overflow-hidden bg-surface-elevated p-5" [appReveal]="140">
             <div class="mb-1 flex items-baseline justify-between gap-3">
@@ -465,7 +465,7 @@
               <span class="text-[0.65rem] font-medium tracking-wide text-text-muted uppercase">Illustrative</span>
             </div>
             <p class="mt-1 mb-3 text-sm text-text-secondary">Count of showcased projects by category.</p>
-            <highcharts-chart class="block min-h-[260px] w-full max-w-full overflow-visible" [options]="categoryChart()" />
+            <highcharts-chart class="block min-h-65 w-full max-w-full overflow-visible" [options]="categoryChart()" />
           </article>
         </div>
         <div class="mt-6 flex flex-wrap gap-2.5" appReveal>
