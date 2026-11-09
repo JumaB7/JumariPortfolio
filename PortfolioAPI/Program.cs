@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PortfolioAPI.Agent;
 using PortfolioAPI.Data;
@@ -20,7 +22,18 @@ builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PortfolioDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Portfolio")));
+    options.UseSqlServer(
+        ResumeAwareConnectionString(builder.Configuration.GetConnectionString("Portfolio")),
+        sql =>
+        {
+            // Error -2 is the post-login timeout seen when serverless SQL is resuming.
+            // Retries still fail the request if the database stays unavailable.
+            sql.EnableRetryOnFailure(
+                maxRetryCount: 3,
+                maxRetryDelay: TimeSpan.FromSeconds(8),
+                errorNumbersToAdd: null);
+            sql.CommandTimeout(30);
+        }));
 builder.Services.AddMemoryCache();
 builder.Services.Configure<DashboardOverviewCacheOptions>(_ => { });
 builder.Services.AddSingleton<DashboardOverviewCacheGate>();
@@ -68,7 +81,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePages();
 app.UseDefaultFiles();
-app.UseStaticFiles();
+
+var contentTypes = new FileExtensionContentTypeProvider();
+contentTypes.Mappings[".xml"] = "application/xml";
+contentTypes.Mappings[".txt"] = "text/plain";
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = contentTypes,
+});
 app.UseCors("PortfolioWebApp");
 app.UseRateLimiter();
 app.UseAuthorization();
@@ -89,3 +109,15 @@ app.MapFallback("/api/{**path}", async context =>
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+static string? ResumeAwareConnectionString(string? connectionString)
+{
+    if (string.IsNullOrWhiteSpace(connectionString))
+        return connectionString;
+
+    var connection = new SqlConnectionStringBuilder(connectionString);
+    // Default 15s expires while Azure SQL serverless is still in post-login resume.
+    if (connection.ConnectTimeout < 60)
+        connection.ConnectTimeout = 60;
+    return connection.ConnectionString;
+}

@@ -1,16 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DestroyRef, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder } from '@angular/forms';
 import type { Options } from 'highcharts';
-import { catchError, fromEvent, of } from 'rxjs';
+import { catchError, fromEvent, map, of, startWith, switchMap } from 'rxjs';
 import {
   DEFAULT_PROJECT_PREVIEW_CLASS,
   PROJECT_PREVIEW_CLASS_BY_ID,
 } from '../constants/analytics.constants';
 import { CONTACT_STATUS_MESSAGES } from '../constants/contact.constants';
+import { OVERVIEW_STATUS_COPY } from '../constants/portfolio.constants';
 import { ContactStatus } from '../models/contact.model';
-import { ChartSeriesPoint, DashboardOverview } from '../models/dashboard.model';
+import { ChartSeriesPoint } from '../models/dashboard.model';
 import {
   ProjectActionLinkKind,
   ProjectActionView,
@@ -48,11 +49,29 @@ export class HomeBase {
   readonly statusMessage = signal('');
   /** Hero copy fades in once the aurora intro reaches the reveal phase. */
   readonly heroContentReady = signal(false);
+  readonly overviewStatusCopy = OVERVIEW_STATUS_COPY;
 
-  readonly overview = toSignal<DashboardOverview | undefined>(
-    this.dashboardService.getOverview().pipe(catchError(() => of(undefined))),
-    { initialValue: undefined },
+  private readonly overviewAttempt = signal(0);
+
+  private readonly overviewState = toSignal(
+    toObservable(this.overviewAttempt).pipe(
+      switchMap(() =>
+        this.dashboardService.getOverview().pipe(
+          map((data) => ({ status: 'ready' as const, data })),
+          catchError(() => of({ status: 'error' as const })),
+          startWith({ status: 'loading' as const }),
+        ),
+      ),
+    ),
+    { initialValue: { status: 'loading' as const } },
   );
+
+  readonly overview = computed(() => {
+    const state = this.overviewState();
+    return state.status === 'ready' ? state.data : undefined;
+  });
+
+  readonly overviewFailed = computed(() => this.overviewState().status === 'error');
 
   readonly techChart = computed(() =>
     this.buildPie('Technology mix', this.overview()?.technologyMix ?? []),
@@ -111,32 +130,44 @@ export class HomeBase {
     this.menuOpen.set(false);
   }
 
+  retryOverview(): void {
+    if (this.overviewState().status === 'loading') return;
+    this.overviewAttempt.update((count) => count + 1);
+  }
+
   submit(): void {
     if (this.form.invalid || this.submitting()) {
       this.form.markAllAsTouched();
       return;
     }
 
+    const request = this.form.getRawValue();
     this.submitting.set(true);
     this.status.set(null);
+    this.form.disable({ emitEvent: false });
 
-    this.contactService.send(this.form.getRawValue()).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        this.status.set('sent');
-        this.statusMessage.set(CONTACT_STATUS_MESSAGES.sent);
-        this.form.reset();
-      },
-      error: (err: unknown) => {
-        this.submitting.set(false);
-        this.status.set('error');
-        this.statusMessage.set(
-          err instanceof HttpErrorResponse && err.status === 429
-            ? CONTACT_STATUS_MESSAGES.rateLimited
-            : CONTACT_STATUS_MESSAGES.error,
-        );
-      },
-    });
+    this.contactService
+      .send(request)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.form.enable({ emitEvent: false });
+          this.form.reset();
+          this.submitting.set(false);
+          this.status.set('sent');
+          this.statusMessage.set(CONTACT_STATUS_MESSAGES.sent);
+        },
+        error: (err: unknown) => {
+          this.form.enable({ emitEvent: false });
+          this.submitting.set(false);
+          this.status.set('error');
+          this.statusMessage.set(
+            err instanceof HttpErrorResponse && err.status === 429
+              ? CONTACT_STATUS_MESSAGES.rateLimited
+              : CONTACT_STATUS_MESSAGES.error,
+          );
+        },
+      });
   }
 
   private resolveActionLinkKind(url: string): ProjectActionLinkKind {

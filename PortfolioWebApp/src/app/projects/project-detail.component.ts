@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
@@ -16,6 +16,7 @@ import {
   ProjectCardView,
 } from '../models/portfolio.model';
 import { PortfolioService } from '../services/portfolio.service';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-project-detail',
@@ -29,6 +30,7 @@ import { PortfolioService } from '../services/portfolio.service';
 export class ProjectDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly portfolio = inject(PortfolioService);
+  private readonly seo = inject(SeoService);
 
   private readonly projectId = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('id') ?? '')),
@@ -61,6 +63,19 @@ export class ProjectDetailComponent {
 
   readonly email = this.portfolio.email;
   readonly year = this.portfolio.year;
+
+  constructor() {
+    effect(() => {
+      const project = this.project();
+      if (!project) return;
+      this.seo.apply({
+        title: `${project.name} — Jumari Blignaut`,
+        description: project.detailSummary ?? project.description,
+        path: `/projects/${project.id}`,
+        image: project.previewVisuals?.[0]?.image ?? project.overviewShots[0]?.image,
+      });
+    });
+  }
 
   private resolveActionLinkKind(url: string): ProjectActionLinkKind {
     if (!url) return 'disabled';

@@ -84,6 +84,8 @@ jobs:
           test -f api/PortfolioAPI.dll
           test -f api/PortfolioAPI.runtimeconfig.json
           test -f api/wwwroot/index.html
+          test -f api/wwwroot/sitemap.xml
+          test -f api/wwwroot/robots.txt
           test ! -d api/api
 
       - name: Sign in to Azure

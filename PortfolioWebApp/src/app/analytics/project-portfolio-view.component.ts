@@ -7,11 +7,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HighchartsChartComponent } from 'highcharts-angular';
 import type { Options } from 'highcharts';
-import { catchError, map, of, startWith } from 'rxjs';
+import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import {
+  ANALYTICS_LOAD_COPY,
   PROJECT_KIND_LABELS,
   PROJECT_STATUS_LABELS,
 } from '../constants/analytics.constants';
@@ -39,20 +40,28 @@ export class ProjectPortfolioViewComponent {
   readonly filters = signal<AnalyticsFilters>(this.analytics.defaultFilters());
   readonly selection = signal<AnalyticsSelection>(null);
   readonly period = signal<'showcase'>('showcase');
+  readonly loadCopy = ANALYTICS_LOAD_COPY;
+  readonly skeletonSlots = [0, 1, 2, 3];
 
   private readonly reduceMotion =
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  private readonly loadAttempt = signal(0);
+
   readonly loadState = toSignal(
-    this.analytics.getAnalytics().pipe(
-      map((data): AnalyticsLoadState => ({ status: 'ready', data })),
-      catchError(() =>
-        of({
-          status: 'error',
-          message: 'Could not load portfolio analytics. Please try again.',
-        } satisfies AnalyticsLoadState),
+    toObservable(this.loadAttempt).pipe(
+      switchMap(() =>
+        this.analytics.getAnalytics().pipe(
+          map((data): AnalyticsLoadState => ({ status: 'ready', data })),
+          catchError(() =>
+            of({
+              status: 'error',
+              message: ANALYTICS_LOAD_COPY.projectsError,
+            } satisfies AnalyticsLoadState),
+          ),
+          startWith({ status: 'loading' } satisfies AnalyticsLoadState),
+        ),
       ),
-      startWith({ status: 'loading' } satisfies AnalyticsLoadState),
     ),
     { initialValue: { status: 'loading' } satisfies AnalyticsLoadState },
   );
@@ -190,5 +199,10 @@ export class ProjectPortfolioViewComponent {
 
   clearSelection(): void {
     this.selection.set(null);
+  }
+
+  retryLoad(): void {
+    if (this.loadState().status === 'loading') return;
+    this.loadAttempt.update((count) => count + 1);
   }
 }

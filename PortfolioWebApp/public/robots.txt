@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# JSON API responses are not pages. Styles, scripts, and images stay crawlable.
+Disallow: /api/
+
+Sitemap: https://jumariblignaut.dev/sitemap.xml

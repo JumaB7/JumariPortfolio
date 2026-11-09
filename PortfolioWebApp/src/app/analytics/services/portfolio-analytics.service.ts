@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { withoutGlobalLoading } from '../../interceptors/loading.interceptor';
 import {
   AnalyticsFilters,
   AnalyticsKpis,
@@ -26,7 +27,10 @@ export class PortfolioAnalyticsService {
   /** Shared showcase analytics from PortfolioAPI (SQL Server). */
   getAnalytics(): Observable<PortfolioAnalyticsDataset> {
     return this.http
-      .get<PortfolioAnalyticsDataset>(`${environment.apiBaseUrl}/dashboard/analytics`)
+      .get<PortfolioAnalyticsDataset>(
+        `${environment.apiBaseUrl}/dashboard/analytics`,
+        withoutGlobalLoading(),
+      )
       .pipe(
         map((data) => ({
           ...data,

@@ -1,8 +1,8 @@
-import { HttpClient, HttpContext } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { SKIP_GLOBAL_LOADING } from '../../interceptors/loading.interceptor';
+import { withoutGlobalLoading } from '../../interceptors/loading.interceptor';
 import { ChatRequest, ChatResponse } from '../models/chat.models';
 
 @Injectable({ providedIn: 'root' })
@@ -11,8 +11,10 @@ export class ChatApiService {
 
   sendMessage(message: string): Observable<ChatResponse> {
     const body: ChatRequest = { message };
-    return this.http.post<ChatResponse>(`${environment.agentApiBaseUrl}/chat`, body, {
-      context: new HttpContext().set(SKIP_GLOBAL_LOADING, true),
-    });
+    return this.http.post<ChatResponse>(
+      `${environment.agentApiBaseUrl}/chat`,
+      body,
+      withoutGlobalLoading(),
+    );
   }
 }

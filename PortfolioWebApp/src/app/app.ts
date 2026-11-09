@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AgentHostComponent } from './agent/agent-host.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner.component';
+import { SeoService } from './services/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -15,4 +16,7 @@ import { LoadingSpinnerComponent } from './components/loading-spinner.component'
     <app-agent-host />
   `,
 })
-export class App {}
+export class App {
+  /** Starts route metadata updates. */
+  private readonly seo = inject(SeoService);
+}

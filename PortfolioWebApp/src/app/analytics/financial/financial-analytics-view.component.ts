@@ -6,10 +6,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HighchartsChartComponent } from 'highcharts-angular';
 import type { Options } from 'highcharts';
-import { catchError, map, of, startWith } from 'rxjs';
+import { catchError, map, of, startWith, switchMap } from 'rxjs';
 import {
   DateRangeId,
   Department,
@@ -17,7 +17,7 @@ import {
   FinancialDemoDataset,
   FinancialFilters,
 } from './models/financial-analytics.model';
-import { FINANCIAL_KPI_ACCENT_CLASS } from '../../constants/analytics.constants';
+import { ANALYTICS_LOAD_COPY, FINANCIAL_KPI_ACCENT_CLASS } from '../../constants/analytics.constants';
 import {
   DATE_RANGE_OPTIONS,
   FinancialAnalyticsService,
@@ -36,27 +36,35 @@ export class FinancialAnalyticsViewComponent {
 
   readonly dateRangeOptions = DATE_RANGE_OPTIONS;
   readonly accentClassByAccent = FINANCIAL_KPI_ACCENT_CLASS;
+  readonly loadCopy = ANALYTICS_LOAD_COPY;
+  readonly skeletonSlots = [0, 1, 2, 3];
 
   readonly filters = signal<FinancialFilters>(this.finance.defaultFilters());
 
   private readonly reduceMotion =
     typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  private readonly loadAttempt = signal(0);
+
   private readonly loadState = toSignal(
-    this.finance.getDataset().pipe(
-      map(
-        (data): { status: 'ready'; data: FinancialDemoDataset } | { status: 'error'; message: string } => ({
-          status: 'ready',
-          data,
-        }),
+    toObservable(this.loadAttempt).pipe(
+      switchMap(() =>
+        this.finance.getDataset().pipe(
+          map(
+            (data): { status: 'ready'; data: FinancialDemoDataset } | { status: 'error'; message: string } => ({
+              status: 'ready',
+              data,
+            }),
+          ),
+          catchError(() =>
+            of({
+              status: 'error' as const,
+              message: ANALYTICS_LOAD_COPY.financialError,
+            }),
+          ),
+          startWith({ status: 'loading' as const }),
+        ),
       ),
-      catchError(() =>
-        of({
-          status: 'error' as const,
-          message: 'Could not load financial analytics. Is the API running on :5157?',
-        }),
-      ),
-      startWith({ status: 'loading' as const }),
     ),
     { initialValue: { status: 'loading' as const } },
   );
@@ -145,5 +153,10 @@ export class FinancialAnalyticsViewComponent {
 
   resetFilters(): void {
     this.filters.set(this.finance.defaultFilters());
+  }
+
+  retryLoad(): void {
+    if (this.loadStatus() === 'loading') return;
+    this.loadAttempt.update((count) => count + 1);
   }
 }

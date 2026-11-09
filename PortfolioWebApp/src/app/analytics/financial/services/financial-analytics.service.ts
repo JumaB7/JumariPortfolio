@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { withoutGlobalLoading } from '../../../interceptors/loading.interceptor';
 import {
   CategoryAggregate,
   DateRangeId,
@@ -50,7 +51,10 @@ export class FinancialAnalyticsService {
   });
 
   getDataset(): Observable<FinancialDemoDataset> {
-    return this.http.get<FinancialDemoDataset>(`${environment.apiBaseUrl}/financial/analytics`);
+    return this.http.get<FinancialDemoDataset>(
+      `${environment.apiBaseUrl}/financial/analytics`,
+      withoutGlobalLoading(),
+    );
   }
 
   defaultFilters(): FinancialFilters {

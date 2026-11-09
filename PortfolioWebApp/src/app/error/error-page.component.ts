@@ -7,7 +7,6 @@ import {
   input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import {
@@ -17,6 +16,7 @@ import {
   ErrorPageCopy,
 } from '../constants/error-page.constants';
 import { PortfolioService } from '../services/portfolio.service';
+import { SeoService } from '../services/seo.service';
 
 function isErrorPageCode(value: unknown): value is ErrorPageCode {
   return value === 404 || value === 500;
@@ -67,8 +67,7 @@ function isErrorPageCode(value: unknown): value is ErrorPageCode {
 })
 export class ErrorPageComponent {
   private readonly route = inject(ActivatedRoute);
-  private readonly title = inject(Title);
-  private readonly meta = inject(Meta);
+  private readonly seo = inject(SeoService);
   private readonly portfolio = inject(PortfolioService);
 
   /** Optional override when the page is embedded (e.g. missing project). */
@@ -100,8 +99,12 @@ export class ErrorPageComponent {
   constructor() {
     effect(() => {
       const page = this.copy();
-      this.title.setTitle(`${page.code} · ${page.title} — Jumari Blignaut`);
-      this.meta.updateTag({ name: 'robots', content: 'noindex' });
+      this.seo.apply({
+        title: `${page.code} · ${page.title} — Jumari Blignaut`,
+        description: page.message,
+        path: `/error/${page.code}`,
+        noindex: true,
+      });
     });
   }
 }

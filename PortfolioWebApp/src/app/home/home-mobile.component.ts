@@ -7,6 +7,7 @@ import { CountUpDirective } from '../directives/count-up.directive';
 import { RevealDirective } from '../directives/reveal.directive';
 import { AuroraBackgroundComponent } from './aurora-background.component';
 import { HomeBase } from './home-base';
+import { OverviewSkeletonComponent } from './overview-skeleton.component';
 import { ProjectShowcaseStageComponent } from './project-showcase-stage.component';
 
 @Component({
@@ -20,6 +21,7 @@ import { ProjectShowcaseStageComponent } from './project-showcase-stage.componen
     CountUpDirective,
     AuroraBackgroundComponent,
     ProjectShowcaseStageComponent,
+    OverviewSkeletonComponent,
   ],
   templateUrl: './home-mobile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

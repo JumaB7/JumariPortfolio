@@ -456,8 +456,15 @@
           <a class="btn btn-primary" routerLink="/dashboard">Explore Analytics Dashboard</a>
           <a class="btn btn-secondary" routerLink="/dashboard/agent">Ask the AI agent</a>
         </div>
+      } @else if (overviewFailed()) {
+        <div class="analytics-state mt-8" role="alert">
+          <p class="m-0 text-text-primary">{{ overviewStatusCopy.error }}</p>
+          <button type="button" class="btn btn-secondary mt-4" (click)="retryOverview()">
+            {{ overviewStatusCopy.retry }}
+          </button>
+        </div>
       } @else {
-        <p class="body-copy mt-8">Loading overview…</p>
+        <app-overview-skeleton layout="mobile" />
       }
     </div>
   </section>
@@ -491,6 +498,7 @@
         [appReveal]="100"
         [formGroup]="form"
         (ngSubmit)="submit()"
+        [attr.aria-busy]="submitting()"
       >
         <div>
           <label class="mb-2 block text-sm font-medium text-text-secondary" for="mobile-name">Name</label>
@@ -517,7 +525,15 @@
           ></textarea>
         </div>
         <div class="flex flex-col gap-3">
-          <button class="btn btn-primary w-full" type="submit" [disabled]="form.invalid || submitting()">
+          <button
+            class="btn btn-primary w-full"
+            type="submit"
+            [disabled]="form.invalid || submitting()"
+            [attr.aria-busy]="submitting()"
+          >
+            @if (submitting()) {
+              <span class="loading-spinner loading-spinner--sm" aria-hidden="true"></span>
+            }
             {{ submitting() ? 'Sending…' : 'Send message' }}
           </button>
           @if (status()) {

@@ -49,15 +49,28 @@
 
 @if (loadState(); as state) {
   @if (state.status === 'loading') {
-    <div class="analytics-state mt-10" role="status">
-      <p class="m-0 text-text-secondary">Loading analytics…</p>
+    <div class="mt-10" role="status" aria-busy="true">
+      <span class="sr-only">{{ loadCopy.projectsLoading }}</span>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-hidden="true">
+        @for (slot of skeletonSlots; track slot) {
+          <article class="surface-card bg-surface-elevated p-5">
+            <div class="h-3 w-24 animate-pulse rounded bg-surface-highlight"></div>
+            <div class="mt-4 h-8 w-16 animate-pulse rounded bg-surface-highlight"></div>
+          </article>
+        }
+      </div>
+      <div class="mt-6 grid gap-5 lg:grid-cols-2" aria-hidden="true">
+        @for (slot of skeletonSlots; track slot) {
+          <article class="analytics-chart-card h-72 animate-pulse bg-surface-elevated"></article>
+        }
+      </div>
     </div>
   } @else if (state.status === 'error') {
     <div class="analytics-state mt-10" role="alert">
       <p class="m-0 text-text-primary">{{ state.message }}</p>
-      <p class="mt-2 mb-0 text-sm text-text-muted">
-        The showcase dataset could not be prepared. Try again from the portfolio home page.
-      </p>
+      <button type="button" class="btn btn-secondary mt-4" (click)="retryLoad()">
+        {{ loadCopy.retry }}
+      </button>
     </div>
   } @else if (allProjects().length === 0) {
     <div class="analytics-state mt-10">

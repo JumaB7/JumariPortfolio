@@ -25,3 +25,11 @@ export const PROJECT_PREVIEW_CLASS_BY_ID: Record<string, string> = {
 };
 
 export const DEFAULT_PROJECT_PREVIEW_CLASS = 'project-preview--analytics';
+
+export const ANALYTICS_LOAD_COPY = {
+  financialLoading: 'Loading financial analytics',
+  financialError: 'Could not load financial analytics.',
+  projectsLoading: 'Loading analytics',
+  projectsError: 'Could not load portfolio analytics.',
+  retry: 'Try again',
+} as const;

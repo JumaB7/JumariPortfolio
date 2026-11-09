@@ -412,6 +412,11 @@ export const EXPERIENCE: ExperienceItem[] = [
   },
 ];
 
+export const OVERVIEW_STATUS_COPY = {
+  error: 'The portfolio overview could not be loaded.',
+  retry: 'Try again',
+} as const;
+
 export const ABOUT: AboutContent = {
   summary: [
     "I'm a software engineer based in Potchefstroom, South Africa, with around four years of professional experience. I've worked on applications in financial technology, higher education and fleet management, contributing to both frontend and backend development.",
