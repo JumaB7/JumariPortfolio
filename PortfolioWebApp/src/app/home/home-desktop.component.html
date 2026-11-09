@@ -519,59 +519,6 @@
           <button type="button" class="btn btn-secondary is-disabled" disabled>GitHub — add URL</button>
         }
       </div>
-      <form
-        class="surface-card mt-10 max-w-3xl space-y-5 p-8"
-        [appReveal]="120"
-        [formGroup]="form"
-        (ngSubmit)="submit()"
-        [attr.aria-busy]="submitting()"
-      >
-        <div>
-          <label class="mb-2 block text-sm font-medium text-text-secondary" for="desktop-name">Name</label>
-          <input id="desktop-name" class="field" formControlName="name" placeholder="Your name" autocomplete="name" />
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-medium text-text-secondary" for="desktop-email">Email</label>
-          <input
-            id="desktop-email"
-            class="field"
-            type="email"
-            formControlName="email"
-            placeholder="you@example.com"
-            autocomplete="email"
-          />
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-medium text-text-secondary" for="desktop-message">Message</label>
-          <textarea
-            id="desktop-message"
-            class="field min-h-28 resize-y"
-            formControlName="message"
-            placeholder="How can I help?"
-          ></textarea>
-        </div>
-        <div class="flex flex-wrap items-center gap-4">
-          <button
-            class="btn btn-primary"
-            type="submit"
-            [disabled]="form.invalid || submitting()"
-            [attr.aria-busy]="submitting()"
-          >
-            @if (submitting()) {
-              <span class="loading-spinner loading-spinner--sm" aria-hidden="true"></span>
-            }
-            {{ submitting() ? 'Sending…' : 'Send message' }}
-          </button>
-          @if (status()) {
-            <p
-              class="m-0 text-sm"
-              [ngClass]="status() === 'sent' ? 'text-accent-cyan' : 'text-red-300'"
-            >
-              {{ statusMessage() }}
-            </p>
-          }
-        </div>
-      </form>
     </div>
   </section>
 </main>

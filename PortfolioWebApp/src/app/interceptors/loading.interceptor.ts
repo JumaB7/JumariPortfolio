@@ -5,7 +5,7 @@ import { LoadingSpinnerService } from '../services/loading-spinner.service';
 
 /**
  * Opt a request out of the full-screen spinner.
- * Section reads and the contact form use their own indicators so the rest of the page stays usable.
+ * Section reads use their own indicators so the rest of the page stays usable.
  */
 export const SKIP_GLOBAL_LOADING = new HttpContextToken(() => false);
 

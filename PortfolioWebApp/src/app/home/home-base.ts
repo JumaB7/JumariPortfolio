@@ -1,35 +1,26 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder } from '@angular/forms';
 import type { Options } from 'highcharts';
 import { catchError, fromEvent, map, of, startWith, switchMap } from 'rxjs';
 import {
   DEFAULT_PROJECT_PREVIEW_CLASS,
   PROJECT_PREVIEW_CLASS_BY_ID,
 } from '../constants/analytics.constants';
-import { CONTACT_STATUS_MESSAGES } from '../constants/contact.constants';
 import { OVERVIEW_STATUS_COPY } from '../constants/portfolio.constants';
-import { ContactStatus } from '../models/contact.model';
 import { ChartSeriesPoint } from '../models/dashboard.model';
 import {
   ProjectActionLinkKind,
   ProjectActionView,
   ProjectCardView,
 } from '../models/portfolio.model';
-import { ContactService } from '../services/contact.service';
 import { DashboardService } from '../services/dashboard.service';
 import { PortfolioService } from '../services/portfolio.service';
-import { ValidationService } from '../services/validation.service';
 
 /** Shared home logic for desktop/mobile — plain TS base (no empty @Directive). */
 export class HomeBase {
   private readonly destroyRef = inject(DestroyRef);
-  private readonly fb = inject(FormBuilder);
-  private readonly validation = inject(ValidationService);
   private readonly portfolio = inject(PortfolioService);
   private readonly dashboardService = inject(DashboardService);
-  private readonly contactService = inject(ContactService);
 
   readonly navLinks = this.portfolio.navLinks;
   readonly about = this.portfolio.about;
@@ -44,9 +35,6 @@ export class HomeBase {
 
   readonly activeSection = signal('home');
   readonly menuOpen = signal(false);
-  readonly submitting = signal(false);
-  readonly status = signal<ContactStatus>(null);
-  readonly statusMessage = signal('');
   /** Hero copy fades in once the aurora intro reaches the reveal phase. */
   readonly heroContentReady = signal(false);
   readonly overviewStatusCopy = OVERVIEW_STATUS_COPY;
@@ -94,12 +82,6 @@ export class HomeBase {
     })),
   }));
 
-  readonly form = this.fb.nonNullable.group({
-    name: ['', this.validation.contactNameValidators()],
-    email: ['', this.validation.contactEmailValidators()],
-    message: ['', this.validation.contactMessageValidators()],
-  });
-
   constructor() {
     fromEvent(window, 'scroll')
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -133,41 +115,6 @@ export class HomeBase {
   retryOverview(): void {
     if (this.overviewState().status === 'loading') return;
     this.overviewAttempt.update((count) => count + 1);
-  }
-
-  submit(): void {
-    if (this.form.invalid || this.submitting()) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const request = this.form.getRawValue();
-    this.submitting.set(true);
-    this.status.set(null);
-    this.form.disable({ emitEvent: false });
-
-    this.contactService
-      .send(request)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.form.enable({ emitEvent: false });
-          this.form.reset();
-          this.submitting.set(false);
-          this.status.set('sent');
-          this.statusMessage.set(CONTACT_STATUS_MESSAGES.sent);
-        },
-        error: (err: unknown) => {
-          this.form.enable({ emitEvent: false });
-          this.submitting.set(false);
-          this.status.set('error');
-          this.statusMessage.set(
-            err instanceof HttpErrorResponse && err.status === 429
-              ? CONTACT_STATUS_MESSAGES.rateLimited
-              : CONTACT_STATUS_MESSAGES.error,
-          );
-        },
-      });
   }
 
   private resolveActionLinkKind(url: string): ProjectActionLinkKind {
