@@ -269,7 +269,7 @@
                     <li class="project-copy text-accent-silver">→ {{ feature }}</li>
                   }
                 </ul>
-                <div class="project-actions mt-auto mt-8 flex flex-wrap gap-3 border-t border-border pt-7">
+                <div class="project-actions mt-auto flex flex-wrap gap-3 border-t border-border pt-7">
                   @for (action of project.actionViews; track action.label) {
                     @if (action.linkKind === 'route') {
                       <a
