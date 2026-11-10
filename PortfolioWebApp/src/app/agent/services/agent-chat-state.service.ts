@@ -1,13 +1,14 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { finalize } from 'rxjs';
+import { HttpErrorMessageService } from '../../services/http-error-message.service';
 import { ChatTurn } from '../models/chat.models';
-import { readApiErrorMessage } from './api-error';
 import { ChatApiService } from './chat-api.service';
 
 /** Site-wide chat state — survives panel close and route changes. */
 @Injectable({ providedIn: 'root' })
 export class AgentChatStateService {
   private readonly chatApi = inject(ChatApiService);
+  private readonly httpErrors = inject(HttpErrorMessageService);
 
   readonly open = signal(false);
   readonly draft = signal('');
@@ -66,7 +67,7 @@ export class AgentChatStateService {
           );
         },
         error: (err: unknown) => {
-          const detail = readApiErrorMessage(err);
+          const detail = this.httpErrors.describeAgentFailure(err);
           this.turns.update((existing) =>
             existing.map((turn) =>
               turn.id === turnId ? { ...turn, loading: false, error: detail } : turn,

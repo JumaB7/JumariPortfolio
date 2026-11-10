@@ -18,6 +18,7 @@ import {
   FinancialFilters,
 } from './models/financial-analytics.model';
 import { ANALYTICS_LOAD_COPY, FINANCIAL_KPI_ACCENT_CLASS } from '../../constants/analytics.constants';
+import { HttpErrorMessageService } from '../../services/http-error-message.service';
 import {
   DATE_RANGE_OPTIONS,
   FinancialAnalyticsService,
@@ -33,6 +34,7 @@ import { FinancialChartService } from './services/financial-chart.service';
 export class FinancialAnalyticsViewComponent {
   private readonly finance = inject(FinancialAnalyticsService);
   private readonly charts = inject(FinancialChartService);
+  private readonly httpErrors = inject(HttpErrorMessageService);
 
   readonly dateRangeOptions = DATE_RANGE_OPTIONS;
   readonly accentClassByAccent = FINANCIAL_KPI_ACCENT_CLASS;
@@ -55,10 +57,10 @@ export class FinancialAnalyticsViewComponent {
               data,
             }),
           ),
-          catchError(() =>
+          catchError((err: unknown) =>
             of({
               status: 'error' as const,
-              message: ANALYTICS_LOAD_COPY.financialError,
+              message: this.httpErrors.describeLoadFailure(err, 'financial analytics'),
             }),
           ),
           startWith({ status: 'loading' as const }),

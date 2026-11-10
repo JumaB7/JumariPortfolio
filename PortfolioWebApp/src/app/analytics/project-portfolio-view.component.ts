@@ -22,6 +22,7 @@ import {
   ProjectKind,
   ProjectStatus,
 } from './models/portfolio-analytics.model';
+import { HttpErrorMessageService } from '../services/http-error-message.service';
 import { AnalyticsChartService } from './services/analytics-chart.service';
 import { PortfolioAnalyticsService } from './services/portfolio-analytics.service';
 
@@ -34,6 +35,7 @@ import { PortfolioAnalyticsService } from './services/portfolio-analytics.servic
 export class ProjectPortfolioViewComponent {
   private readonly analytics = inject(PortfolioAnalyticsService);
   private readonly charts = inject(AnalyticsChartService);
+  private readonly httpErrors = inject(HttpErrorMessageService);
 
   readonly filters = signal<AnalyticsFilters>(this.analytics.defaultFilters());
   readonly period = signal<'showcase'>('showcase');
@@ -49,10 +51,10 @@ export class ProjectPortfolioViewComponent {
       switchMap(() =>
         this.analytics.getAnalytics().pipe(
           map((data): AnalyticsLoadState => ({ status: 'ready', data })),
-          catchError(() =>
+          catchError((err: unknown) =>
             of({
               status: 'error',
-              message: ANALYTICS_LOAD_COPY.projectsError,
+              message: this.httpErrors.describeLoadFailure(err, 'portfolio analytics'),
             } satisfies AnalyticsLoadState),
           ),
           startWith({ status: 'loading' } satisfies AnalyticsLoadState),

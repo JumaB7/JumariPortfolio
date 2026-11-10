@@ -463,7 +463,7 @@
         </div>
       } @else if (overviewFailed()) {
         <div class="analytics-state mt-8" role="alert">
-          <p class="m-0 text-text-primary">{{ overviewStatusCopy.error }}</p>
+          <p class="m-0 text-text-primary">{{ overviewError() }}</p>
           <button type="button" class="btn btn-secondary mt-4" (click)="retryOverview()">
             {{ overviewStatusCopy.retry }}
           </button>

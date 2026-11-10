@@ -14,19 +14,21 @@ import {
   ProjectCardView,
 } from '../models/portfolio.model';
 import { DashboardService } from '../services/dashboard.service';
+import { HttpErrorMessageService } from '../services/http-error-message.service';
 import { PortfolioService } from '../services/portfolio.service';
 
 type OverviewUiState =
   | { status: 'idle' }
   | { status: 'loading' }
   | { status: 'ready'; data: DashboardOverview }
-  | { status: 'error' };
+  | { status: 'error'; message: string };
 
 /** Shared home logic for desktop/mobile — plain TS base (no empty @Directive). */
 export class HomeBase {
   private readonly destroyRef = inject(DestroyRef);
   private readonly portfolio = inject(PortfolioService);
   private readonly dashboardService = inject(DashboardService);
+  private readonly httpErrors = inject(HttpErrorMessageService);
 
   readonly navLinks = this.portfolio.navLinks;
   readonly about = this.portfolio.about;
@@ -57,7 +59,12 @@ export class HomeBase {
         }
         return this.dashboardService.getOverview().pipe(
           map((data): OverviewUiState => ({ status: 'ready', data })),
-          catchError(() => of<OverviewUiState>({ status: 'error' })),
+          catchError((err: unknown) =>
+            of<OverviewUiState>({
+              status: 'error',
+              message: this.httpErrors.describeLoadFailure(err, 'portfolio overview'),
+            }),
+          ),
           startWith<OverviewUiState>({ status: 'loading' }),
         );
       }),
@@ -71,6 +78,11 @@ export class HomeBase {
   });
 
   readonly overviewFailed = computed(() => this.overviewState().status === 'error');
+
+  readonly overviewError = computed(() => {
+    const state = this.overviewState();
+    return state.status === 'error' ? state.message : this.overviewStatusCopy.error;
+  });
 
   readonly overviewLoading = computed(() => {
     const state = this.overviewState();
