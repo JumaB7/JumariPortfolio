@@ -21,7 +21,14 @@
               <span></span><span></span><span></span>
             </div>
             <div class="device-laptop__screen">
-              <img [src]="laptop.image" [alt]="laptop.imageAlt" loading="lazy" />
+              <img
+                [src]="laptop.image"
+                [alt]="laptop.imageAlt"
+                width="1024"
+                height="640"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
           <div class="device-laptop__base"></div>
@@ -33,7 +40,14 @@
         <div class="device-phone">
           <div class="device-phone__notch"></div>
           <div class="device-phone__screen">
-            <img [src]="phone.image" [alt]="phone.imageAlt" loading="lazy" />
+            <img
+              [src]="phone.image"
+              [alt]="phone.imageAlt"
+              width="320"
+              height="640"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       }
@@ -44,7 +58,14 @@
             class="project-shot"
             [class.project-shot--phone]="shot.device === 'phone'"
           >
-            <img [src]="shot.image" [alt]="shot.imageAlt" loading="lazy" />
+            <img
+              [src]="shot.image"
+              [alt]="shot.imageAlt"
+              [attr.width]="shot.device === 'phone' ? 320 : 1024"
+              [attr.height]="640"
+              loading="lazy"
+              decoding="async"
+            />
             @if (shot.caption) {
               <figcaption>{{ shot.caption }}</figcaption>
             }

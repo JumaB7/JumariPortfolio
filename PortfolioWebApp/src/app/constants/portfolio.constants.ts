@@ -17,13 +17,13 @@ function veldSupplyCapabilities(): ProjectCapability[] {
         'Laptop and phone are the same Angular app — not a separate mobile site. At ~1024px the hero runs as a wide composition with a featured product card; at ~320px navigation, search, and CTAs stack into a single readable column. Layouts reflow; the catalogue and checkout stay on one codebase.',
       visuals: [
         {
-          image: '/projects/veld-supply/home-1024.jpg',
+          image: '/projects/veld-supply/home-1024.webp',
           imageAlt: 'Veld Supply home hero on a laptop-width viewport',
           caption: 'Laptop · 1024px',
           device: 'laptop',
         },
         {
-          image: '/projects/veld-supply/home-320.png',
+          image: '/projects/veld-supply/home-320.webp',
           imageAlt: 'Veld Supply home hero on a phone-width viewport with search',
           caption: 'Phone · 320px',
           device: 'phone',
@@ -36,7 +36,7 @@ function veldSupplyCapabilities(): ProjectCapability[] {
         'Every product shows on-hand count. The quantity stepper stops at available units — here the bag is capped at 23 when stock is 23. The UI is only the first gate: cart and checkout APIs re-check inventory and reject oversells, so a stale tab cannot promise gear that is already gone.',
       visuals: [
         {
-          image: '/projects/veld-supply/product-stock-1024.png',
+          image: '/projects/veld-supply/product-stock-1024.webp',
           imageAlt: 'Product page with quantity set to 23 matching units in stock',
           caption: 'Laptop · stock-capped quantity',
           frameClass: 'object-top',
@@ -62,13 +62,13 @@ function veldSupplyCapabilities(): ProjectCapability[] {
         'Paid orders only. The desk opens on period KPIs, then charts profit across months, sales versus profit, and contribution by category — so margin and mix are visible without exporting a spreadsheet.',
       visuals: [
         {
-          image: '/projects/veld-supply/sales-admin-1024.png',
+          image: '/projects/veld-supply/sales-admin-1024.webp',
           imageAlt: 'Admin sales desk with KPIs and profit bar chart',
           caption: 'Admin · sales overview',
           device: 'laptop',
         },
         {
-          image: '/projects/veld-supply/sales-charts-1024.png',
+          image: '/projects/veld-supply/sales-charts-1024.webp',
           imageAlt: 'Admin sales charts for margin, sales versus profit, and category',
           caption: 'Admin · sales charts',
           device: 'laptop',
@@ -152,13 +152,13 @@ export const PROJECTS: ProjectItem[] = [
     previewLabel: 'Commerce platform',
     previewVisuals: [
       {
-        image: '/projects/veld-supply/home-1024.jpg',
+        image: '/projects/veld-supply/home-1024.webp',
         imageAlt: 'Veld Supply storefront on a laptop-width viewport',
         caption: 'Laptop · 1024px',
         device: 'laptop',
       },
       {
-        image: '/projects/veld-supply/home-320.png',
+        image: '/projects/veld-supply/home-320.webp',
         imageAlt: 'Veld Supply storefront on a phone-width viewport',
         caption: 'Phone · 320px',
         device: 'phone',
@@ -188,21 +188,21 @@ export const PROJECTS: ProjectItem[] = [
     ],
     previewVisuals: [
       {
-        image: '/projects/accountant-app/admin-clients-1024.png',
+        image: '/projects/accountant-app/admin-clients-1024.webp',
         imageAlt: 'Accountant Admin clients desk with active client list',
         caption: 'Admin clients · laptop',
         frameClass: 'object-top',
         device: 'laptop',
       },
       {
-        image: '/projects/accountant-app/client-signin-320.png',
+        image: '/projects/accountant-app/client-signin-320.webp',
         imageAlt: 'Accountant Client sign-in on a phone-width viewport',
         caption: 'Client · phone',
         frameClass: 'object-top',
         device: 'phone',
       },
       {
-        image: '/projects/accountant-app/admin-signin-1024.png',
+        image: '/projects/accountant-app/admin-signin-1024.webp',
         imageAlt: 'Accountant Admin sign-in workspace',
         caption: 'Admin sign-in · laptop',
         frameClass: 'object-top',
@@ -265,13 +265,13 @@ export const PROJECTS: ProjectItem[] = [
     previewLabel: 'Site + analytics',
     previewVisuals: [
       {
-        image: '/projects/jumari-portfolio/home-1024.jpg',
+        image: '/projects/jumari-portfolio/home-1024.webp',
         imageAlt: 'Jumari Portfolio home hero on a laptop-width viewport',
         caption: 'Laptop · home',
         device: 'laptop',
       },
       {
-        image: '/projects/jumari-portfolio/analytics-320.png',
+        image: '/projects/jumari-portfolio/analytics-320.webp',
         imageAlt: 'Project portfolio analytics on a phone-width viewport',
         caption: 'Phone · analytics',
         device: 'phone',

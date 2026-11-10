@@ -16,13 +16,7 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     provideHttpClient(withInterceptors([loadingInterceptor])),
-    provideHighcharts({
-      modules: () => [
-        import('highcharts/esm/modules/heatmap'),
-        import('highcharts/esm/modules/xrange'),
-        import('highcharts/esm/modules/exporting'),
-        import('highcharts/esm/modules/accessibility'),
-      ],
-    }),
+    // Registers the lazy Highcharts loader only — the library downloads when a chart mounts.
+    provideHighcharts(),
   ],
 };

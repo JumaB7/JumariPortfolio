@@ -1,13 +1,13 @@
-import { DestroyRef, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import type { Options } from 'highcharts';
-import { catchError, fromEvent, map, of, startWith, switchMap } from 'rxjs';
+import { catchError, combineLatest, map, of, startWith, switchMap } from 'rxjs';
 import {
   DEFAULT_PROJECT_PREVIEW_CLASS,
   PROJECT_PREVIEW_CLASS_BY_ID,
 } from '../constants/analytics.constants';
 import { OVERVIEW_STATUS_COPY } from '../constants/portfolio.constants';
-import { ChartSeriesPoint } from '../models/dashboard.model';
+import { ChartSeriesPoint, DashboardOverview } from '../models/dashboard.model';
 import {
   ProjectActionLinkKind,
   ProjectActionView,
@@ -15,6 +15,12 @@ import {
 } from '../models/portfolio.model';
 import { DashboardService } from '../services/dashboard.service';
 import { PortfolioService } from '../services/portfolio.service';
+
+type OverviewUiState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'ready'; data: DashboardOverview }
+  | { status: 'error' };
 
 /** Shared home logic for desktop/mobile — plain TS base (no empty @Directive). */
 export class HomeBase {
@@ -39,19 +45,24 @@ export class HomeBase {
   readonly heroContentReady = signal(false);
   readonly overviewStatusCopy = OVERVIEW_STATUS_COPY;
 
+  /** Overview /api/dashboard is below the fold — arm only when the section nears the viewport. */
+  private readonly overviewArmed = signal(false);
   private readonly overviewAttempt = signal(0);
 
   private readonly overviewState = toSignal(
-    toObservable(this.overviewAttempt).pipe(
-      switchMap(() =>
-        this.dashboardService.getOverview().pipe(
-          map((data) => ({ status: 'ready' as const, data })),
-          catchError(() => of({ status: 'error' as const })),
-          startWith({ status: 'loading' as const }),
-        ),
-      ),
+    combineLatest([toObservable(this.overviewArmed), toObservable(this.overviewAttempt)]).pipe(
+      switchMap(([armed]) => {
+        if (!armed) {
+          return of<OverviewUiState>({ status: 'idle' });
+        }
+        return this.dashboardService.getOverview().pipe(
+          map((data): OverviewUiState => ({ status: 'ready', data })),
+          catchError(() => of<OverviewUiState>({ status: 'error' })),
+          startWith<OverviewUiState>({ status: 'loading' }),
+        );
+      }),
     ),
-    { initialValue: { status: 'loading' as const } },
+    { initialValue: { status: 'idle' } as OverviewUiState },
   );
 
   readonly overview = computed(() => {
@@ -60,6 +71,11 @@ export class HomeBase {
   });
 
   readonly overviewFailed = computed(() => this.overviewState().status === 'error');
+
+  readonly overviewLoading = computed(() => {
+    const state = this.overviewState();
+    return state.status === 'loading' || (this.overviewArmed() && state.status === 'idle');
+  });
 
   readonly techChart = computed(() =>
     this.buildPie('Technology mix', this.overview()?.technologyMix ?? []),
@@ -83,17 +99,36 @@ export class HomeBase {
   }));
 
   constructor() {
-    fromEvent(window, 'scroll')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.updateActiveSection());
-    fromEvent(window, 'resize')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+    afterNextRender(() => {
+      let scrollScheduled = false;
+      const onScroll = () => {
+        if (scrollScheduled) return;
+        scrollScheduled = true;
+        window.requestAnimationFrame(() => {
+          scrollScheduled = false;
+          this.updateActiveSection();
+          this.armOverviewIfNearViewport();
+        });
+      };
+      const onResize = () => {
         if (window.innerWidth >= 1024) {
           this.menuOpen.set(false);
         }
+        this.armOverviewIfNearViewport();
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize, { passive: true });
+      this.updateActiveSection();
+      this.armOverviewIfNearViewport();
+      const anchorPass = window.setTimeout(() => this.armOverviewIfNearViewport(), 200);
+
+      this.destroyRef.onDestroy(() => {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onResize);
+        window.clearTimeout(anchorPass);
       });
-    this.updateActiveSection();
+    });
 
     // Safety: never leave hero copy hidden if the aurora intro fails to signal.
     const heroFallback = window.setTimeout(() => this.heroContentReady.set(true), 3500);
@@ -112,7 +147,25 @@ export class HomeBase {
     this.menuOpen.set(false);
   }
 
+  armOverview(): void {
+    if (this.overviewArmed()) return;
+    this.overviewArmed.set(true);
+  }
+
+  /** Used by scroll/resize/hash paths — keeps /api/dashboard off the critical path. */
+  private armOverviewIfNearViewport(): void {
+    if (this.overviewArmed()) return;
+    const el = document.getElementById('overview');
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const margin = 200;
+    if (rect.top < window.innerHeight + margin && rect.bottom > -margin) {
+      this.armOverview();
+    }
+  }
+
   retryOverview(): void {
+    this.overviewArmed.set(true);
     if (this.overviewState().status === 'loading') return;
     this.overviewAttempt.update((count) => count + 1);
   }

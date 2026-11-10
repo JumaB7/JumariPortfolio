@@ -1,8 +1,4 @@
 import { Routes } from '@angular/router';
-import { DashboardAgentComponent } from './agent/dashboard-agent.component';
-import { AnalyticsDashboardComponent } from './analytics/analytics-dashboard.component';
-import { FinancialAnalyticsViewComponent } from './analytics/financial/financial-analytics-view.component';
-import { ProjectPortfolioViewComponent } from './analytics/project-portfolio-view.component';
 import {
   FINANCIAL_DASHBOARD_SEO,
   HOME_SEO,
@@ -10,53 +6,66 @@ import {
   SEO_DEFER_DATA,
   SEO_ROUTE_DATA,
 } from './constants/seo.constants';
-import { ErrorPageComponent } from './error/error-page.component';
-import { HomeContainerComponent } from './home/home-container.component';
-import { ProjectDetailComponent } from './projects/project-detail.component';
+import { provideDashboardHighcharts } from './providers/highcharts.providers';
 
 export const routes: Routes = [
-  { path: '', component: HomeContainerComponent, data: { [SEO_ROUTE_DATA]: HOME_SEO } },
+  {
+    path: '',
+    loadComponent: () =>
+      import('./home/home-container.component').then((m) => m.HomeContainerComponent),
+    data: { [SEO_ROUTE_DATA]: HOME_SEO },
+  },
   {
     path: 'projects/:id',
-    component: ProjectDetailComponent,
+    loadComponent: () =>
+      import('./projects/project-detail.component').then((m) => m.ProjectDetailComponent),
     data: { [SEO_DEFER_DATA]: true },
   },
   {
     path: 'dashboard/agent',
-    component: DashboardAgentComponent,
+    loadComponent: () =>
+      import('./agent/dashboard-agent.component').then((m) => m.DashboardAgentComponent),
     data: { [SEO_DEFER_DATA]: true },
   },
   {
     path: 'dashboard',
-    component: AnalyticsDashboardComponent,
+    loadComponent: () =>
+      import('./analytics/analytics-dashboard.component').then((m) => m.AnalyticsDashboardComponent),
+    providers: [provideDashboardHighcharts()],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'financial' },
       {
         path: 'financial',
-        component: FinancialAnalyticsViewComponent,
+        loadComponent: () =>
+          import('./analytics/financial/financial-analytics-view.component').then(
+            (m) => m.FinancialAnalyticsViewComponent,
+          ),
         data: { [SEO_ROUTE_DATA]: FINANCIAL_DASHBOARD_SEO },
       },
       {
         path: 'projects',
-        component: ProjectPortfolioViewComponent,
+        loadComponent: () =>
+          import('./analytics/project-portfolio-view.component').then(
+            (m) => m.ProjectPortfolioViewComponent,
+          ),
         data: { [SEO_ROUTE_DATA]: PROJECT_PORTFOLIO_SEO },
       },
     ],
   },
   {
     path: 'error/404',
-    component: ErrorPageComponent,
+    loadComponent: () => import('./error/error-page.component').then((m) => m.ErrorPageComponent),
     data: { code: 404, [SEO_DEFER_DATA]: true },
   },
   {
     path: 'error/500',
-    component: ErrorPageComponent,
+    loadComponent: () => import('./error/error-page.component').then((m) => m.ErrorPageComponent),
     data: { code: 500, [SEO_DEFER_DATA]: true },
   },
   { path: 'error', pathMatch: 'full', redirectTo: 'error/404' },
   {
     path: '**',
-    component: ErrorPageComponent,
+    loadComponent: () => import('./error/error-page.component').then((m) => m.ErrorPageComponent),
     data: { code: 404, [SEO_DEFER_DATA]: true },
   },
 ];

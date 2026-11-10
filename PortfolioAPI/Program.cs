@@ -1,7 +1,10 @@
+using System.IO.Compression;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using PortfolioAPI.Agent;
 using PortfolioAPI.Data;
 using PortfolioAPI.RateLimiting;
@@ -17,6 +20,27 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Clear();
 });
 
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat([
+        "application/javascript",
+        "application/json",
+        "image/svg+xml",
+        "application/xml",
+        "text/plain",
+    ]);
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
@@ -64,6 +88,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 app.UseForwardedHeaders();
+app.UseResponseCompression();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -92,10 +117,52 @@ app.UseDefaultFiles();
 var contentTypes = new FileExtensionContentTypeProvider();
 contentTypes.Mappings[".xml"] = "application/xml";
 contentTypes.Mappings[".txt"] = "text/plain";
-app.UseStaticFiles(new StaticFileOptions
+contentTypes.Mappings[".webp"] = "image/webp";
+contentTypes.Mappings[".webm"] = "video/webm";
+void SetStaticCacheHeaders(StaticFileResponseContext ctx)
+{
+    var path = ctx.File.Name;
+    var requestPath = ctx.Context.Request.Path.Value ?? string.Empty;
+    var headers = ctx.Context.Response.Headers;
+
+    // Fingerprinted Angular bundles — long cache, immutable.
+    if (path.Contains('-') && (path.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".css", StringComparison.OrdinalIgnoreCase)))
+    {
+        headers[HeaderNames.CacheControl] = "public,max-age=31536000,immutable";
+        return;
+    }
+
+    // Media and icons — long cache; filenames are stable and versioned by deploy.
+    if (path.EndsWith(".webp", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".ico", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".webm", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".woff2", StringComparison.OrdinalIgnoreCase))
+    {
+        headers[HeaderNames.CacheControl] = "public,max-age=604800,stale-while-revalidate=86400";
+        return;
+    }
+
+    // HTML shell (including `/` via default files / SPA fallback) and SEO text — always revalidate.
+    if (path.Equals("index.html", StringComparison.OrdinalIgnoreCase)
+        || path.EndsWith(".html", StringComparison.OrdinalIgnoreCase)
+        || requestPath is "/" or "/index.html"
+        || path.Equals("robots.txt", StringComparison.OrdinalIgnoreCase)
+        || path.Equals("sitemap.xml", StringComparison.OrdinalIgnoreCase))
+    {
+        headers[HeaderNames.CacheControl] = "no-cache";
+    }
+}
+
+var staticFileOptions = new StaticFileOptions
 {
     ContentTypeProvider = contentTypes,
-});
+    OnPrepareResponse = SetStaticCacheHeaders,
+};
+app.UseStaticFiles(staticFileOptions);
 app.UseCors("PortfolioWebApp");
 app.UseRateLimiter();
 app.UseAuthorization();
@@ -113,7 +180,8 @@ app.MapFallback("/api/{**path}", async context =>
     });
 });
 
-app.MapFallbackToFile("index.html");
+// SPA deep links — same no-cache policy as index.html.
+app.MapFallbackToFile("index.html", staticFileOptions);
 
 app.Run();
 

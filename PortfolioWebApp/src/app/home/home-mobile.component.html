@@ -4,11 +4,13 @@
   <div class="content-shell flex h-(--nav-height) items-center justify-between gap-4">
     <a href="#home" class="inline-flex items-center no-underline" aria-label="Jumari Blignaut home">
       <img
-        src="/logo-j-layered.png"
+        src="/logo-j-layered-128.webp"
         alt="Jumari Blignaut"
         class="h-8 w-auto max-w-36 object-contain object-left"
-        width="256"
-        height="213"
+        width="128"
+        height="131"
+        fetchpriority="high"
+        decoding="async"
       />
     </a>
     <button
@@ -427,7 +429,7 @@
   </section>
 
   <!-- Overview (home teaser — full analytics lives at /dashboard) -->
-  <section id="overview" class="section-pad bg-surface">
+  <section id="overview" class="section-pad bg-surface" appViewportEnter (entered)="armOverview()">
     <div class="content-shell">
       <div appReveal>
         <p class="section-label">Overview</p>
@@ -449,24 +451,11 @@
           }
         </div>
         <div class="mt-5 grid min-w-0 gap-5">
-          <article class="surface-card min-w-0 overflow-hidden bg-surface-elevated p-5" [appReveal]="80">
-            <div class="mb-1 flex items-baseline justify-between gap-3">
-              <h3 class="m-0 text-base font-semibold text-text-primary">Technology mix</h3>
-              <span class="text-[0.65rem] font-medium tracking-wide text-text-muted uppercase">Illustrative</span>
-            </div>
-            <p class="mt-1 mb-3 text-sm text-text-secondary">
-              Relative emphasis across the stack used in these portfolio projects.
-            </p>
-            <highcharts-chart class="block min-h-65 w-full max-w-full overflow-visible" [options]="techChart()" />
-          </article>
-          <article class="surface-card min-w-0 overflow-hidden bg-surface-elevated p-5" [appReveal]="140">
-            <div class="mb-1 flex items-baseline justify-between gap-3">
-              <h3 class="m-0 text-base font-semibold text-text-primary">Project categories</h3>
-              <span class="text-[0.65rem] font-medium tracking-wide text-text-muted uppercase">Illustrative</span>
-            </div>
-            <p class="mt-1 mb-3 text-sm text-text-secondary">Count of showcased projects by category.</p>
-            <highcharts-chart class="block min-h-65 w-full max-w-full overflow-visible" [options]="categoryChart()" />
-          </article>
+          @defer (on viewport; prefetch on idle) {
+            <app-home-overview-charts [techChart]="techChart()" [categoryChart]="categoryChart()" />
+          } @placeholder {
+            <app-overview-skeleton layout="mobile" />
+          }
         </div>
         <div class="mt-6 flex flex-wrap gap-2.5" appReveal>
           <a class="btn btn-primary" routerLink="/dashboard">Explore Analytics Dashboard</a>
@@ -479,7 +468,7 @@
             {{ overviewStatusCopy.retry }}
           </button>
         </div>
-      } @else {
+      } @else if (overviewLoading()) {
         <app-overview-skeleton layout="mobile" />
       }
     </div>

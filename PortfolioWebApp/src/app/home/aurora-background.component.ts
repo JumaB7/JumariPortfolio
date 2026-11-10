@@ -30,6 +30,8 @@ import {
           class="hero-aurora__media hero-aurora__poster"
           [src]="posterSrc"
           alt=""
+          width="644"
+          height="220"
           decoding="async"
           (load)="onPosterReady()"
           (error)="onPosterReady()"
@@ -65,7 +67,7 @@ export class AuroraBackgroundComponent {
   /** Poster only when not using video (reduced motion or video failed). */
   readonly showPoster = signal(false);
 
-  readonly posterSrc = '/aurora/aurora-poster.png';
+  readonly posterSrc = '/aurora/aurora-poster.webp';
   readonly videoSrc = `/aurora/aurora.webm?v=2`;
 
   private readyEmitted = false;
